@@ -121,6 +121,10 @@
   .rthumbs img { width: 58px; height: 74px; object-fit: cover; border-radius: 8px; }
   .done { text-align: center; padding: 10px 0; }
   .done .big { font-size: 44px; }
+  .modal { position: fixed; inset: 0; background: rgba(30,51,51,.55); display: flex; align-items: flex-start; justify-content: center; padding: 24px 16px; overflow-y: auto; z-index: 100; }
+  .modal[hidden] { display: none; }
+  .modal-card { position: relative; background: #fff; border-radius: 16px; padding: 24px 20px; max-width: 480px; width: 100%; margin: auto; box-shadow: 0 12px 40px rgba(0,0,0,.25); }
+  .modal-x { position: absolute; top: 10px; right: 10px; border: none; background: var(--light); width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 14px; }
   footer { text-align: center; font-size: 11px; color: var(--muted); padding: 30px 20px 40px; line-height: 1.7; }
   @media (max-width: 560px) {
     .card { padding: 20px 16px; }
@@ -158,6 +162,8 @@
   ClickLounge Studio &middot; Antipolo City, Philippines<br>
   Your photos and details are only used to prepare your session. Final look confirmed with your photographer on the day.
 </footer>
+
+<div id="rc-modal" class="modal" hidden></div>
 
 <!-- Prices and what each part includes come from the live Look Lab, so there is one source of truth -->
 <script src="https://hellotalentff-max.github.io/clicklounge_looklab/looklab-data.js"></script>
@@ -202,7 +208,7 @@
   var S = {
     step: 0, occasion: '', vibe: '', budget: '', keep: '', gown: '', outfits: 1,
     top: '', bottom: '', shoe: '', photos: [], links: '', notes: '',
-    name: '', fb: '', phone: '', email: '',
+    name: '', fb: '', phone: '', email: '', questions: '', modal: '',
     pickGown: '', forced: '', err: '', busy: false, sentId: '', dresses: null, dressErr: false, ready: false, finished: false
   };
   S.id = genId();
@@ -425,7 +431,7 @@
           (S.photos.length < MAX_PHOTOS ? '<label class="drop"><div style="font-size:30px;">📷</div><b>Tap to add photos</b><span>JPG or PNG · ' + (MAX_PHOTOS - S.photos.length) + ' more allowed</span><input type="file" id="rc-file" accept="image/*" multiple style="display:none;"></label>' : '') +
           (th ? '<div class="thumbs">' + th + '</div>' : '') +
           '<div class="field" style="margin-top:18px;"><label for="rc-links">Or paste links (Pinterest, Instagram, Drive)</label><textarea id="rc-links" rows="2" placeholder="https://…">' + esc(S.links) + '</textarea></div>' +
-          '<div class="field"><label for="rc-notes">Describe the look (colours, props, mood, anything we should know)</label><textarea id="rc-notes" rows="3" placeholder="e.g. all-black with gold jewellery, dramatic lighting, I love the fur coat idea…">' + esc(S.notes) + '</textarea></div>' +
+          '<div class="field"><label for="rc-notes">Describe the look (colours, props, mood, anything we should know)</label><textarea id="rc-notes" rows="3" maxlength="300" placeholder="e.g. all-black with gold jewellery, dramatic lighting, I love the fur coat idea…">' + esc(S.notes) + '</textarea></div>' +
           '<div class="hint">Photos are optional, but they help us a lot.</div>';
       case 'result':
         return resultHtml();
@@ -470,21 +476,11 @@
       '<ul class="why">' + whyList(rec).map(function (w) { return '<li>' + w + '</li>'; }).join('') + '</ul>' +
       (rec.over ? '<div class="note warn">This is a little above your budget — it’s the closest build we have for that look. The “Save more” option below may help.</div>' : '') +
       gownBox + '</div>' + alts + recap +
-      '<div class="card" id="rc-contact" style="margin-top:22px;border-color:rgba(81,137,125,.35);">' +
-        '<h2 class="q" style="font-size:18px;">Like what you see? Send it to the studio</h2>' +
-        '<p class="qsub">Tell us where to reach you and we\u2019ll get your look ready \u2014 your sizes and inspiration go with it.</p>' +
-        '<div class="field"><label for="rc-name">Your name *</label><input id="rc-name" type="text" value="' + esc(S.name) + '" autocomplete="name"></div>' +
-        '<div class="field"><label for="rc-phone">Mobile number *</label><input id="rc-phone" type="tel" value="' + esc(S.phone) + '" placeholder="09XXXXXXXXX" autocomplete="tel"></div>' +
-        '<div class="field"><label for="rc-fb">Facebook name</label><input id="rc-fb" type="text" value="' + esc(S.fb) + '" placeholder="So we can find you on Messenger"></div>' +
-        '<div class="field"><label for="rc-email">Email</label><input id="rc-email" type="email" value="' + esc(S.email) + '" placeholder="email@example.com" autocomplete="email"></div>' +
-        '<div class="hint" style="margin:-4px 0 4px;">We only use these to prepare your session.</div>' +
+      '<div class="nav" style="flex-wrap:wrap;margin-top:22px;">' +
+        '<button type="button" class="btn btn-gold" data-a="book" style="flex:1 1 220px;">Book this look \u2192</button>' +
+        '<button type="button" class="btn btn-line" data-a="ask" style="flex:1 1 220px;">\u2709 Send this quote to the studio</button>' +
       '</div>' +
-      '<div class="err" id="rc-err" role="alert">' + esc(S.err) + '</div>' +
-      '<div class="nav" style="flex-wrap:wrap;">' +
-        '<button type="button" class="btn btn-gold" id="rc-book" data-a="book"' + (S.busy ? ' disabled' : '') + '>' + (S.busy ? 'Saving…' : 'Book this look →') + '</button>' +
-        '<button type="button" class="btn btn-line" data-a="send"' + (S.busy ? ' disabled' : '') + '>Just send it to the studio</button>' +
-      '</div>' +
-      '<div class="hint" style="text-align:center;margin-top:12px;">Booking takes you to pick your date and time — your sizes and photos go with you.</div>';
+      '<div class="hint" style="text-align:center;margin-top:12px;">Not ready to book? Send us your quote and ask anything \u2014 we\u2019ll reply on Messenger or by text.</div>';
   }
   function sessionTitle(b) { return b.sess.name + ' + ' + (b.mood ? b.mood.name : '') + ' + ' + (b.kobj ? b.kobj.name : ''); }
   function altHtml(label, b, base) {
@@ -494,7 +490,7 @@
   }
   function doneHtml() {
     return '<div class="done"><div class="big">🎉</div><h2 class="q" style="margin-top:8px;">Sent to the studio!</h2>' +
-      '<p class="qsub" style="margin-top:6px;">Thanks, ' + esc(S.name.split(' ')[0] || 'there') + '. Your look, sizes and photos are with our team' + (S.sentId ? ' (ref <b>' + esc(S.sentId) + '</b>)' : '') + '. We’ll message you soon.</p>' +
+      '<p class="qsub" style="margin-top:6px;">Thanks, ' + esc(S.name.split(' ')[0] || 'there') + '. Your look, sizes and photos are with our team' + (S.sentId ? ' (ref <b>' + esc(S.sentId) + '</b>)' : '') + '. We’ll message you soon' + (S.questions ? ' and answer your questions' : '') + '.</p>' +
       '<div class="nav" style="flex-direction:column;"><a class="btn btn-gold" href="' + esc(bookingUrl()) + '" style="text-align:center;">Pick a date and book →</a>' +
       '<a class="btn btn-line" href="' + MESSENGER + '" target="_blank" rel="noopener" style="text-align:center;">Message us on Messenger</a></div></div>';
   }
@@ -523,7 +519,7 @@
       id: S.id, name: S.name, fbName: S.fb, phone: S.phone, email: S.email,
       occasion: S.occasion, vibe: S.vibe, budget: S.budget, keepsakePref: S.keep, gownPref: S.gown, outfits: S.outfits,
       build: sessionTitle(b), total: b.total, minutes: b.shoot, gown: b.gown ? b.gown.name : '',
-      sizes: { top: S.top, bottom: S.bottom, shoe: S.shoe }, links: S.links, notes: S.notes,
+      sizes: { top: S.top, bottom: S.bottom, shoe: S.shoe }, links: S.links, notes: notesForStudio(),
       images: S.photos.map(function (d, i) { return { name: 'inspo-' + (i + 1) + '.jpg', mime: 'image/jpeg', data: d.replace(/^data:image\/jpeg;base64,/, '') }; })
     };
     var ctl = typeof AbortController !== 'undefined' ? new AbortController() : null;
@@ -537,26 +533,45 @@
         S.sentId = j.id || S.id;
       }).catch(function (e) { clearTimeout(timer); throw e; });
   }
-  function submit(thenBook) {
+  function notesForStudio() {
+    return [S.notes, S.questions ? 'QUESTIONS: ' + S.questions : ''].filter(Boolean).join(' | ');
+  }
+  function modalHtml(mode) {
+    var book = mode === 'book';
+    return '<div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="rc-mt">' +
+      '<button type="button" class="modal-x" data-a="mclose" aria-label="Close">\u2715</button>' +
+      '<h2 class="q" id="rc-mt" style="font-size:19px;padding-right:30px;">' + (book ? 'Almost there \u2014 attach your photos to your booking' : 'Send your quote to the studio') + '</h2>' +
+      '<p class="qsub">' + (book ? 'Add your name and mobile so we can link your sizes and inspiration photos to your booking.' : 'We\u2019ll reply on Messenger or by text. Your quote, sizes and inspiration go with it.') + '</p>' +
+      '<div class="field"><label for="rc-name">Your name *</label><input id="rc-name" type="text" value="' + esc(S.name) + '" autocomplete="name"></div>' +
+      '<div class="field"><label for="rc-phone">Mobile number *</label><input id="rc-phone" type="tel" value="' + esc(S.phone) + '" placeholder="09XXXXXXXXX" autocomplete="tel"></div>' +
+      '<div class="field"><label for="rc-fb">Facebook name</label><input id="rc-fb" type="text" value="' + esc(S.fb) + '" placeholder="So we can find you on Messenger"></div>' +
+      '<div class="field"><label for="rc-email">Email</label><input id="rc-email" type="email" value="' + esc(S.email) + '" placeholder="email@example.com" autocomplete="email"></div>' +
+      '<div class="field"><label for="rc-q">Any questions for us?</label><textarea id="rc-q" rows="3" maxlength="500" placeholder="e.g. Can I bring a friend? Can I do both looks? Do you have gowns in my size?">' + esc(S.questions) + '</textarea></div>' +
+      '<div class="err" id="rc-merr" role="alert"></div>' +
+      '<div class="nav"><button type="button" class="btn btn-gold" id="rc-msend" data-a="msend">' + (book ? 'Save & continue to booking \u2192' : 'Send to the studio') + '</button></div>' +
+      (book ? '<div style="text-align:center;margin-top:12px;"><a class="link" href="' + esc(bookingUrl()) + '">Skip \u2014 just book without my photos</a></div>' : '') +
+      '<div class="hint" style="margin-top:12px;">We only use these to prepare your session.</div>' +
+    '</div>';
+  }
+  function openModal(mode) {
+    S.modal = mode; var m = $('rc-modal'); m.innerHTML = modalHtml(mode); m.hidden = false; document.body.style.overflow = 'hidden';
+    setTimeout(function () { var f = $('rc-name'); if (f) f.focus(); }, 50);
+  }
+  function closeModal() {
+    readFields(); S.modal = ''; var m = $('rc-modal'); m.hidden = true; m.innerHTML = ''; document.body.style.overflow = '';
+  }
+  function submitModal() {
     readFields();
-    var bad = validate('contact');
-    if (bad) {
-      S.err = bad; render();
-      var c = $('rc-contact'); if (c && c.scrollIntoView) c.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      return;
-    }
-    S.busy = true; S.err = ''; render();
+    var box = $('rc-merr'), bad = validate('contact');
+    if (bad) { box.textContent = bad; return; }
+    var btn = $('rc-msend'), mode = S.modal, label = btn.textContent;
+    btn.disabled = true; btn.textContent = 'Sending\u2026'; box.textContent = '';
     sendInquiry().then(function () {
-      S.busy = false;
-      if (thenBook) { window.location.href = bookingUrl(); }
-      else { S.finished = true; render(); }
+      if (mode === 'book') { window.location.href = bookingUrl(); }
+      else { closeModal(); S.finished = true; render(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
     }).catch(function () {
-      S.busy = false;
-      S.err = 'We couldn’t send your photos to the studio just now.';
-      S.fallback = true;
-      render();
-      var box = $('rc-err');
-      if (box) box.innerHTML = esc(S.err) + ' <a class="link" href="' + esc(bookingUrl()) + '">Continue to booking anyway</a> (we’ll ask for your photos on Messenger) or try again.';
+      btn.disabled = false; btn.textContent = label;
+      box.innerHTML = 'We couldn\u2019t send that just now. <a class="link" href="' + esc(bookingUrl()) + '">Continue to booking anyway</a> or try again.';
     });
   }
 
@@ -570,6 +585,7 @@
     if ((v = g('rc-fb')) !== null) S.fb = v.trim();
     if ((v = g('rc-phone')) !== null) S.phone = v.trim();
     if ((v = g('rc-email')) !== null) S.email = v.trim();
+    if ((v = g('rc-q')) !== null) S.questions = v.trim();
   }
   function validate(name) {
     switch (name) {
@@ -623,9 +639,14 @@
     else if (a === 'rmphoto') { readFields(); S.photos.splice(+v, 1); render(); }
     else if (a === 'gown') { readFields(); S.pickGown = (S.pickGown === v ? '' : v); render(); }
     else if (a === 'usealt') { readFields(); S.forced = v; render(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
-    else if (a === 'book') submit(true);
-    else if (a === 'send') submit(false);
+    else if (a === 'book') { readFields(); if ((S.photos.length || S.links) && !S.sentId) openModal('book'); else window.location.href = bookingUrl(); }
+    else if (a === 'ask') openModal('send');
+    else if (a === 'msend') submitModal();
+    else if (a === 'mclose') closeModal();
   });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && S.modal) closeModal(); });
+  $('rc-modal').addEventListener('click', function (e) { if (e.target === $('rc-modal')) closeModal(); });
+
   loadDresses();
   loadLookLab(function () { S.ready = true; render(); });
 })();
