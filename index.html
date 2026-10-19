@@ -173,7 +173,7 @@
   var MESSENGER   = 'https://m.me/clicklounge.studio';
   var MAX_PHOTOS  = 4;
 
-  var STEPS = ['occasion', 'vibe', 'budget', 'keepsake', 'outfit', 'sizes', 'inspo', 'contact', 'result'];
+  var STEPS = ['occasion', 'vibe', 'budget', 'keepsake', 'outfit', 'sizes', 'inspo', 'result'];
   var SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL', 'Not sure'];
   var SHOES = ['35', '36', '37', '38', '39', '40', '41', '42', '43', '44', 'Not sure'];
   var SIZE_ORDER = ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'];
@@ -420,12 +420,6 @@
           '<div class="field" style="margin-top:18px;"><label for="rc-links">Or paste links (Pinterest, Instagram, Drive)</label><textarea id="rc-links" rows="2" placeholder="https://…">' + esc(S.links) + '</textarea></div>' +
           '<div class="field"><label for="rc-notes">Describe the look (colours, props, mood, anything we should know)</label><textarea id="rc-notes" rows="3" placeholder="e.g. all-black with gold jewellery, dramatic lighting, I love the fur coat idea…">' + esc(S.notes) + '</textarea></div>' +
           '<div class="hint">Photos are optional, but they help us a lot.</div>';
-      case 'contact':
-        return '<h2 class="q">Where can we reach you?</h2><p class="qsub">So the studio can prepare your look and follow up.</p>' +
-          '<div class="field"><label for="rc-name">Your name *</label><input id="rc-name" type="text" value="' + esc(S.name) + '" autocomplete="name"></div>' +
-          '<div class="field"><label for="rc-fb">Facebook name</label><input id="rc-fb" type="text" value="' + esc(S.fb) + '" placeholder="So we can find you on Messenger"></div>' +
-          '<div class="field"><label for="rc-phone">Mobile number *</label><input id="rc-phone" type="tel" value="' + esc(S.phone) + '" placeholder="09XXXXXXXXX" autocomplete="tel"></div>' +
-          '<div class="field"><label for="rc-email">Email</label><input id="rc-email" type="email" value="' + esc(S.email) + '" placeholder="email@example.com" autocomplete="email"></div>';
       case 'result':
         return resultHtml();
     }
@@ -469,6 +463,15 @@
       '<ul class="why">' + whyList(rec).map(function (w) { return '<li>' + w + '</li>'; }).join('') + '</ul>' +
       (rec.over ? '<div class="note warn">This is a little above your budget — it’s the closest build we have for that look. The “Save more” option below may help.</div>' : '') +
       gownBox + '</div>' + alts + recap +
+      '<div class="card" id="rc-contact" style="margin-top:22px;border-color:rgba(81,137,125,.35);">' +
+        '<h2 class="q" style="font-size:18px;">Like what you see? Send it to the studio</h2>' +
+        '<p class="qsub">Tell us where to reach you and we\u2019ll get your look ready \u2014 your sizes and inspiration go with it.</p>' +
+        '<div class="field"><label for="rc-name">Your name *</label><input id="rc-name" type="text" value="' + esc(S.name) + '" autocomplete="name"></div>' +
+        '<div class="field"><label for="rc-phone">Mobile number *</label><input id="rc-phone" type="tel" value="' + esc(S.phone) + '" placeholder="09XXXXXXXXX" autocomplete="tel"></div>' +
+        '<div class="field"><label for="rc-fb">Facebook name</label><input id="rc-fb" type="text" value="' + esc(S.fb) + '" placeholder="So we can find you on Messenger"></div>' +
+        '<div class="field"><label for="rc-email">Email</label><input id="rc-email" type="email" value="' + esc(S.email) + '" placeholder="email@example.com" autocomplete="email"></div>' +
+        '<div class="hint" style="margin:-4px 0 4px;">We only use these to prepare your session.</div>' +
+      '</div>' +
       '<div class="err" id="rc-err" role="alert">' + esc(S.err) + '</div>' +
       '<div class="nav" style="flex-wrap:wrap;">' +
         '<button type="button" class="btn btn-gold" id="rc-book" data-a="book"' + (S.busy ? ' disabled' : '') + '>' + (S.busy ? 'Saving…' : 'Book this look →') + '</button>' +
@@ -528,6 +531,13 @@
       }).catch(function (e) { clearTimeout(timer); throw e; });
   }
   function submit(thenBook) {
+    readFields();
+    var bad = validate('contact');
+    if (bad) {
+      S.err = bad; render();
+      var c = $('rc-contact'); if (c && c.scrollIntoView) c.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
     S.busy = true; S.err = ''; render();
     sendInquiry().then(function () {
       S.busy = false;
@@ -588,7 +598,7 @@
     if (!last) {
       html += '<div class="err" role="alert">' + esc(S.err) + '</div><div class="nav">' +
         (S.step > 0 ? '<button type="button" class="btn btn-back" data-a="back">Back</button>' : '') +
-        '<button type="button" class="btn btn-next" data-a="next">' + (name === 'contact' ? 'See my recommendation →' : name === 'inspo' && !S.photos.length && !S.links ? 'Skip for now →' : 'Continue →') + '</button></div>';
+        '<button type="button" class="btn btn-next" data-a="next">' + (name === 'inspo' ? (S.photos.length || S.links ? 'See my recommendation →' : 'Skip photos & see my recommendation →') : 'Continue →') + '</button></div>';
     } else if (!S.finished) {
       html += '<div class="nav" style="margin-top:8px;"><button type="button" class="btn btn-back" data-a="back" style="flex:1;">← Change my answers</button></div>';
     }
@@ -604,8 +614,8 @@
     else if (a === 'next') go(1);
     else if (a === 'back') go(-1);
     else if (a === 'rmphoto') { readFields(); S.photos.splice(+v, 1); render(); }
-    else if (a === 'gown') { S.pickGown = (S.pickGown === v ? '' : v); render(); }
-    else if (a === 'usealt') { S.forced = v; render(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+    else if (a === 'gown') { readFields(); S.pickGown = (S.pickGown === v ? '' : v); render(); }
+    else if (a === 'usealt') { readFields(); S.forced = v; render(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
     else if (a === 'book') submit(true);
     else if (a === 'send') submit(false);
   });
