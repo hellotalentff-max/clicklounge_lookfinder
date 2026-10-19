@@ -277,6 +277,13 @@
     for (var i = 0; i < S.dresses.length; i++) if (S.dresses[i].name === S.pickGown) return S.dresses[i];
     return null;
   }
+  // The shoot time the Look Lab itself shows a client ("45-minute guided shoot"), not the
+  // longer slot blocked in the diary. Read from the same part-by-part rule the Look Lab uses.
+  function shootMinutes(sess, mid, extras) {
+    var r = buildInclusions({ session: sess, mood: llMood(mid), keepsake: null, extras: extras || {}, extraDefs: EXTRAS,
+                              moodMinutes: moodMinutesOverride(sess.id, mid) });
+    return r.counts.mins || 0;
+  }
   function buildFor(sess, mid, kid) {
     var m = llMood(mid), kp = keepsakePrice(sess.id, kid, mid);
     var inc = sess.outfits != null ? +sess.outfits : (sess.id === 'Prestige' ? 2 : 1);
@@ -297,7 +304,7 @@
     if (wants) lines.push({ l: 'Gown' + (gown ? ': ' + gown.name : ''), p: gownRate, free: incl, from: gownNote === 'from' });
     var total = lines.reduce(function (a, x) { return a + (x.p || 0); }, 0);
     return { sess: sess, mood: m, mid: mid, kid: kid, kobj: kobj, extras: extras, wantsGown: wants, gownIncl: incl, gownOffered: offered,
-             gown: gown, gownRate: gownRate, lines: lines, total: total, mins: slotMinutes(sess.id, mid, extras) };
+             gown: gown, gownRate: gownRate, lines: lines, total: total, mins: slotMinutes(sess.id, mid, extras), shoot: shootMinutes(sess, mid, extras) };
   }
   function recommend() {
     var mid = S.vibe, kid = keepsakeFor(mid, S.keep), cap = CAPS[S.budget];
@@ -329,7 +336,7 @@
     }[S.occasion];
     if (occ) out.push(occ);
     var budgetTxt = S.budget === 'flex' ? 'your flexible budget' : 'your budget';
-    out.push('<b>' + esc(p.sess.name) + '</b> gives you ' + Math.round(p.mins) + ' minutes in the studio and fits ' + budgetTxt + (rec.over ? ' as closely as we can' : '') + '.');
+    out.push('<b>' + esc(p.sess.name) + '</b> gives you a ' + Math.round(p.shoot) + '-minute shoot and fits ' + budgetTxt + (rec.over ? ' as closely as we can' : '') + '.');
     if (p.kobj) out.push('You get <b>' + esc(p.kobj.name) + '</b> to take home' + (S.keep === 'digital' ? '.' : ', since you wanted ' + (S.keep === 'framed' ? 'something framed' : 'a few prints') + '.'));
     if (S.gown === 'gown') {
       if (!p.gownOffered) out.push('A gown isn’t offered with this session, so we’ll style you from our available outfits.');
@@ -457,7 +464,7 @@
       (S.photos.length ? '<div class="rthumbs">' + S.photos.map(function (d) { return '<img src="' + d + '" alt="">'; }).join('') + '</div>' : '') +
       (S.links ? '<div class="hint">Links: ' + esc(S.links.slice(0, 120)) + '</div>' : '');
     return '<div class="hero-rec"><span class="badge">Your best match</span><div class="rec-name">' + esc(sessionTitle(p)) + '</div>' +
-      '<div class="rec-meta">' + Math.round(p.mins) + ' minutes in the studio</div>' +
+      '<div class="rec-meta">' + Math.round(p.shoot) + '-minute shoot</div>' +
       '<div class="rec-total">' + peso(p.total) + (p.lines.some(function (l) { return l.from; }) ? '<span style="font-size:13px;font-weight:500;color:var(--muted);"> + gown</span>' : '') + '</div>' +
       '<div class="lines">' + lines + '</div>' +
       '<ul class="why">' + whyList(rec).map(function (w) { return '<li>' + w + '</li>'; }).join('') + '</ul>' +
@@ -482,7 +489,7 @@
   function sessionTitle(b) { return b.sess.name + ' + ' + (b.mood ? b.mood.name : '') + ' + ' + (b.kobj ? b.kobj.name : ''); }
   function altHtml(label, b, base) {
     var diff = b.total - base.total;
-    var d = label === 'Save more' ? b.sess.name + ' session — ' + Math.round(b.mins) + ' min, ' + peso(-diff) + ' less.' : b.sess.name + ' session — ' + Math.round(b.mins) + ' min, ' + peso(diff) + ' more' + (b.gownIncl && S.gown === 'gown' ? ' (gown included)' : '') + '.';
+    var d = label === 'Save more' ? b.sess.name + ' session — ' + Math.round(b.shoot) + '-min shoot, ' + peso(-diff) + ' less.' : b.sess.name + ' session — ' + Math.round(b.shoot) + '-min shoot, ' + peso(diff) + ' more' + (b.gownIncl && S.gown === 'gown' ? ' (gown included)' : '') + '.';
     return '<div class="alt"><div class="l">' + label + '</div><div class="n">' + esc(b.sess.name) + '</div><div class="p">' + peso(b.total) + '</div><div class="d">' + d + '</div><button type="button" class="chip" style="margin-top:10px;" data-a="usealt" data-v="' + esc(b.sess.id) + '">Use this</button></div>';
   }
   function doneHtml() {
@@ -515,7 +522,7 @@
     var payload = {
       id: S.id, name: S.name, fbName: S.fb, phone: S.phone, email: S.email,
       occasion: S.occasion, vibe: S.vibe, budget: S.budget, keepsakePref: S.keep, gownPref: S.gown, outfits: S.outfits,
-      build: sessionTitle(b), total: b.total, minutes: b.mins, gown: b.gown ? b.gown.name : '',
+      build: sessionTitle(b), total: b.total, minutes: b.shoot, gown: b.gown ? b.gown.name : '',
       sizes: { top: S.top, bottom: S.bottom, shoe: S.shoe }, links: S.links, notes: S.notes,
       images: S.photos.map(function (d, i) { return { name: 'inspo-' + (i + 1) + '.jpg', mime: 'image/jpeg', data: d.replace(/^data:image\/jpeg;base64,/, '') }; })
     };
