@@ -497,9 +497,9 @@
       gownBox + '</div>' + alts + recap +
       '<div class="nav" style="flex-wrap:wrap;margin-top:22px;">' +
         '<button type="button" class="btn btn-gold" data-a="book" style="flex:1 1 220px;">Book this look \u2192</button>' +
-        '<button type="button" class="btn btn-line" data-a="ask" style="flex:1 1 220px;">\u2709 Send this quote to the studio</button>' +
+        '<button type="button" class="btn btn-line" data-a="ask" style="flex:1 1 220px;">\uD83D\uDCAC Send this quote on Messenger</button>' +
       '</div>' +
-      '<div class="hint" style="text-align:center;margin-top:12px;">Not ready to book? Send us your quote and ask anything \u2014 we\u2019ll reply on Messenger or by text.</div>';
+      '<div class="hint" style="text-align:center;margin-top:12px;">Not ready to book? Send us your quote on Messenger and ask anything.</div>';
   }
   function sessionTitle(b) { return b.sess.name + ' + ' + (b.mood ? b.mood.name : '') + ' + ' + (b.kobj ? b.kobj.name : ''); }
   function altHtml(label, b, base) {
@@ -508,10 +508,13 @@
     return '<div class="alt"><div class="l">' + label + '</div><div class="n">' + esc(b.sess.name) + '</div><div class="p">' + peso(b.total) + '</div><div class="d">' + d + '</div><button type="button" class="chip" style="margin-top:10px;" data-a="usealt" data-v="' + esc(b.sess.id) + '">Use this</button></div>';
   }
   function doneHtml() {
-    return '<div class="done"><div class="big">🎉</div><h2 class="q" style="margin-top:8px;">Sent to the studio!</h2>' +
-      '<p class="qsub" style="margin-top:6px;">Thanks, ' + esc(S.name.split(' ')[0] || 'there') + '. Your look, sizes and photos are with our team' + (S.sentId ? ' (ref <b>' + esc(S.sentId) + '</b>)' : '') + '. We’ll message you soon' + (S.questions ? ' and answer your questions' : '') + '.</p>' +
-      '<div class="nav" style="flex-direction:column;"><a class="btn btn-gold" href="' + esc(bookingUrl()) + '" style="text-align:center;">Pick a date and book →</a>' +
-      '<a class="btn btn-line" href="' + MESSENGER + '" target="_blank" rel="noopener" style="text-align:center;">Message us on Messenger</a></div></div>';
+    var msgrUrl = MESSENGER + '?text=' + encodeURIComponent(messengerText());
+    return '<div class="done"><div class="big">💬</div><h2 class="q" style="margin-top:8px;">Messenger is opening…</h2>' +
+      '<p class="qsub" style="margin-top:6px;">Your quote is typed in — just press <b>Send</b> in the chat' + (S.photos.length ? ' and attach your inspiration photo' + (S.photos.length > 1 ? 's' : '') : '') + '. We’ll reply there.</p>' +
+      '<div class="note" id="rc-pop" style="display:none;margin-bottom:12px;">Your browser blocked the new window — use the button below.</div>' +
+      '<div class="nav" style="flex-direction:column;"><a class="btn btn-gold" href="' + esc(msgrUrl) + '" target="_blank" rel="noopener" style="text-align:center;">Open Messenger again →</a>' +
+      '<a class="btn btn-line" href="' + esc(bookingUrl()) + '" style="text-align:center;">Pick a date and book →</a>' +
+      '<button type="button" class="btn btn-back" data-a="backresult">← Back to my quote</button></div></div>';
   }
 
   /* ───────────── booking link + inquiry ───────────── */
@@ -555,22 +558,69 @@
   function notesForStudio() {
     return [S.notes, S.questions ? 'QUESTIONS: ' + S.questions : ''].filter(Boolean).join(' | ');
   }
+  // The message that opens in Messenger: the whole quote, so nobody has to retype it.
+  function messengerText() {
+    var b = chosenBuild(), oc = byId(OCCASIONS, S.occasion);
+    var L = [];
+    L.push('Hi ClickLounge Studio! I’d like to ask about this Look Lab quote (ref ' + S.id + '):');
+    L.push('');
+    L.push('Look: ' + sessionTitle(b));
+    L.push('Shoot: ' + Math.round(b.shoot) + ' minutes · Total: ' + peso(b.total) + (b.lines.some(function (l) { return l.from; }) ? ' (gown extra)' : ''));
+    if (b.wantsGown) L.push('Gown: ' + (b.gown ? b.gown.name + (b.gownIncl ? ' (included)' : '') : 'to be chosen'));
+    if (b.extras && b.extras.outfit) L.push('Extra outfit change: yes');
+    if (oc) L.push('For: ' + oc.t.replace(/^an? /i, ''));
+    L.push('Sizes: top ' + S.top + ', bottom ' + S.bottom + ', shoe ' + (S.shoe === 'Not sure' ? 'not sure' : 'EU ' + S.shoe));
+    if (S.photos.length) L.push('Inspiration: ' + S.photos.length + ' photo' + (S.photos.length > 1 ? 's' : '') + ' — I’ll send them here');
+    if (S.links) L.push('Inspiration links: ' + S.links);
+    if (S.notes) L.push('The look I want: ' + S.notes);
+    L.push('');
+    L.push(S.questions ? 'My questions: ' + S.questions : 'My questions: ');
+    return L.join('\n');
+  }
   function modalHtml(mode) {
-    var book = mode === 'book';
+    if (mode === 'send') {
+      return '<div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="rc-mt">' +
+        '<button type="button" class="modal-x" data-a="mclose" aria-label="Close">✕</button>' +
+        '<h2 class="q" id="rc-mt" style="font-size:19px;padding-right:30px;">Send your quote on Messenger</h2>' +
+        '<p class="qsub">We’ll open Messenger with your quote ready to send. Add any questions first.</p>' +
+        '<div class="field"><label for="rc-q">Any questions for us?</label><textarea id="rc-q" rows="3" maxlength="500" placeholder="e.g. Can I bring a friend? Can I do both looks? Do you have gowns in my size?">' + esc(S.questions) + '</textarea></div>' +
+        '<div class="field"><label for="rc-preview">Your message</label><textarea id="rc-preview" rows="9" readonly>' + esc(messengerText()) + '</textarea></div>' +
+        (S.photos.length ? '<div class="note">📷 Photos can’t travel inside a link — once Messenger opens, attach your ' + S.photos.length + ' inspiration photo' + (S.photos.length > 1 ? 's' : '') + ' in the chat.</div>' : '') +
+        '<div class="nav" style="flex-wrap:wrap;margin-top:14px;">' +
+          '<button type="button" class="btn btn-gold" data-a="msgr" style="flex:1 1 200px;">Open Messenger →</button>' +
+          '<button type="button" class="btn btn-line" data-a="mcopy" id="rc-copy" style="flex:1 1 140px;">Copy message</button>' +
+        '</div>' +
+        '<div class="hint" style="margin-top:12px;">If Messenger opens empty, tap “Copy message” and paste it into the chat.</div>' +
+      '</div>';
+    }
     return '<div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="rc-mt">' +
-      '<button type="button" class="modal-x" data-a="mclose" aria-label="Close">\u2715</button>' +
-      '<h2 class="q" id="rc-mt" style="font-size:19px;padding-right:30px;">' + (book ? 'Almost there \u2014 attach your photos to your booking' : 'Send your quote to the studio') + '</h2>' +
-      '<p class="qsub">' + (book ? 'Add your name and mobile so we can link your sizes and inspiration photos to your booking.' : 'We\u2019ll reply on Messenger or by text. Your quote, sizes and inspiration go with it.') + '</p>' +
+      '<button type="button" class="modal-x" data-a="mclose" aria-label="Close">✕</button>' +
+      '<h2 class="q" id="rc-mt" style="font-size:19px;padding-right:30px;">Almost there — attach your photos to your booking</h2>' +
+      '<p class="qsub">Add your name and mobile so we can link your sizes and inspiration photos to your booking.</p>' +
       '<div class="field"><label for="rc-name">Your name *</label><input id="rc-name" type="text" value="' + esc(S.name) + '" autocomplete="name"></div>' +
       '<div class="field"><label for="rc-phone">Mobile number *</label><input id="rc-phone" type="tel" value="' + esc(S.phone) + '" placeholder="09XXXXXXXXX" autocomplete="tel"></div>' +
       '<div class="field"><label for="rc-fb">Facebook name</label><input id="rc-fb" type="text" value="' + esc(S.fb) + '" placeholder="So we can find you on Messenger"></div>' +
       '<div class="field"><label for="rc-email">Email</label><input id="rc-email" type="email" value="' + esc(S.email) + '" placeholder="email@example.com" autocomplete="email"></div>' +
-      '<div class="field"><label for="rc-q">Any questions for us?</label><textarea id="rc-q" rows="3" maxlength="500" placeholder="e.g. Can I bring a friend? Can I do both looks? Do you have gowns in my size?">' + esc(S.questions) + '</textarea></div>' +
       '<div class="err" id="rc-merr" role="alert"></div>' +
-      '<div class="nav"><button type="button" class="btn btn-gold" id="rc-msend" data-a="msend">' + (book ? 'Save & continue to booking \u2192' : 'Send to the studio') + '</button></div>' +
-      (book ? '<div style="text-align:center;margin-top:12px;"><a class="link" href="' + esc(bookingUrl()) + '">Skip \u2014 just book without my photos</a></div>' : '') +
+      '<div class="nav"><button type="button" class="btn btn-gold" id="rc-msend" data-a="msend">Save & continue to booking →</button></div>' +
+      '<div style="text-align:center;margin-top:12px;"><a class="link" href="' + esc(bookingUrl()) + '">Skip — just book without my photos</a></div>' +
       '<div class="hint" style="margin-top:12px;">We only use these to prepare your session.</div>' +
     '</div>';
+  }
+  function openMessenger() {
+    readFields();
+    var text = messengerText();
+    var w = window.open(MESSENGER + '?text=' + encodeURIComponent(text), '_blank', 'noopener');
+    closeModal(); S.finished = true; S.viaMessenger = true; render(); window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (!w) { var n = $('rc-pop'); if (n) n.style.display = ''; }
+  }
+  function copyMessage() {
+    readFields();
+    var text = messengerText(), btn = $('rc-copy');
+    var done = function () { if (btn) { btn.textContent = 'Copied ✓'; setTimeout(function () { if (btn) btn.textContent = 'Copy message'; }, 2000); } };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, function () { fallbackCopy(); });
+    else fallbackCopy();
+    function fallbackCopy() { var t = $('rc-preview'); if (t) { t.removeAttribute('readonly'); t.select(); try { document.execCommand('copy'); done(); } catch (e) {} t.setAttribute('readonly', ''); } }
   }
   function openModal(mode) {
     S.modal = mode; var m = $('rc-modal'); m.innerHTML = modalHtml(mode); m.hidden = false; document.body.style.overflow = 'hidden';
@@ -661,9 +711,15 @@
     else if (a === 'book') { readFields(); if ((S.photos.length || S.links) && !S.sentId) openModal('book'); else window.location.href = bookingUrl(); }
     else if (a === 'ask') openModal('send');
     else if (a === 'msend') submitModal();
+    else if (a === 'msgr') openMessenger();
+    else if (a === 'mcopy') copyMessage();
     else if (a === 'mclose') closeModal();
+    else if (a === 'backresult') { S.finished = false; S.viaMessenger = false; render(); }
   });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && S.modal) closeModal(); });
+  document.addEventListener('input', function (e) {
+    if (e.target && e.target.id === 'rc-q' && S.modal === 'send') { S.questions = e.target.value.trim(); var pv = $('rc-preview'); if (pv) pv.value = messengerText(); }
+  });
   $('rc-modal').addEventListener('click', function (e) { if (e.target === $('rc-modal')) closeModal(); });
 
   loadDresses();
