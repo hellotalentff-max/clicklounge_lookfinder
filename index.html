@@ -278,6 +278,20 @@
     for (var i = 0; i < wants.length; i++) if (byId(opts, wants[i])) return wants[i];
     return opts.length ? opts[0].id : 'digital';
   }
+  // What each session says about a gown for the chosen look, from the Look Lab's "Premium Dress"
+  // column: 'included' (free), 'add-on' (paid) or 'no' (not offered). Nothing here is hard-coded.
+  function gownBlurb(mid) {
+    var inc = [], add = [], no = [];
+    SESSIONS.slice().sort(function (a, b) { return b.price - a.price; }).forEach(function (x) {
+      var r = dressRule(x.id, mid); (r === 'included' ? inc : r === 'no' ? no : add).push(x.name);
+    });
+    var join = function (a) { return a.length > 1 ? a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1] : a[0]; };
+    var bits = [];
+    if (inc.length) bits.push('<b>Included free</b> with ' + join(inc));
+    if (add.length) bits.push('Paid add-on with ' + join(add));
+    if (no.length)  bits.push('Not available with ' + join(no));
+    return { text: bits.join(' · '), any: inc.length + add.length > 0, included: inc };
+  }
   function chosenGown() {
     if (!S.pickGown || !S.dresses) return null;
     for (var i = 0; i < S.dresses.length; i++) if (S.dresses[i].name === S.pickGown) return S.dresses[i];
@@ -316,12 +330,14 @@
     var mid = S.vibe, kid = keepsakeFor(mid, S.keep), cap = CAPS[S.budget];
     var sessions = SESSIONS.slice().sort(function (a, b) { return b.price - a.price; });
     var builds = sessions.map(function (s) { return buildFor(s, mid, kid); });
-    var fits = builds.filter(function (b) { return b.total <= cap; });
+    var pool = builds;
+    if (S.gown === 'gown') { var offeredBuilds = builds.filter(function (b) { return b.gownOffered; }); if (offeredBuilds.length) pool = offeredBuilds; }
+    var fits = pool.filter(function (b) { return b.total <= cap; });
     var primary, over = false;
-    if (!fits.length) { primary = builds[builds.length - 1]; over = true; }
+    if (!fits.length) { primary = pool[pool.length - 1]; over = true; }
     else if (S.budget === 'flex') {
       // Flexible budget: a gown or a milestone/birthday points to the full experience, otherwise the guided middle tier.
-      var full = builds[0], mid2 = builds[1] || builds[0];
+      var full = pool[0], mid2 = pool[1] || pool[0];
       primary = (S.gown === 'gown' || S.occasion === 'birthday' || S.occasion === 'milestone') ? full : mid2;
     } else primary = fits[0];
     if (S.forced) { var f = builds.filter(function (b) { return b.sess.id === S.forced; })[0]; if (f) { primary = f; over = false; } }
@@ -345,9 +361,10 @@
     out.push('<b>' + esc(p.sess.name) + '</b> gives you a ' + Math.round(p.shoot) + '-minute shoot and fits ' + budgetTxt + (rec.over ? ' as closely as we can' : '') + '.');
     if (p.kobj) out.push('You get <b>' + esc(p.kobj.name) + '</b> to take home' + (S.keep === 'digital' ? '.' : ', since you wanted ' + (S.keep === 'framed' ? 'something framed' : 'a few prints') + '.'));
     if (S.gown === 'gown') {
-      if (!p.gownOffered) out.push('A gown isn’t offered with this session, so we’ll style you from our available outfits.');
-      else if (p.gownIncl) out.push('A House of Roan gown is <b>included free</b> with this session.');
-      else out.push('A House of Roan gown is an add-on here — we matched gowns to your size below.');
+      var gb2 = gownBlurb(rec.mid), inclWith = gb2.included.length ? gb2.included.join(' and ') : '';
+      if (!p.gownOffered) out.push('A gown isn\u2019t offered with this session, so we\u2019ll style you from our available outfits.');
+      else if (p.gownIncl) out.push('A House of Roan gown is <b>included free</b> with ' + esc(p.sess.name) + ' \u2014 pick yours below.');
+      else out.push('A House of Roan gown is a <b>paid add-on</b> with ' + esc(p.sess.name) + (inclWith ? ' (it\u2019s included free with ' + esc(inclWith) + ')' : '') + ' \u2014 we matched gowns to your size below.');
     }
     if (S.photos.length || S.links) out.push('Your inspiration ' + (S.photos.length ? S.photos.length + ' photo' + (S.photos.length > 1 ? 's' : '') : 'links') + ' go to the studio so your photographer can match the look.');
     return out;
@@ -409,13 +426,15 @@
           return '<button type="button" class="opt' + (S.keep === o.id ? ' on' : '') + '" data-a="set" data-k="keep" data-v="' + o.id + '" aria-pressed="' + (S.keep === o.id) + '"><div style="display:flex;gap:14px;align-items:center;"><div class="ic">' + o.ic + '</div><div><div class="t" style="margin:0;">' + o.t + '</div><div class="d">' + o.d + '</div></div></div></button>';
         }).join('') + '</div>';
       case 'outfit':
+        var gb = gownBlurb(S.vibe); if (!gb.any && S.gown === 'gown') S.gown = '';
         return '<h2 class="q">Your outfit</h2><p class="qsub">Tell us what you’ll be wearing.</p>' +
           '<div class="qlabel">Outfit</div>' +
           '<div class="opts one">' + [
             { id: 'own', ic: '👗', t: 'I’ll bring my own outfit', d: 'Wear what makes you feel like you.' },
-            { id: 'gown', ic: '👑', t: 'I’d like to rent a gown', d: 'We’ll match House of Roan gowns to your size.' },
+            (gb.any ? { id: 'gown', ic: '\uD83D\uDC51', t: 'I\u2019d like a House of Roan gown', d: gb.text + '. We\u2019ll match gowns to your size.' } : null),
             { id: 'unsure', ic: '🤔', t: 'Not sure yet', d: 'We’ll help you decide before the shoot.' }
-          ].map(function (o) { return '<button type="button" class="opt' + (S.gown === o.id ? ' on' : '') + '" data-a="set" data-k="gown" data-v="' + o.id + '" aria-pressed="' + (S.gown === o.id) + '"><div style="display:flex;gap:14px;align-items:center;"><div class="ic">' + o.ic + '</div><div><div class="t" style="margin:0;">' + o.t + '</div><div class="d">' + o.d + '</div></div></div></button>'; }).join('') + '</div>' +
+          ].filter(Boolean).map(function (o) { return '<button type="button" class="opt' + (S.gown === o.id ? ' on' : '') + '" data-a="set" data-k="gown" data-v="' + o.id + '" aria-pressed="' + (S.gown === o.id) + '"><div style="display:flex;gap:14px;align-items:center;"><div class="ic">' + o.ic + '</div><div><div class="t" style="margin:0;">' + o.t + '</div><div class="d">' + o.d + '</div></div></div></button>'; }).join('') + '</div>' +
+          (!gb.any ? '<div class="note" style="margin-top:12px;">A gown isn\u2019t offered with this look \u2014 we\u2019ll style you from our available outfits, or you can bring your own.</div>' : '') +
           '<div class="qlabel">How many outfit changes?</div>' +
           '<div class="chips">' + [1, 2].map(function (n) { return '<button type="button" class="chip' + (S.outfits === n ? ' on' : '') + '" data-a="outfits" data-v="' + n + '" aria-pressed="' + (S.outfits === n) + '">' + n + (n === 1 ? ' outfit' : ' outfits') + '</button>'; }).join('') + '</div>' +
           '<div class="hint">Some sessions include a second outfit; for the others it’s a small add-on, shown in your recommendation.</div>';
@@ -449,7 +468,7 @@
     if (S.gown === 'gown' && p.gownOffered) {
       if (S.dresses) {
         var show = fit.slice(0, 6);
-        gownBox = '<div class="qlabel" style="margin-top:20px;">Gowns that fit you' + (gownSizeKey() ? ' (size ' + gownSizeKey() + ')' : '') + '</div>' +
+        gownBox = '<div class="qlabel" style="margin-top:20px;">' + (p.gownIncl ? 'Choose your included gown' : 'Gowns that fit you \u00B7 paid add-on') + (gownSizeKey() ? ' (size ' + gownSizeKey() + ')' : '') + '</div>' +
           (show.length ? '<div class="gowns">' + show.map(function (d) {
             var rate = p.gownIncl ? 0 : (d.photographerRate == null ? null : d.photographerRate);
             return '<button type="button" class="gown' + (S.pickGown === d.name ? ' on' : '') + '" data-a="gown" data-v="' + esc(d.name) + '"><div class="ph"><img src="' + esc(dressPhoto(d)) + '" alt="' + esc(d.name) + '" loading="lazy" onerror="rcImgFail(this)"></div><div class="m"><b>' + esc(d.name) + '</b><span>' + (rate === 0 ? 'Included' : rate == null ? '' : '+' + peso(rate)) + '</span><small>' + esc(d.size || '') + '</small></div></button>';
@@ -471,7 +490,7 @@
       (S.links ? '<div class="hint">Links: ' + esc(S.links.slice(0, 120)) + '</div>' : '');
     return '<div class="hero-rec"><span class="badge">Your best match</span><div class="rec-name">' + esc(sessionTitle(p)) + '</div>' +
       '<div class="rec-meta">' + Math.round(p.shoot) + '-minute shoot</div>' +
-      '<div class="rec-total">' + peso(p.total) + (p.lines.some(function (l) { return l.from; }) ? '<span style="font-size:13px;font-weight:500;color:var(--muted);"> + gown</span>' : '') + '</div>' +
+      '<div class="rec-total">' + peso(p.total) + (function () { var g = p.lines.filter(function (l) { return l.from; })[0]; return g ? '<span style="font-size:13px;font-weight:500;color:var(--muted);"> incl. gown from ' + peso(g.p) + '</span>' : ''; })() + '</div>' +
       '<div class="lines">' + lines + '</div>' +
       '<ul class="why">' + whyList(rec).map(function (w) { return '<li>' + w + '</li>'; }).join('') + '</ul>' +
       (rec.over ? '<div class="note warn">This is a little above your budget — it’s the closest build we have for that look. The “Save more” option below may help.</div>' : '') +
