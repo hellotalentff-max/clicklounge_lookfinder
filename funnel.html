@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Look Lab · ClickLounge Studio</title>
+<meta name="description" content="Guided portrait sessions at ClickLounge Studio. Pick your session, choose your look, reserve with a ₱300 deposit.">
+<meta name="theme-color" content="#2f4f4f">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal:#51897d; --teal-dk:#3d6b61; --teal-lt:#7aada3;
+    --gold:#d79068; --gold-dk:#b9724d; --gold-lt:#e8b08a;
+    --slate:#2f4f4f; --slate-dk:#223a3a; --light:#f4f7f6; --light2:#e8efee;
+    --white:#fff; --text:#1e3333; --muted:#5f8080;
+    --border:rgba(81,137,125,0.22);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; font-family: 'Poppins', system-ui, sans-serif; background: var(--light); color: var(--text); line-height: 1.55; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; text-decoration: none; }
+  img { max-width: 100%; display: block; }
+  button { font-family: inherit; }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 20px; }
+  .eyebrow { font-size: 11px; letter-spacing: .2em; text-transform: uppercase; font-weight: 700; color: var(--teal); }
+  h1, h2, h3 { text-wrap: balance; margin: 0; color: var(--slate); }
+  h2 { font-size: clamp(24px, 4.2vw, 34px); line-height: 1.2; font-weight: 600; }
+  .lead { color: var(--muted); font-size: 15px; max-width: 560px; margin: 10px 0 0; }
+
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 0; border-radius: 999px; padding: 15px 26px; font-weight: 600; font-size: 15px; cursor: pointer; letter-spacing: .01em; transition: transform .15s ease, background .15s ease; }
+  .btn:hover { transform: translateY(-1px); }
+  .btn:focus-visible, a:focus-visible, summary:focus-visible { outline: 3px solid var(--gold-lt); outline-offset: 3px; }
+  .btn-gold { background: var(--gold); color: #fff; }
+  .btn-gold:hover { background: var(--gold-dk); }
+  .btn-teal { background: var(--teal); color: #fff; }
+  .btn-teal:hover { background: var(--teal-dk); }
+  .btn-line { background: transparent; color: var(--slate); box-shadow: inset 0 0 0 1.5px var(--teal); }
+  .btn-line:hover { background: rgba(81,137,125,.08); }
+  .btn-light { background: #fff; color: var(--slate); }
+
+  /* top bar + hero */
+  .hero { background: var(--slate); color: #fff; overflow: hidden; }
+  .top { display: flex; align-items: center; justify-content: space-between; padding: 16px 0; gap: 12px; }
+  .top img { height: 36px; width: auto; }
+  .top a.small { font-size: 13px; font-weight: 600; color: var(--gold-lt); }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 36px; align-items: center; padding: 18px 0 56px; }
+  .hero .eyebrow { color: var(--gold-lt); }
+  .hero h1 { color: #fff; font-size: clamp(32px, 6vw, 52px); line-height: 1.08; font-weight: 600; margin: 12px 0 16px; letter-spacing: -.01em; }
+  .hero h1 em { font-style: normal; color: var(--gold-lt); }
+  .hero p { color: rgba(255,255,255,.78); font-size: 16px; max-width: 470px; margin: 0 0 26px; }
+  .cta-row { display: flex; flex-wrap: wrap; gap: 12px; }
+  .hero .btn-line { color: #fff; box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.5); }
+  .hero .btn-line:hover { background: rgba(255,255,255,.1); }
+  .hero-note { margin-top: 16px; font-size: 12.5px; color: rgba(255,255,255,.6); }
+  .hero-img { position: relative; }
+  .hero-img img { width: 100%; border-radius: 20px; box-shadow: 0 24px 60px rgba(0,0,0,.35); aspect-ratio: 8 / 5; object-fit: cover; }
+
+  /* how it works */
+  .steps { background: #fff; border-bottom: 1px solid var(--light2); }
+  .steps ol { list-style: none; margin: 0; padding: 22px 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; }
+  .steps li { display: flex; gap: 12px; align-items: flex-start; font-size: 13px; color: var(--muted); }
+  .steps li b { display: block; color: var(--slate); font-size: 14px; font-weight: 600; }
+  .steps .n { flex: none; width: 30px; height: 30px; border-radius: 50%; background: var(--teal); color: #fff; font-weight: 700; font-size: 13px; display: grid; place-items: center; }
+
+  section.block { padding: 60px 0 8px; }
+  section.block header { margin-bottom: 26px; }
+
+  /* sessions */
+  .tiers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; align-items: stretch; }
+  .tier { position: relative; background: #fff; border: 1px solid var(--border); border-radius: 20px; padding: 26px 22px 22px; display: flex; flex-direction: column; box-shadow: 0 2px 14px rgba(47,79,79,.06); min-width: 0; }
+  .tier.pop { border: 2px solid var(--gold); box-shadow: 0 10px 34px rgba(215,144,104,.22); }
+  .ribbon { position: absolute; top: -12px; left: 22px; background: var(--gold); color: #fff; font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; font-weight: 700; padding: 5px 12px; border-radius: 999px; }
+  .tier .em { font-size: 28px; line-height: 1; }
+  .tier h3 { font-size: 22px; font-weight: 600; margin-top: 10px; }
+  .tier .sub { font-size: 13px; color: var(--muted); margin: 2px 0 14px; min-height: 40px; }
+  .price { font-size: 34px; font-weight: 700; color: var(--slate); line-height: 1; }
+  .price small { font-size: 12px; font-weight: 500; color: var(--muted); margin-left: 4px; }
+  .facts { display: flex; flex-wrap: wrap; gap: 6px; margin: 14px 0 4px; }
+  .fact { font-size: 11.5px; font-weight: 600; color: var(--teal-dk); background: rgba(81,137,125,.1); border-radius: 999px; padding: 4px 10px; }
+  .fact.gold { color: #8a4f2c; background: rgba(215,144,104,.16); }
+  .tier ul { list-style: none; margin: 14px 0 0; padding: 0; font-size: 13.5px; }
+  .tier li { padding: 5px 0 5px 22px; position: relative; line-height: 1.45; }
+  .tier li::before { content: '\2713'; position: absolute; left: 0; color: var(--teal); font-weight: 700; }
+  .tier details { margin-top: 6px; font-size: 13px; }
+  .tier summary { cursor: pointer; color: var(--teal-dk); font-weight: 600; padding: 6px 0; list-style: none; }
+  .tier summary::-webkit-details-marker { display: none; }
+  .tier summary::after { content: ' +'; }
+  .tier details[open] summary::after { content: ' \2212'; }
+  .tier .grp { font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; font-weight: 700; color: var(--gold-dk); margin: 12px 0 2px; }
+  .tier .go { margin-top: auto; padding-top: 20px; display: grid; gap: 8px; }
+  .tier .go .btn { width: 100%; }
+  .tier-note { font-size: 12px; color: var(--muted); text-align: center; }
+  .sheetnote { margin-top: 18px; font-size: 12.5px; color: var(--muted); }
+
+  /* looks */
+  .looks { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+  .look { background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 20px 18px; min-width: 0; }
+  .look .em { font-size: 26px; }
+  .look h3 { font-size: 16.5px; font-weight: 600; margin: 8px 0 2px; }
+  .look .sub { font-size: 12px; color: var(--muted); margin-bottom: 10px; }
+  .look .add { display: inline-block; font-size: 12px; font-weight: 700; color: var(--gold-dk); margin-bottom: 10px; }
+  .look ul { list-style: none; padding: 0; margin: 0; font-size: 12.5px; color: var(--text); }
+  .look li { padding: 3px 0 3px 16px; position: relative; }
+  .look li::before { content: ''; position: absolute; left: 3px; top: 11px; width: 5px; height: 5px; border-radius: 50%; background: var(--gold); }
+  .keeps { margin-top: 18px; background: #fff; border: 1px dashed var(--teal-lt); border-radius: 16px; padding: 16px 18px; }
+  .keeps h3 { font-size: 14px; font-weight: 600; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .chip { font-size: 12.5px; background: var(--light); border-radius: 999px; padding: 7px 14px; color: var(--text); }
+  .chip b { color: var(--gold-dk); font-weight: 700; margin-left: 4px; }
+
+  /* proof */
+  .proof[hidden] { display: none; }
+  .rate { margin-top: 8px; font-size: 14px; color: var(--muted); }
+  .rate b { color: var(--slate); }
+  .quotes { display: flex; gap: 14px; overflow-x: auto; padding: 4px 2px 14px; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
+  .quote { flex: 0 0 min(320px, 82%); scroll-snap-align: start; background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 18px; }
+  .quote .st { color: var(--gold); letter-spacing: 2px; font-size: 14px; }
+  .quote p { margin: 8px 0 10px; font-size: 14px; }
+  .quote .by { font-size: 12px; color: var(--muted); font-weight: 600; }
+
+  /* faq */
+  .faq details { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 0 18px; margin-bottom: 10px; }
+  .faq summary { cursor: pointer; font-weight: 600; font-size: 15px; padding: 16px 0; color: var(--slate); list-style: none; display: flex; justify-content: space-between; gap: 12px; }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after { content: '+'; color: var(--teal); font-size: 20px; line-height: 1; }
+  .faq details[open] summary::after { content: '\2212'; }
+  .faq p { margin: 0 0 16px; font-size: 14px; color: var(--muted); max-width: 640px; }
+
+  /* closing */
+  .closing { margin-top: 64px; background: var(--slate); color: #fff; text-align: center; padding: 56px 0 60px; }
+  .closing h2 { color: #fff; }
+  .closing p { color: rgba(255,255,255,.75); margin: 10px auto 26px; max-width: 460px; }
+  .closing .cta-row { justify-content: center; }
+  .closing .msg { margin-top: 18px; font-size: 13px; color: rgba(255,255,255,.65); }
+  .closing .msg a { color: var(--gold-lt); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+  footer { background: var(--slate-dk); color: rgba(255,255,255,.55); font-size: 12px; text-align: center; padding: 22px 20px 26px; line-height: 1.7; }
+
+  /* sticky mobile bar */
+  .sticky { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; background: rgba(255,255,255,.96); backdrop-filter: blur(8px); border-top: 1px solid var(--light2); padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px)); display: none; gap: 10px; transform: translateY(110%); transition: transform .25s ease; }
+  .sticky.show { transform: none; }
+  .sticky .btn { flex: 1; padding: 13px 14px; font-size: 14px; }
+
+  @media (max-width: 880px) {
+    .hero-grid { grid-template-columns: minmax(0, 1fr); gap: 26px; padding-bottom: 40px; }
+    .tiers { grid-template-columns: minmax(0, 1fr); max-width: 520px; margin: 0 auto; }
+    .looks { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .steps ol { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .tier .sub { min-height: 0; }
+    .sticky { display: flex; }
+    body { padding-bottom: 72px; }
+  }
+  @media (max-width: 520px) {
+    .looks { grid-template-columns: minmax(0, 1fr); }
+    .btn { width: 100%; }
+    .cta-row .btn { flex: 1 1 100%; }
+  }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .btn, .sticky { transition: none; } }
+</style>
+</head>
+<body>
+
+<div class="hero" id="top">
+  <div class="wrap">
+    <div class="top">
+      <a href="https://hellotalentff-max.github.io/clicklounge_looklab/" aria-label="The Look Lab"><img src="https://hellotalentff-max.github.io/clicklounge/STUDIO_LOGO_GIF.gif" alt="ClickLounge Studio"></a>
+      <a class="small" href="#sessions">See sessions</a>
+    </div>
+    <div class="hero-grid">
+      <div>
+        <div class="eyebrow">The Look Lab · ClickLounge Studio</div>
+        <h1>Your portrait, <em>styled and directed.</em></h1>
+        <p>Pick a session, choose your look, and show up. We handle the lighting, the posing and the direction.</p>
+        <div class="cta-row">
+          <a class="btn btn-gold" id="cta-quiz" href="./">Find my look · 2 min</a>
+          <a class="btn btn-line" href="#sessions">Compare sessions</a>
+        </div>
+        <div class="hero-note">Reserve with a ₱300 deposit through GCash or BPI.</div>
+      </div>
+      <div class="hero-img">
+        <img src="https://hellotalentff-max.github.io/clicklounge/img_looklab.jpg" alt="A Look Lab portrait with printed keepsakes and gowns" width="800" height="500" fetchpriority="high">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="steps">
+  <div class="wrap">
+    <ol>
+      <li><span class="n">1</span><span><b>Pick a session</b>Standard, Signature or Prestige.</span></li>
+      <li><span class="n">2</span><span><b>Choose your look</b>Fashion, dreamy, or both.</span></li>
+      <li><span class="n">3</span><span><b>Reserve your slot</b>₱300 deposit, confirmed by the studio.</span></li>
+      <li><span class="n">4</span><span><b>Show up and shoot</b>We guide you through it.</span></li>
+    </ol>
+  </div>
+</div>
+
+<main>
+  <section class="block" id="sessions">
+    <div class="wrap">
+      <header>
+        <div class="eyebrow">Step 1</div>
+        <h2>Choose your session</h2>
+        <p class="lead">Each session builds on the one before. Prices below are the live Look Lab prices and include the Styleshots look and digital copies.</p>
+      </header>
+      <div class="tiers" id="tiers" aria-live="polite"><div class="sheetnote">Loading sessions…</div></div>
+      <div class="sheetnote" id="tier-foot"></div>
+    </div>
+  </section>
+
+  <section class="block" id="looks">
+    <div class="wrap">
+      <header>
+        <div class="eyebrow">Step 2</div>
+        <h2>Choose your look</h2>
+        <p class="lead">Styleshots comes with every session. Add a signature look for the full editorial feel.</p>
+      </header>
+      <div class="looks" id="looksgrid"></div>
+      <div class="keeps" id="keeps" hidden></div>
+    </div>
+  </section>
+
+  <section class="block proof" id="proof" hidden>
+    <div class="wrap">
+      <header>
+        <div class="eyebrow">Kind words</div>
+        <h2>What our clients say</h2>
+        <div class="rate" id="rate"></div>
+      </header>
+      <div class="quotes" id="quotes" tabindex="0" aria-label="Client testimonials"></div>
+    </div>
+  </section>
+
+  <section class="block faq" id="faq">
+    <div class="wrap">
+      <header>
+        <div class="eyebrow">Before you book</div>
+        <h2>Good to know</h2>
+      </header>
+      <div id="faqlist">
+        <details><summary>How do I reserve my slot?</summary><p>Pick a date on the booking page, then send a ₱300 deposit through GCash or BPI and enter the reference number. The studio confirms your booking by email.</p></details>
+        <details><summary>What should I wear?</summary><p>Bring your own outfit, or rent a gown from our House of Roan collection. A gown is included with Prestige; for the other sessions it is an optional rental. The quiz shows gowns that fit your sizes.</p></details>
+        <details><summary>How long does the shoot take?</summary><p>Each session card shows the shoot time. Plan to arrive a little early, and allow extra time if you are changing outfits.</p></details>
+        <details><summary>What if I need to cancel or move my booking?</summary><p>Message us as early as you can. If you cancel or miss your session, your ₱300 deposit can still be used for another shoot booked within the same month as your original date.</p></details>
+        <details><summary>Can I get my photos faster?</summary><p id="rushans">Rush delivery is available as an add-on. Ask the studio when you book.</p></details>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="closing" id="book">
+  <div class="wrap">
+    <h2>Ready when you are</h2>
+    <p>Not sure which session fits? Answer a few questions and we will match you with one.</p>
+    <div class="cta-row">
+      <a class="btn btn-gold" href="./">Find my look · 2 min</a>
+      <a class="btn btn-light" href="#sessions">Pick a session</a>
+    </div>
+    <div class="msg">Questions? <a href="https://m.me/clicklounge.studio" target="_blank" rel="noopener">Message us on Messenger</a></div>
+  </div>
+</div>
+<footer>ClickLounge Studio · The Look Lab<br>Prices and inclusions are read live from the studio, so they match what we quote you.</footer>
+
+<div class="sticky" id="sticky">
+  <a class="btn btn-gold" href="./">Find my look</a>
+  <a class="btn btn-line" href="#sessions">See sessions</a>
+</div>
+
+<!-- Prices and inclusions come from the live Look Lab, so there is one source of truth -->
+<script src="https://hellotalentff-max.github.io/clicklounge_looklab/looklab-data.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  var BOOKING_URL = 'https://hellotalentff-max.github.io/clicklounge_booking/';
+  var STUDIO_API  = 'https://script.google.com/macros/s/AKfycbx_Y5nH34Rq16JJ2AxBDr30ttmDFuic61OqoC0u3Wq0zogHEhfoV6qE7uiNagI43flVgw/exec';
+  // "Most booked": Prestige was 17 of the 28 Look Lab bookings recorded up to 2026-10-25. Update if that changes.
+  var POPULAR = 'Prestige';
+
+  function $(id) { return document.getElementById(id); }
+  function h(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+  function peso(n) { return '₱' + Math.round(n).toLocaleString('en-PH'); }
+  function ready() { return typeof SESSIONS !== 'undefined' && typeof MOODS !== 'undefined' && typeof buildInclusions === 'function'; }
+
+  /* ── what a session includes, from the same rules the Look Lab uses ── */
+  function incFor(sess) {
+    var mid = 'styleshots';
+    return buildInclusions({ session: sess, mood: llMood(mid), keepsake: byKeep('digital'), extras: {}, extraDefs: EXTRAS,
+                             moodMinutes: moodMinutesOverride(sess.id, mid) });
+  }
+  function byKeep(id) { for (var i = 0; i < KEEPSAKES.length; i++) if (KEEPSAKES[i].id === id) return KEEPSAKES[i]; return null; }
+
+  function bookingUrl(sess) {
+    var label = 'The Look Lab: ' + sess.name + ' + Styleshots + Digital';
+    return BOOKING_URL + '?pkg=' + encodeURIComponent(label) + '&price=' + encodeURIComponent(sess.price) +
+           '&dur=' + encodeURIComponent(slotMinutes(sess.id, 'styleshots', {})) +
+           '&desc=' + encodeURIComponent('Booked from the Look Lab page');
+  }
+
+  function tierHtml(sess) {
+    var inc = incFor(sess), g = inc.groups || [];
+    var flat = [];
+    g.forEach(function (grp) { grp.items.forEach(function (it) { flat.push({ t: grp.title, i: it }); }); });
+    var head = flat.slice(0, 5), rest = flat.slice(5);
+    var rule = dressRule(sess.id, 'styleshots');
+    var facts = '';
+    if (inc.counts && inc.counts.mins) facts += '<span class="fact">' + inc.counts.mins + '-min shoot</span>';
+    if (rule === 'included') facts += '<span class="fact gold">Gown included</span>';
+    else if (rule === 'add-on') facts += '<span class="fact">Gown rental optional</span>';
+    var restHtml = '';
+    if (rest.length) {
+      var by = {}, order = [];
+      rest.forEach(function (x) { if (!by[x.t]) { by[x.t] = []; order.push(x.t); } by[x.t].push(x.i); });
+      restHtml = '<details><summary>Everything included</summary>' + order.map(function (t) {
+        return '<div class="grp">' + h(t) + '</div><ul>' + by[t].map(function (i) { return '<li>' + h(i) + '</li>'; }).join('') + '</ul>';
+      }).join('') + '</details>';
+    }
+    var pop = sess.id === POPULAR;
+    return '<article class="tier' + (pop ? ' pop' : '') + '">' +
+      (pop ? '<span class="ribbon">Most booked</span>' : '') +
+      '<div class="em" aria-hidden="true">' + h(sess.emoji || '') + '</div>' +
+      '<h3>' + h(sess.name) + '</h3>' +
+      '<div class="sub">' + h(sess.sub || '') + '</div>' +
+      '<div class="price">' + peso(sess.price) + '<small>per session</small></div>' +
+      '<div class="facts">' + facts + '</div>' +
+      '<ul>' + head.map(function (x) { return '<li>' + h(x.i) + '</li>'; }).join('') + '</ul>' + restHtml +
+      '<div class="go"><a class="btn ' + (pop ? 'btn-gold' : 'btn-teal') + '" href="' + h(bookingUrl(sess)) + '">Book ' + h(sess.name) + '</a>' +
+      '<div class="tier-note">₱300 deposit to reserve</div></div>' +
+    '</article>';
+  }
+
+  function lookHtml(m, isDouble) {
+    var add = m.price ? '+' + peso(m.price) : 'Included';
+    return '<div class="look"><div class="em" aria-hidden="true">' + h(m.emoji || '') + '</div>' +
+      '<h3>' + h(m.name) + '</h3><div class="sub">' + h(m.sub || '') + '</div>' +
+      '<span class="add">' + h(add) + '</span>' +
+      '<ul>' + (m.setDesign || []).map(function (d) { return '<li>' + h(d) + '</li>'; }).join('') + '</ul></div>';
+  }
+
+  function render() {
+    if (!ready()) {
+      $('tiers').innerHTML = '<div class="sheetnote">We could not load the sessions right now. <a class="btn btn-teal" href="https://m.me/clicklounge.studio" style="margin-top:10px;">Message us to book</a></div>';
+      return;
+    }
+    $('tiers').innerHTML = SESSIONS.map(tierHtml).join('');
+    $('tier-foot').textContent = 'Want a different look or a keepsake? Choose it in the next step, or let the quiz build it for you.';
+    var looks = MOODS.slice();
+    if (typeof DOUBLE !== 'undefined' && DOUBLE) looks.push(DOUBLE);
+    $('looksgrid').innerHTML = looks.map(function (m) { return lookHtml(m); }).join('');
+    var keeps = KEEPSAKES;
+    if (keeps.length) {
+      var chips = keeps.map(function (k) {
+        var p = k.price ? '<b>+' + peso(k.price) + '</b>' : '<b>Included</b>';
+        return '<span class="chip">' + h(k.name) + p + '</span>';
+      }).join('');
+      $('keeps').hidden = false;
+      $('keeps').innerHTML = '<h3>Make it a keepsake</h3><div class="chips">' + chips + '</div>';
+    }
+    if (typeof EXTRAS !== 'undefined') {
+      for (var i = 0; i < EXTRAS.length; i++) if (EXTRAS[i].key === 'rush') {
+        $('rushans').textContent = 'Rush 24-hour delivery is available as an add-on for ' + peso(EXTRAS[i].price) + '. Ask the studio when you book.';
+      }
+    }
+  }
+
+  /* ── real testimonials, first names only; the section stays hidden if they cannot load ── */
+  function loadProof(cb) {
+    try { var c = JSON.parse(sessionStorage.getItem('sp_cache_v1') || 'null'); if (c && Date.now() - c.t < 300000) { cb(c.d); return; } } catch (e) {}
+    var name = '_sp_' + Math.random().toString(36).slice(2), done = false, sc = document.createElement('script');
+    function finish(d) {
+      if (done) return; done = true;
+      try { delete window[name]; } catch (e) { window[name] = undefined; }
+      if (sc.parentNode) sc.parentNode.removeChild(sc);
+      if (d && d.ok) { try { sessionStorage.setItem('sp_cache_v1', JSON.stringify({ t: Date.now(), d: d })); } catch (e) {} cb(d); }
+    }
+    window[name] = finish;
+    setTimeout(function () { finish(null); }, 10000);
+    sc.onerror = function () { finish(null); };
+    sc.src = STUDIO_API + '?d=' + encodeURIComponent(btoa(JSON.stringify({ action: 'getPublicSocialProof', payload: {} }))) + '&callback=' + name;
+    document.head.appendChild(sc);
+  }
+  function stars(n) { n = Math.max(0, Math.min(5, Math.round(n))); return '★★★★★'.slice(0, n) + '☆☆☆☆☆'.slice(0, 5 - n); }
+  function showProof(d) {
+    var list = (d.testimonials || []).filter(function (t) { return t && t.message; }).slice(0, 8);
+    if (!list.length) return;
+    $('quotes').innerHTML = list.map(function (t) {
+      return '<figure class="quote" style="margin:0;"><div class="st" aria-label="' + h(t.rating) + ' out of 5 stars">' + stars(t.rating) + '</div>' +
+        '<p>“' + h(t.message) + '”</p><div class="by">' + h(t.name) + ', ClickLounge client</div></figure>';
+    }).join('');
+    var r = d.rating || {};
+    if (r.count >= 10 && r.avg) $('rate').innerHTML = '<b>' + h(Number(r.avg).toFixed(1)) + ' / 5</b> from ' + h(r.count) + ' client reviews';
+    $('proof').hidden = false;
+  }
+
+  /* ── sticky bar appears once the hero is out of view (phones only) ── */
+  var hero = document.querySelector('.hero'), bar = $('sticky');
+  if (hero && 'IntersectionObserver' in window) {
+    new IntersectionObserver(function (es) { bar.classList.toggle('show', !es[0].isIntersecting); }, { threshold: 0 }).observe(hero);
+  }
+
+  render();
+  if (typeof loadLookLab === 'function') loadLookLab(function () { render(); });
+  loadProof(showProof);
+})();
+</script>
+</body>
+</html>
