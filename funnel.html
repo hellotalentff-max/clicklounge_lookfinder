@@ -370,7 +370,7 @@
         <h2>Questions, answered</h2>
       </div>
       <div class="faq">
-        <details><summary>What should I wear?</summary><p>Bring your own outfit, or rent a gown from our House of Roan and Serra collections. A gown is included with Prestige; for Standard and Signature it is an optional rental. The quiz shows gowns that fit your sizes.</p></details>
+        <details><summary>What should I wear?</summary><p>The Coat Code, Angelic Muse and Twofold come with their outfit. For Styleshots, bring your own outfit or wear a gown from our House of Roan and Serra collections: a gown is included with Prestige, and an optional rental with Standard and Signature. We have studio shoes in size 6 (beige) and sizes 7 and 9 (black), or you can bring your own. You'll choose these after booking.</p></details>
         <details><summary>When should I arrive?</summary><p>For Signature and Prestige, please arrive 1.5 hours before your schedule for hair and makeup. Arriving later may shorten your actual shoot. For Standard, arrive a few minutes early.</p></details>
         <details><summary>Can I reschedule?</summary><p>Yes. Rescheduling at least 5 days before your shoot is free. Rescheduling 4 days or less before your shoot, including on the day itself, has a ₱200 rescheduling fee. Your new date must be in the same month as your original booking for your deposit to stay valid.</p></details>
         <details><summary>What if I cancel or miss my session?</summary><p>If you cancel at least 5 days before your shoot, your ₱300 deposit can be used for another package scheduled within the same month. Cancelling less than 5 days before your shoot forfeits the deposit. If you miss your session, your deposit can still be used for a shoot within the same month.</p></details>
@@ -517,6 +517,7 @@
     if (inc.counts.mins) chips += '<span class="chip">' + inc.counts.mins + '-minute shoot</span>';
     if (rule === 'included') chips += '<span class="chip copper">Gown included</span>';
     else if (rule === 'add-on') chips += '<span class="chip">Gown rental optional</span>';
+    else if (rule === 'no' && S.mood) chips += '<span class="chip copper">Outfit included</span>';
     var groups = inc.groups.map(function (g) {
       return '<div class="group"><h4>' + h(g.title) + '</h4><ul>' + g.items.map(function (it) { return '<li>' + CHECK + '<span>' + h(it) + '</span></li>'; }).join('') + '</ul></div>';
     }).join('');
