@@ -114,6 +114,24 @@
   .group ul { list-style: none; margin: 0; padding: 0; font-size: 14px; }
   .group li { display: flex; gap: 9px; padding: 4px 0; line-height: 1.45; }
   .group li svg { flex: none; margin-top: 3px; color: var(--teal); }
+  .pick { margin-top: 20px; border-top: 1px solid var(--line); padding-top: 18px; scroll-margin-top: calc(var(--hdr) + 24px); }
+  .pick h4 { margin: 0 0 4px; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--copper-dk); font-weight: 600; }
+  .pick p.hint { margin: 0 0 10px; font-size: 13px; color: var(--muted); }
+  .pick-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .pick-opt { text-align: left; border: 1.5px solid var(--line); background: #fff; border-radius: 12px; padding: 11px 12px; cursor: pointer; min-width: 0; transition: border-color .15s ease, background .15s ease; }
+  .pick-opt:hover { border-color: var(--teal); }
+  .pick-opt b { display: block; font-size: 14px; font-weight: 600; color: var(--ink); }
+  .pick-opt span { display: block; font-size: 11.5px; color: var(--muted); line-height: 1.4; }
+  .pick-opt em { display: block; margin-top: 4px; font-style: normal; font-size: 12.5px; font-weight: 600; color: var(--copper-dk); }
+  .pick-opt[aria-pressed="true"] { border-color: var(--teal); background: var(--teal-soft); box-shadow: inset 0 0 0 1px var(--teal); }
+  .pick.need .pick-grid { animation: nudge .5s ease; }
+  .pick-need { font-size: 13px; font-weight: 500; color: var(--copper-dk); margin-top: 8px; }
+  @keyframes nudge { 0%,100% { transform: none; } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+  .total { margin-top: 14px; display: flex; justify-content: space-between; align-items: baseline; gap: 12px; background: var(--bg); border-radius: 12px; padding: 12px 14px; }
+  .total span { font-size: 13px; color: var(--muted); }
+  .total b { font-size: 20px; color: var(--ink); font-weight: 700; white-space: nowrap; }
+  .look .choose { margin-top: 14px; }
+  .look.on { border-color: var(--teal); box-shadow: inset 0 0 0 1px var(--teal); }
   .arrive { margin-top: 16px; background: var(--copper-soft); color: #7a4a2c; border-radius: 12px; padding: 12px 14px; font-size: 13.5px; line-height: 1.5; }
   .arrive b { font-weight: 600; }
   .d-cta { display: grid; gap: 10px; margin-top: 22px; }
@@ -227,6 +245,7 @@
   }
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
+    .pick.need .pick-grid { animation: none; }
     .btn, .bar, .trio img, .tab, .thumb, .faq summary::after { transition: none; }
   }
 </style>
@@ -309,9 +328,9 @@
   <section class="sec" id="looks">
     <div class="wrap">
       <div class="sec-head">
-        <div class="eyebrow">Step 2 · optional</div>
-        <h2>Add a signature look</h2>
-        <p class="lead">Styleshots is already included. Add a look for a bolder or dreamier set. You can choose it when you book or in the quiz.</p>
+        <div class="eyebrow">Step 2</div>
+        <h2>Choose your look</h2>
+        <p class="lead">Every session needs one look before you book. Styleshots is included in the session price; the other looks are add-ons.</p>
       </div>
       <div class="looks" id="looksgrid"></div>
       <div class="keeps" id="keeps" hidden></div>
@@ -336,10 +355,10 @@
         <h2>From booking to your shoot</h2>
       </div>
       <ol class="steps">
-        <li><span class="n">1</span><b>Pick a session</b><span>Book it on this page, or let the quiz match you.</span></li>
+        <li><span class="n">1</span><b>Pick a session and a look</b><span>Choose them on this page, or let the quiz match you.</span></li>
         <li><span class="n">2</span><b>Choose a date</b><span>See open slots and pick the time that suits you.</span></li>
         <li><span class="n">3</span><b>Send the ₱300 deposit</b><span>Pay by GCash or BPI and enter your reference number.</span></li>
-        <li><span class="n">4</span><b>Arrive and shoot</b><span>We confirm by email. For Signature and Prestige, arrive 1.5 hours early for hair and makeup.</span></li>
+        <li><span class="n">4</span><b>Send sizes and arrive</b><span>After booking, send your sizes and look photos. For Signature and Prestige, arrive 1.5 hours early for hair and makeup.</span></li>
       </ol>
     </div>
   </section>
@@ -406,7 +425,8 @@
   var CHECK = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
   var DASH  = '<span class="no" aria-label="Not included">—</span>';
 
-  var S = { tab: POPULAR, idx: 0 };
+  // mood stays empty until the client picks a look: booking needs one
+  var S = { tab: POPULAR, idx: 0, mood: '' };
   var touchX = null;
 
   function $(id) { return document.getElementById(id); }
@@ -423,17 +443,38 @@
   }
 
   /* ── what a session includes, from the same rules the Look Lab uses ── */
-  function incFor(s) {
-    return buildInclusions({ session: s, mood: llMood('styleshots'), keepsake: byKeep('digital'), extras: {}, extraDefs: EXTRAS,
-                             moodMinutes: moodMinutesOverride(s.id, 'styleshots') });
+  function incFor(s, mid) {
+    mid = mid || 'styleshots';
+    return buildInclusions({ session: s, mood: llMood(mid), keepsake: keepFor(s, mid), extras: {}, extraDefs: EXTRAS,
+                             moodMinutes: moodMinutesOverride(s.id, mid) });
+  }
+  function allLooks() {
+    var looks = MOODS.slice();
+    if (typeof DOUBLE !== 'undefined' && DOUBLE) looks.push(DOUBLE);
+    return looks;
+  }
+  // The keepsake that comes with a look at no extra cost: the one the look includes (Twofold → Prestige Wall),
+  // otherwise the cheapest on offer (Digital).
+  function keepFor(s, mid) {
+    var opts = keepsakeOptions(mid), best = null, bestP = Infinity;
+    for (var i = 0; i < opts.length; i++) if (opts[i].freeWith && llNames(opts[i].freeWith, mid)) return opts[i];
+    opts.forEach(function (k) { var p = keepsakePrice(s.id, k.id, mid); if (p < bestP) { best = k; bestP = p; } });
+    return best || byKeep('digital');
+  }
+  function buildOf(s, mid) {
+    var m = llMood(mid), k = keepFor(s, mid);
+    var kp = k ? keepsakePrice(s.id, k.id, mid) : 0;
+    return { label: s.name + ' + ' + m.name + ' + ' + (k ? k.name : 'Digital'), total: s.price + (m.price || 0) + kp,
+             mins: slotMinutes(s.id, mid, {}) };
   }
   function hmuOf(inc) {
     for (var i = 0; i < inc.groups.length; i++) if (/hair/i.test(inc.groups[i].title)) return inc.groups[i].items[0];
     return '';
   }
-  function bookingUrl(s) {
-    return BOOKING_URL + '?pkg=' + encodeURIComponent('The Look Lab: ' + s.name + ' + Styleshots + Digital') +
-           '&price=' + encodeURIComponent(s.price) + '&dur=' + encodeURIComponent(slotMinutes(s.id, 'styleshots', {})) +
+  function bookingUrl(s, mid) {
+    var b = buildOf(s, mid);
+    return BOOKING_URL + '?pkg=' + encodeURIComponent('The Look Lab: ' + b.label) +
+           '&price=' + encodeURIComponent(b.total) + '&dur=' + encodeURIComponent(b.mins) +
            '&desc=' + encodeURIComponent('Booked from the Look Lab page');
   }
 
@@ -463,8 +504,15 @@
     // warm the next photo so swiping feels instant
     var nx = list[(S.idx + 1) % list.length]; if (nx) { var pre = new Image(); pre.src = nx.full; }
   }
+  function pickerHtml(s) {
+    return '<div class="pick" id="pick"><h4>Choose your look</h4><p class="hint">Pick one to book. Styleshots is included in the price.</p>' +
+      '<div class="pick-grid">' + allLooks().map(function (m) {
+        return '<button type="button" class="pick-opt" data-mood="' + h(m.id) + '" aria-pressed="' + (S.mood === m.id) + '">' +
+          '<b>' + h(m.name) + '</b><span>' + h(m.sub || '') + '</span><em>' + (m.price ? '+' + peso(m.price) : 'Included') + '</em></button>';
+      }).join('') + '</div><div class="pick-need" id="pick-need" hidden>Choose a look first, then you can book.</div></div>';
+  }
   function renderDetails() {
-    var s = sess(S.tab), inc = incFor(s), rule = dressRule(s.id, 'styleshots');
+    var s = sess(S.tab), inc = incFor(s, S.mood), rule = dressRule(s.id, S.mood || 'styleshots');
     var chips = '';
     if (inc.counts.mins) chips += '<span class="chip">' + inc.counts.mins + '-minute shoot</span>';
     if (rule === 'included') chips += '<span class="chip copper">Gown included</span>';
@@ -472,18 +520,36 @@
     var groups = inc.groups.map(function (g) {
       return '<div class="group"><h4>' + h(g.title) + '</h4><ul>' + g.items.map(function (it) { return '<li>' + CHECK + '<span>' + h(it) + '</span></li>'; }).join('') + '</ul></div>';
     }).join('');
+    var b = S.mood ? buildOf(s, S.mood) : null;
+    var cta = b
+      ? '<a class="btn btn-primary btn-block" href="' + h(bookingUrl(s, S.mood)) + '">Book ' + h(s.name) + ' + ' + h(llMood(S.mood).name) + ' · ' + peso(b.total) + '</a>'
+      : '<button type="button" class="btn btn-primary btn-block" data-need-look aria-disabled="true">Choose a look to book</button>';
     $('details').innerHTML =
       '<h3>' + h(s.name) + '</h3><div class="sub">' + h(s.sub || '') + '</div>' +
-      '<div class="d-price"><b>' + peso(s.price) + '</b><span>per session</span></div>' +
+      '<div class="d-price"><b>' + peso(s.price) + '</b><span>session price</span></div>' +
       '<div class="chips">' + chips + '</div>' +
+      pickerHtml(s) +
+      (b ? '<div class="total"><span>' + h(b.label) + '</span><b>' + peso(b.total) + '</b></div>' : '') +
       '<div class="groups">' + groups + '</div>' +
       (hmuOf(inc) ? '<div class="arrive"><b>Arrive 1.5 hours early</b> for hair and makeup. Arriving later may shorten your shoot.</div>' : '') +
-      '<div class="d-cta"><a class="btn btn-primary btn-block" href="' + h(bookingUrl(s)) + '">Book ' + h(s.name) + ' · ' + peso(s.price) + '</a>' +
+      '<div class="d-cta">' + cta +
       '<div class="d-note">₱300 deposit to reserve · <a href="./">Not sure? Take the quiz</a></div></div>';
-    $('bar-name').textContent = s.name;
-    $('bar-price').textContent = peso(s.price) + ' · ₱300 deposit to reserve';
-    $('bar-book').href = bookingUrl(s);
-    $('bar-book').textContent = 'Book ' + s.name;
+    $('bar-name').textContent = s.name + (b ? ' + ' + llMood(S.mood).name : '');
+    $('bar-price').textContent = b ? peso(b.total) + ' · ₱300 deposit to reserve' : 'Choose a look to book';
+    $('bar-book').href = b ? bookingUrl(s, S.mood) : '#pick';
+    $('bar-book').textContent = b ? 'Book' : 'Choose look';
+    $('bar-book').toggleAttribute('data-need-look', !b);
+  }
+  // Bring the look picker into view and nudge it when someone tries to book without a look
+  function needLook() {
+    var p = $('pick'); if (!p) return;
+    p.scrollIntoView({ block: 'center' });
+    $('pick-need').hidden = false;
+    p.classList.remove('need'); void p.offsetWidth; p.classList.add('need');
+    var first = p.querySelector('.pick-opt'); if (first) first.focus({ preventScroll: true });
+  }
+  function chooseLook(mid) {
+    S.mood = mid; renderDetails(); renderLooks();
   }
   function selectTab(id, focus) {
     S.tab = id; S.idx = 0;
@@ -515,7 +581,7 @@
     var head = '<thead><tr><th scope="col"><span class="sr">Session</span></th>' + cols.map(function (c) {
       var hl = c.s.id === POPULAR ? ' class="hl"' : '';
       return '<th scope="col"' + hl + '><b>' + h(c.s.name) + '</b><span class="p">' + peso(c.s.price) + '</span>' +
-        '<a class="btn ' + (c.s.id === POPULAR ? 'btn-primary' : 'btn-ghost') + ' btn-sm" href="' + h(bookingUrl(c.s)) + '">Book</a></th>';
+        '<button type="button" class="btn ' + (c.s.id === POPULAR ? 'btn-primary' : 'btn-ghost') + ' btn-sm" data-choose-session="' + h(c.s.id) + '">Choose</button></th>';
     }).join('') + '</tr></thead>';
     var body = '<tbody>' + rows.map(function (r) {
       return '<tr><td>' + h(r[0]) + '</td>' + cols.map(function (c) {
@@ -527,12 +593,12 @@
 
   /* ── looks + keepsakes ── */
   function renderLooks() {
-    var looks = MOODS.slice();
-    if (typeof DOUBLE !== 'undefined' && DOUBLE) looks.push(DOUBLE);
-    $('looksgrid').innerHTML = looks.map(function (m) {
-      return '<div class="look"><div class="dot" aria-hidden="true"></div><h3>' + h(m.name) + '</h3><div class="sub">' + h(m.sub || '') + '</div>' +
+    $('looksgrid').innerHTML = allLooks().map(function (m) {
+      var on = S.mood === m.id;
+      return '<div class="look' + (on ? ' on' : '') + '"><div class="dot" aria-hidden="true"></div><h3>' + h(m.name) + '</h3><div class="sub">' + h(m.sub || '') + '</div>' +
         '<span class="add">' + (m.price ? '+' + peso(m.price) : 'Included') + '</span>' +
-        '<p>' + (m.setDesign || []).map(h).join(' · ') + '</p></div>';
+        '<p>' + (m.setDesign || []).map(h).join(' · ') + '</p>' +
+        '<button type="button" class="btn ' + (on ? 'btn-primary' : 'btn-ghost') + ' btn-sm btn-block choose" data-look-card="' + h(m.id) + '">' + (on ? 'Chosen ✓' : 'Choose this look') + '</button></div>';
     }).join('');
     if (KEEPSAKES.length) {
       $('keeps').hidden = false;
@@ -572,6 +638,15 @@
     var ids = SESSIONS.map(function (s) { return s.id; }), i = ids.indexOf(S.tab);
     if (e.key === 'ArrowRight') { e.preventDefault(); selectTab(ids[(i + 1) % ids.length], true); }
     if (e.key === 'ArrowLeft')  { e.preventDefault(); selectTab(ids[(i - 1 + ids.length) % ids.length], true); }
+  });
+  // Look choice, from the session panel or the looks section; "Choose" in the table opens that session's picker
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest('[data-mood],[data-look-card],[data-need-look],[data-choose-session]');
+    if (!t) return;
+    if (t.hasAttribute('data-mood')) { chooseLook(t.getAttribute('data-mood')); var o = document.querySelector('.pick-opt[data-mood="' + t.getAttribute('data-mood') + '"]'); if (o) o.focus({ preventScroll: true }); return; }
+    if (t.hasAttribute('data-look-card')) { chooseLook(t.getAttribute('data-look-card')); $('panel').scrollIntoView(); return; }
+    if (t.hasAttribute('data-choose-session')) { selectTab(t.getAttribute('data-choose-session')); needLook(); return; }
+    e.preventDefault(); needLook();
   });
   $('thumbs').addEventListener('click', function (e) { var b = e.target.closest('.thumb'); if (b) { S.idx = +b.getAttribute('data-i'); renderGallery(); } });
   $('g-prev').addEventListener('click', function () { step(-1); });

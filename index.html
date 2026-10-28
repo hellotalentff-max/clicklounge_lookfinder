@@ -179,7 +179,8 @@
   var MESSENGER   = 'https://m.me/clicklounge.studio';
   var MAX_PHOTOS  = 4;
 
-  var STEPS = ['occasion', 'vibe', 'budget', 'keepsake', 'outfit', 'sizes', 'inspo', 'result'];
+  // Sizes and inspiration photos are asked for after booking, on the booking confirmation page.
+  var STEPS = ['occasion', 'vibe', 'budget', 'keepsake', 'outfit', 'result'];
   var SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL', 'Not sure'];
   var SHOES = ['35', '36', '37', '38', '39', '40', '41', '42', '43', '44', 'Not sure'];
   var SIZE_ORDER = ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'];
@@ -364,7 +365,7 @@
       var gb2 = gownBlurb(rec.mid), inclWith = gb2.included.length ? gb2.included.join(' and ') : '';
       if (!p.gownOffered) out.push('A gown isn\u2019t offered with this session, so we\u2019ll style you from our available outfits.');
       else if (p.gownIncl) out.push('A House of Roan or Serra gown is <b>included free</b> with ' + esc(p.sess.name) + ' \u2014 pick yours below.');
-      else out.push('A House of Roan or Serra gown is a <b>paid add-on</b> with ' + esc(p.sess.name) + (inclWith ? ' (it\u2019s included free with ' + esc(inclWith) + ')' : '') + ' \u2014 we matched gowns to your size below.');
+      else out.push('A House of Roan or Serra gown is a <b>paid add-on</b> with ' + esc(p.sess.name) + (inclWith ? ' (it\u2019s included free with ' + esc(inclWith) + ')' : '') + ' \u2014 pick one below; we\u2019ll confirm the fit after you book.');
     }
     if (S.photos.length || S.links) out.push('Your inspiration ' + (S.photos.length ? S.photos.length + ' photo' + (S.photos.length > 1 ? 's' : '') : 'links') + ' go to the studio so your photographer can match the look.');
     return out;
@@ -438,20 +439,6 @@
           '<div class="qlabel">How many outfit changes?</div>' +
           '<div class="chips">' + [1, 2].map(function (n) { return '<button type="button" class="chip' + (S.outfits === n ? ' on' : '') + '" data-a="outfits" data-v="' + n + '" aria-pressed="' + (S.outfits === n) + '">' + n + (n === 1 ? ' outfit' : ' outfits') + '</button>'; }).join('') + '</div>' +
           '<div class="hint">Some sessions include a second outfit; for the others it’s a small add-on, shown in your recommendation.</div>';
-      case 'sizes':
-        return '<h2 class="q">Your sizes</h2><p class="qsub">So we can have outfits, gowns and shoes ready for you. Pick the closest — or “Not sure” and we’ll size you on the day.</p>' +
-          '<div class="qlabel">Top</div>' + chipsHtml(SIZES, 'top', S.top) +
-          '<div class="qlabel">Bottom</div>' + chipsHtml(SIZES, 'bottom', S.bottom) +
-          '<div class="qlabel">Shoe size (EU)</div>' + chipsHtml(SHOES, 'shoe', S.shoe, 'EU ') +
-          '<div class="hint">Roughly: women’s US 6 ≈ EU 36–37 · US 7 ≈ EU 37–38 · US 8 ≈ EU 38–39 · US 9 ≈ EU 40. Men’s US 8 ≈ EU 41 · US 9 ≈ EU 42 · US 10 ≈ EU 43.</div>';
-      case 'inspo':
-        var th = S.photos.map(function (d, i) { return '<div class="thumb"><img src="' + d + '" alt="Inspiration photo ' + (i + 1) + '"><button type="button" data-a="rmphoto" data-v="' + i + '" aria-label="Remove photo ' + (i + 1) + '">✕</button></div>'; }).join('');
-        return '<h2 class="q">Show us the look you’re aiming for</h2><p class="qsub">Add up to ' + MAX_PHOTOS + ' photos — poses, outfits, colours, a Pinterest save, a screenshot. Your photographer will use them to plan your shoot.</p>' +
-          (S.photos.length < MAX_PHOTOS ? '<label class="drop"><div style="font-size:30px;">📷</div><b>Tap to add photos</b><span>JPG or PNG · ' + (MAX_PHOTOS - S.photos.length) + ' more allowed</span><input type="file" id="rc-file" accept="image/*" multiple style="display:none;"></label>' : '') +
-          (th ? '<div class="thumbs">' + th + '</div>' : '') +
-          '<div class="field" style="margin-top:18px;"><label for="rc-links">Or paste links (Pinterest, Instagram, Drive)</label><textarea id="rc-links" rows="2" placeholder="https://…">' + esc(S.links) + '</textarea></div>' +
-          '<div class="field"><label for="rc-notes">Describe the look (colours, props, mood, anything we should know)</label><textarea id="rc-notes" rows="3" maxlength="300" placeholder="e.g. all-black with gold jewellery, dramatic lighting, I love the fur coat idea…">' + esc(S.notes) + '</textarea></div>' +
-          '<div class="hint">Photos are optional, but they help us a lot.</div>';
       case 'result':
         return resultHtml();
     }
@@ -468,14 +455,14 @@
     if (S.gown === 'gown' && p.gownOffered) {
       if (S.dresses) {
         var show = fit.slice(0, 6);
-        gownBox = '<div class="qlabel" style="margin-top:20px;">' + (p.gownIncl ? 'Choose your included gown' : 'Gowns that fit you \u00B7 paid add-on') + (gownSizeKey() ? ' (size ' + gownSizeKey() + ')' : '') + '</div>' +
+        gownBox = '<div class="qlabel" style="margin-top:20px;">' + (p.gownIncl ? 'Choose your included gown' : 'Gowns \u00B7 paid add-on') + (gownSizeKey() ? ' (size ' + gownSizeKey() + ')' : '') + '</div>' +
           (show.length ? '<div class="gowns">' + show.map(function (d) {
             var rate = p.gownIncl ? 0 : (d.photographerRate == null ? null : d.photographerRate);
             return '<button type="button" class="gown' + (S.pickGown === d.name ? ' on' : '') + '" data-a="gown" data-v="' + esc(d.name) + '"><div class="ph"><img src="' + esc(dressPhoto(d)) + '" alt="' + esc(d.name) + '" loading="lazy" onerror="rcImgFail(this)"></div><div class="m"><b>' + esc(d.name) + '</b><span>' + (rate === 0 ? 'Included' : rate == null ? '' : '+' + peso(rate)) + '</span><small>' + esc((d.brand ? d.brand + ' · ' : '') + (d.size || '')) + '</small></div></button>';
           }).join('') + '</div><div class="hint">Tap a gown to add it to your look. <a class="link" href="' + DRESS_SITE + '" target="_blank" rel="noopener">See all gowns →</a></div>'
             : '<div class="note">No gown matches that size in our list right now — message us and we’ll find you one.</div>');
       } else {
-        gownBox = '<div class="note">' + (S.dressErr ? 'We couldn’t load the gown list just now — we’ll match gowns to your size when you book.' : 'Loading gowns that fit you…') + '</div>';
+        gownBox = '<div class="note">' + (S.dressErr ? 'We couldn’t load the gown list just now — we’ll help you choose one after you book.' : 'Loading gowns…') + '</div>';
       }
     }
     var alts = '';
@@ -483,11 +470,7 @@
       alts = '<div class="qlabel" style="margin-top:22px;">Other options</div><div class="alts">' +
         (rec.cheaper ? altHtml('Save more', rec.cheaper, p) : '') + (rec.richer ? altHtml('Level up', rec.richer, p) : '') + '</div>';
     }
-    var recap = '<div class="qlabel" style="margin-top:22px;">What we’re sending the studio</div><div class="recap">' +
-      '<div><span>Top</span>' + esc(S.top) + '</div><div><span>Bottom</span>' + esc(S.bottom) + '</div><div><span>Shoe</span>' + (S.shoe === 'Not sure' ? 'Not sure' : 'EU ' + esc(S.shoe)) + '</div>' +
-      '<div><span>Look</span>' + esc(p.mood ? p.mood.name : '') + '</div></div>' +
-      (S.photos.length ? '<div class="rthumbs">' + S.photos.map(function (d) { return '<img src="' + d + '" alt="">'; }).join('') + '</div>' : '') +
-      (S.links ? '<div class="hint">Links: ' + esc(S.links.slice(0, 120)) + '</div>' : '');
+    var recap = '<div class="note" style="margin-top:18px;">After you book, we’ll ask for your sizes and photos of the look you’re aiming for, so we can prepare your outfit and set.</div>';
     return '<div class="hero-rec"><span class="badge">Your best match</span><div class="rec-name">' + esc(sessionTitle(p)) + '</div>' +
       '<div class="rec-meta">' + Math.round(p.shoot) + '-minute shoot</div>' +
       '<div class="rec-total">' + peso(p.total) + (function () { var g = p.lines.filter(function (l) { return l.from; })[0]; return g ? '<span style="font-size:13px;font-weight:500;color:var(--muted);"> incl. gown from ' + peso(g.p) + '</span>' : ''; })() + '</div>' +
@@ -523,7 +506,7 @@
     var bits = [];
     if (b.extras && b.extras.outfit) bits.push('+Additional Outfit Change');
     if (b.wantsGown) bits.push('Gown: ' + (b.gown ? b.gown.name + (b.gown.brand ? ' [' + b.gown.brand + ']' : '') + (b.gownIncl ? ' (included)' : b.gownRate ? ' (+' + peso(b.gownRate) + ')' : '') : 'to be chosen'));
-    bits.push('Sizes: top ' + S.top + ', bottom ' + S.bottom + ', shoe ' + (S.shoe === 'Not sure' ? 'not sure' : 'EU ' + S.shoe));
+    if (S.top) bits.push('Sizes: top ' + S.top + ', bottom ' + S.bottom + ', shoe ' + (S.shoe === 'Not sure' ? 'not sure' : 'EU ' + S.shoe));
     if (S.photos.length || S.links) bits.push('Inspo: ' + (S.photos.length ? S.photos.length + ' photo(s)' : '') + (S.photos.length && S.links ? ' + ' : '') + (S.links ? 'links' : ''));
     if (withId && S.sentId) bits.push('Look Lab inquiry ' + S.sentId);
     return bits.join(' · ');
@@ -569,7 +552,7 @@
     if (b.wantsGown) L.push('Gown: ' + (b.gown ? b.gown.name + (b.gown.brand ? ' (' + b.gown.brand + ')' : '') + (b.gownIncl ? ' (included)' : '') : 'to be chosen'));
     if (b.extras && b.extras.outfit) L.push('Extra outfit change: yes');
     if (oc) L.push('For: ' + oc.t.replace(/^an? /i, ''));
-    L.push('Sizes: top ' + S.top + ', bottom ' + S.bottom + ', shoe ' + (S.shoe === 'Not sure' ? 'not sure' : 'EU ' + S.shoe));
+    if (S.top) L.push('Sizes: top ' + S.top + ', bottom ' + S.bottom + ', shoe ' + (S.shoe === 'Not sure' ? 'not sure' : 'EU ' + S.shoe));
     if (S.photos.length) L.push('Inspiration: ' + S.photos.length + ' photo' + (S.photos.length > 1 ? 's' : '') + ' — I’ll send them here');
     if (S.links) L.push('Inspiration links: ' + S.links);
     if (S.notes) L.push('The look I want: ' + S.notes);
@@ -663,7 +646,6 @@
       case 'budget':   return S.budget ? '' : 'Choose a budget range.';
       case 'keepsake': return S.keep ? '' : 'Choose what you’d like to take home.';
       case 'outfit':   return S.gown ? '' : 'Tell us about your outfit.';
-      case 'sizes':    return (S.top && S.bottom && S.shoe) ? '' : 'Please pick a top, bottom and shoe size (or “Not sure”).';
       case 'contact':
         if (!S.name) return 'Please enter your name.';
         if (!/^(09|\+639)\d{9}$/.test(S.phone.replace(/[\s\-]/g, ''))) return 'Enter a valid PH mobile number (09XXXXXXXXX).';
@@ -690,7 +672,7 @@
     if (!last) {
       html += '<div class="err" role="alert">' + esc(S.err) + '</div><div class="nav">' +
         (S.step > 0 ? '<button type="button" class="btn btn-back" data-a="back">Back</button>' : '') +
-        '<button type="button" class="btn btn-next" data-a="next">' + (name === 'inspo' ? (S.photos.length || S.links ? 'See my recommendation →' : 'Skip photos & see my recommendation →') : 'Continue →') + '</button></div>';
+        '<button type="button" class="btn btn-next" data-a="next">' + (name === 'outfit' ? 'See my recommendation →' : 'Continue →') + '</button></div>';
     } else if (!S.finished) {
       html += '<div class="nav" style="margin-top:8px;"><button type="button" class="btn btn-back" data-a="back" style="flex:1;">← Change my answers</button></div>';
     }
