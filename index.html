@@ -321,7 +321,7 @@
     var kobj = byId(KEEPSAKES, kid);
     lines.push({ l: kobj ? kobj.name : 'Keepsake', p: kp, free: kp === 0 });
     if (extras.outfit) lines.push({ l: 'Additional Outfit Change', p: extraPrice('outfit') });
-    if (wants) lines.push({ l: 'Gown' + (gown ? ': ' + gown.name : ''), p: gownRate, free: incl, from: gownNote === 'from' });
+    if (wants) lines.push({ l: 'Gown' + (gown ? ': ' + gown.name + (gown.brand ? ' (' + gown.brand + ')' : '') : ''), p: gownRate, free: incl, from: gownNote === 'from' });
     var total = lines.reduce(function (a, x) { return a + (x.p || 0); }, 0);
     return { sess: sess, mood: m, mid: mid, kid: kid, kobj: kobj, extras: extras, wantsGown: wants, gownIncl: incl, gownOffered: offered,
              gown: gown, gownRate: gownRate, lines: lines, total: total, mins: slotMinutes(sess.id, mid, extras), shoot: shootMinutes(sess, mid, extras) };
@@ -363,8 +363,8 @@
     if (S.gown === 'gown') {
       var gb2 = gownBlurb(rec.mid), inclWith = gb2.included.length ? gb2.included.join(' and ') : '';
       if (!p.gownOffered) out.push('A gown isn\u2019t offered with this session, so we\u2019ll style you from our available outfits.');
-      else if (p.gownIncl) out.push('A House of Roan gown is <b>included free</b> with ' + esc(p.sess.name) + ' \u2014 pick yours below.');
-      else out.push('A House of Roan gown is a <b>paid add-on</b> with ' + esc(p.sess.name) + (inclWith ? ' (it\u2019s included free with ' + esc(inclWith) + ')' : '') + ' \u2014 we matched gowns to your size below.');
+      else if (p.gownIncl) out.push('A House of Roan or Serra gown is <b>included free</b> with ' + esc(p.sess.name) + ' \u2014 pick yours below.');
+      else out.push('A House of Roan or Serra gown is a <b>paid add-on</b> with ' + esc(p.sess.name) + (inclWith ? ' (it\u2019s included free with ' + esc(inclWith) + ')' : '') + ' \u2014 we matched gowns to your size below.');
     }
     if (S.photos.length || S.links) out.push('Your inspiration ' + (S.photos.length ? S.photos.length + ' photo' + (S.photos.length > 1 ? 's' : '') : 'links') + ' go to the studio so your photographer can match the look.');
     return out;
@@ -431,7 +431,7 @@
           '<div class="qlabel">Outfit</div>' +
           '<div class="opts one">' + [
             { id: 'own', ic: '👗', t: 'I’ll bring my own outfit', d: 'Wear what makes you feel like you.' },
-            (gb.any ? { id: 'gown', ic: '\uD83D\uDC51', t: 'I\u2019d like a House of Roan gown', d: gb.text + '. We\u2019ll match gowns to your size.' } : null),
+            (gb.any ? { id: 'gown', ic: '\uD83D\uDC51', t: 'I\u2019d like a premium gown', d: gb.text + '. We\u2019ll match gowns to your size.' } : null),
             { id: 'unsure', ic: '🤔', t: 'Not sure yet', d: 'We’ll help you decide before the shoot.' }
           ].filter(Boolean).map(function (o) { return '<button type="button" class="opt' + (S.gown === o.id ? ' on' : '') + '" data-a="set" data-k="gown" data-v="' + o.id + '" aria-pressed="' + (S.gown === o.id) + '"><div style="display:flex;gap:14px;align-items:center;"><div class="ic">' + o.ic + '</div><div><div class="t" style="margin:0;">' + o.t + '</div><div class="d">' + o.d + '</div></div></div></button>'; }).join('') + '</div>' +
           (!gb.any ? '<div class="note" style="margin-top:12px;">A gown isn\u2019t offered with this look \u2014 we\u2019ll style you from our available outfits, or you can bring your own.</div>' : '') +
@@ -471,7 +471,7 @@
         gownBox = '<div class="qlabel" style="margin-top:20px;">' + (p.gownIncl ? 'Choose your included gown' : 'Gowns that fit you \u00B7 paid add-on') + (gownSizeKey() ? ' (size ' + gownSizeKey() + ')' : '') + '</div>' +
           (show.length ? '<div class="gowns">' + show.map(function (d) {
             var rate = p.gownIncl ? 0 : (d.photographerRate == null ? null : d.photographerRate);
-            return '<button type="button" class="gown' + (S.pickGown === d.name ? ' on' : '') + '" data-a="gown" data-v="' + esc(d.name) + '"><div class="ph"><img src="' + esc(dressPhoto(d)) + '" alt="' + esc(d.name) + '" loading="lazy" onerror="rcImgFail(this)"></div><div class="m"><b>' + esc(d.name) + '</b><span>' + (rate === 0 ? 'Included' : rate == null ? '' : '+' + peso(rate)) + '</span><small>' + esc(d.size || '') + '</small></div></button>';
+            return '<button type="button" class="gown' + (S.pickGown === d.name ? ' on' : '') + '" data-a="gown" data-v="' + esc(d.name) + '"><div class="ph"><img src="' + esc(dressPhoto(d)) + '" alt="' + esc(d.name) + '" loading="lazy" onerror="rcImgFail(this)"></div><div class="m"><b>' + esc(d.name) + '</b><span>' + (rate === 0 ? 'Included' : rate == null ? '' : '+' + peso(rate)) + '</span><small>' + esc((d.brand ? d.brand + ' · ' : '') + (d.size || '')) + '</small></div></button>';
           }).join('') + '</div><div class="hint">Tap a gown to add it to your look. <a class="link" href="' + DRESS_SITE + '" target="_blank" rel="noopener">See all gowns →</a></div>'
             : '<div class="note">No gown matches that size in our list right now — message us and we’ll find you one.</div>');
       } else {
@@ -522,7 +522,7 @@
   function descText(b, withId) {
     var bits = [];
     if (b.extras && b.extras.outfit) bits.push('+Additional Outfit Change');
-    if (b.wantsGown) bits.push('Gown: ' + (b.gown ? b.gown.name + (b.gownIncl ? ' (included)' : b.gownRate ? ' (+' + peso(b.gownRate) + ')' : '') : 'to be chosen'));
+    if (b.wantsGown) bits.push('Gown: ' + (b.gown ? b.gown.name + (b.gown.brand ? ' [' + b.gown.brand + ']' : '') + (b.gownIncl ? ' (included)' : b.gownRate ? ' (+' + peso(b.gownRate) + ')' : '') : 'to be chosen'));
     bits.push('Sizes: top ' + S.top + ', bottom ' + S.bottom + ', shoe ' + (S.shoe === 'Not sure' ? 'not sure' : 'EU ' + S.shoe));
     if (S.photos.length || S.links) bits.push('Inspo: ' + (S.photos.length ? S.photos.length + ' photo(s)' : '') + (S.photos.length && S.links ? ' + ' : '') + (S.links ? 'links' : ''));
     if (withId && S.sentId) bits.push('Look Lab inquiry ' + S.sentId);
@@ -566,7 +566,7 @@
     L.push('');
     L.push('Look: ' + sessionTitle(b));
     L.push('Shoot: ' + Math.round(b.shoot) + ' minutes · Total: ' + peso(b.total) + (b.lines.some(function (l) { return l.from; }) ? ' (gown extra)' : ''));
-    if (b.wantsGown) L.push('Gown: ' + (b.gown ? b.gown.name + (b.gownIncl ? ' (included)' : '') : 'to be chosen'));
+    if (b.wantsGown) L.push('Gown: ' + (b.gown ? b.gown.name + (b.gown.brand ? ' (' + b.gown.brand + ')' : '') + (b.gownIncl ? ' (included)' : '') : 'to be chosen'));
     if (b.extras && b.extras.outfit) L.push('Extra outfit change: yes');
     if (oc) L.push('For: ' + oc.t.replace(/^an? /i, ''));
     L.push('Sizes: top ' + S.top + ', bottom ' + S.bottom + ', shoe ' + (S.shoe === 'Not sure' ? 'not sure' : 'EU ' + S.shoe));

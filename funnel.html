@@ -2,268 +2,392 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>The Look Lab · ClickLounge Studio</title>
-<meta name="description" content="Guided portrait sessions at ClickLounge Studio. Pick your session, choose your look, reserve with a ₱300 deposit.">
-<meta name="theme-color" content="#2f4f4f">
+<meta name="description" content="Guided portrait sessions at ClickLounge Studio. See real photos from each session, compare them, and reserve with a ₱300 deposit.">
+<meta name="theme-color" content="#f7f5f1">
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
+  /* Light and photo-led: warm ivory ground, white cards, studio teal for actions, copper for accents */
   :root {
-    --teal:#51897d; --teal-dk:#3d6b61; --teal-lt:#7aada3;
-    --gold:#d79068; --gold-dk:#b9724d; --gold-lt:#e8b08a;
-    --slate:#2f4f4f; --slate-dk:#223a3a; --light:#f4f7f6; --light2:#e8efee;
-    --white:#fff; --text:#1e3333; --muted:#5f8080;
-    --border:rgba(81,137,125,0.22);
+    --bg:#f7f5f1; --card:#ffffff; --ink:#1f3a3a; --text:#2b3f3f; --muted:#6b7f7d;
+    --teal:#51897d; --teal-dk:#3d6b61; --teal-soft:#e7f0ee;
+    --copper:#d79068; --copper-dk:#a8653f; --copper-soft:#fbefe7;
+    --line:#e7e2da; --shadow:0 1px 2px rgba(31,58,58,.05), 0 8px 24px rgba(31,58,58,.06);
+    --r:16px; --hdr:64px;
   }
   * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
-  body { margin: 0; font-family: 'Poppins', system-ui, sans-serif; background: var(--light); color: var(--text); line-height: 1.55; -webkit-font-smoothing: antialiased; }
+  html { scroll-behavior: smooth; scroll-padding-top: calc(var(--hdr) + 12px); }
+  body { margin: 0; font-family: 'Poppins', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; -webkit-font-smoothing: antialiased; }
   a { color: inherit; text-decoration: none; }
-  img { max-width: 100%; display: block; }
-  button { font-family: inherit; }
-  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 20px; }
-  .eyebrow { font-size: 11px; letter-spacing: .2em; text-transform: uppercase; font-weight: 700; color: var(--teal); }
-  h1, h2, h3 { text-wrap: balance; margin: 0; color: var(--slate); }
-  h2 { font-size: clamp(24px, 4.2vw, 34px); line-height: 1.2; font-weight: 600; }
-  .lead { color: var(--muted); font-size: 15px; max-width: 560px; margin: 10px 0 0; }
+  img { max-width: 100%; height: auto; display: block; }
+  button { font-family: inherit; color: inherit; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); }
+  h1, h2, h3 { color: var(--ink); margin: 0; text-wrap: balance; letter-spacing: -.015em; }
+  h2 { font-size: clamp(26px, 4vw, 36px); line-height: 1.15; font-weight: 600; }
+  .eyebrow { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; font-weight: 600; color: var(--copper-dk); }
+  .lead { color: var(--muted); font-size: 15.5px; max-width: 560px; margin: 10px 0 0; }
+  .sec { padding: 80px 0 0; }
+  .sec-head { margin-bottom: 28px; }
+  .sec-head.center { text-align: center; }
+  .sec-head.center .lead { margin-left: auto; margin-right: auto; }
 
-  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 0; border-radius: 999px; padding: 15px 26px; font-weight: 600; font-size: 15px; cursor: pointer; letter-spacing: .01em; transition: transform .15s ease, background .15s ease; }
-  .btn:hover { transform: translateY(-1px); }
-  .btn:focus-visible, a:focus-visible, summary:focus-visible { outline: 3px solid var(--gold-lt); outline-offset: 3px; }
-  .btn-gold { background: var(--gold); color: #fff; }
-  .btn-gold:hover { background: var(--gold-dk); }
-  .btn-teal { background: var(--teal); color: #fff; }
-  .btn-teal:hover { background: var(--teal-dk); }
-  .btn-line { background: transparent; color: var(--slate); box-shadow: inset 0 0 0 1.5px var(--teal); }
-  .btn-line:hover { background: rgba(81,137,125,.08); }
-  .btn-light { background: #fff; color: var(--slate); }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 1.5px solid transparent; border-radius: 12px; padding: 14px 22px; font-weight: 600; font-size: 15px; cursor: pointer; transition: background .2s ease, border-color .2s ease, color .2s ease, transform .2s ease; white-space: nowrap; }
+  .btn:active { transform: translateY(1px); }
+  .btn:focus-visible, a:focus-visible, button:focus-visible, summary:focus-visible { outline: 3px solid rgba(215,144,104,.6); outline-offset: 2px; }
+  .btn-primary { background: var(--teal); color: #fff; }
+  .btn-primary:hover { background: var(--teal-dk); }
+  .btn-copper { background: var(--copper); color: #fff; }
+  .btn-copper:hover { background: var(--copper-dk); }
+  .btn-ghost { background: #fff; color: var(--ink); border-color: var(--line); }
+  .btn-ghost:hover { border-color: var(--teal); color: var(--teal-dk); }
+  .btn-sm { padding: 10px 16px; font-size: 14px; border-radius: 10px; }
+  .btn-block { width: 100%; }
 
-  /* top bar + hero */
-  .hero { background: var(--slate); color: #fff; overflow: hidden; }
-  .top { display: flex; align-items: center; justify-content: space-between; padding: 16px 0; gap: 12px; }
-  .top img { height: 36px; width: auto; }
-  .top a.small { font-size: 13px; font-weight: 600; color: var(--gold-lt); }
-  .hero-grid { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 36px; align-items: center; padding: 18px 0 56px; }
-  .hero .eyebrow { color: var(--gold-lt); }
-  .hero h1 { color: #fff; font-size: clamp(32px, 6vw, 52px); line-height: 1.08; font-weight: 600; margin: 12px 0 16px; letter-spacing: -.01em; }
-  .hero h1 em { font-style: normal; color: var(--gold-lt); }
-  .hero p { color: rgba(255,255,255,.78); font-size: 16px; max-width: 470px; margin: 0 0 26px; }
+  /* ── header ── */
+  header.site { position: sticky; top: 0; z-index: 30; background: rgba(247,245,241,.92); backdrop-filter: saturate(1.4) blur(10px); border-bottom: 1px solid var(--line); }
+  body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); background: var(--bg); z-index: 31; }
+  header.site { top: env(safe-area-inset-top, 0px); }
+  .hdr { height: var(--hdr); display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .hdr img { height: 34px; width: auto; }
+  .hdr nav { display: flex; gap: 26px; font-size: 14px; font-weight: 500; color: var(--muted); }
+  .hdr nav a:hover { color: var(--ink); }
+
+  /* ── hero ── */
+  .hero { padding: 56px 0 8px; }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, .92fr) minmax(0, 1.18fr); gap: 44px; align-items: center; }
+  .hero h1 { font-size: clamp(34px, 5.4vw, 54px); line-height: 1.08; font-weight: 600; margin: 14px 0 16px; }
+  .hero h1 span { color: var(--teal); }
+  .hero p.sub { font-size: 16.5px; color: var(--muted); max-width: 470px; margin: 0 0 28px; }
   .cta-row { display: flex; flex-wrap: wrap; gap: 12px; }
-  .hero .btn-line { color: #fff; box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.5); }
-  .hero .btn-line:hover { background: rgba(255,255,255,.1); }
-  .hero-note { margin-top: 16px; font-size: 12.5px; color: rgba(255,255,255,.6); }
-  .hero-img { position: relative; }
-  .hero-img img { width: 100%; border-radius: 20px; box-shadow: 0 24px 60px rgba(0,0,0,.35); aspect-ratio: 8 / 5; object-fit: cover; }
+  .trust { display: flex; flex-wrap: wrap; gap: 8px 22px; margin-top: 26px; font-size: 13.5px; color: var(--muted); }
+  .trust span { display: inline-flex; align-items: center; gap: 7px; }
+  .trust svg { flex: none; color: var(--teal); }
+  .trust .stars { color: var(--copper); letter-spacing: 1px; }
+  .trio { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; align-items: end; }
+  .trio a { position: relative; display: block; border-radius: var(--r); overflow: hidden; box-shadow: var(--shadow); background: var(--line); }
+  .trio a:nth-child(1) { transform: translateY(-18px); }
+  .trio a:nth-child(3) { transform: translateY(-36px); }
+  .trio img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; transition: transform .6s ease; }
+  .trio a:hover img { transform: scale(1.03); }
+  .trio .cap { position: absolute; left: 10px; bottom: 10px; background: rgba(255,255,255,.94); color: var(--ink); font-size: 12px; font-weight: 600; padding: 5px 10px; border-radius: 999px; }
 
-  /* how it works */
-  .steps { background: #fff; border-bottom: 1px solid var(--light2); }
-  .steps ol { list-style: none; margin: 0; padding: 22px 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; }
-  .steps li { display: flex; gap: 12px; align-items: flex-start; font-size: 13px; color: var(--muted); }
-  .steps li b { display: block; color: var(--slate); font-size: 14px; font-weight: 600; }
-  .steps .n { flex: none; width: 30px; height: 30px; border-radius: 50%; background: var(--teal); color: #fff; font-weight: 700; font-size: 13px; display: grid; place-items: center; }
+  /* ── session explorer ── */
+  .tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; background: #efebe4; padding: 6px; border-radius: 14px; max-width: 640px; }
+  .tab { position: relative; border: 0; background: transparent; border-radius: 10px; padding: 11px 8px; cursor: pointer; text-align: center; transition: background .2s ease, box-shadow .2s ease; min-width: 0; }
+  .tab b { display: block; font-size: 15px; font-weight: 600; color: var(--ink); }
+  .tab small { display: block; font-size: 12.5px; color: var(--muted); }
+  .tab[aria-selected="true"] { background: #fff; box-shadow: 0 1px 3px rgba(31,58,58,.12); }
+  .tab[aria-selected="true"] b { color: var(--teal-dk); }
+  .tab .pop { position: absolute; top: -9px; left: 50%; transform: translateX(-50%); background: var(--copper); color: #fff; font-size: 10px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
 
-  section.block { padding: 60px 0 8px; }
-  section.block header { margin-bottom: 26px; }
+  .panel { margin-top: 22px; display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 28px; align-items: start; }
+  .gallery { min-width: 0; }
+  @media (min-width: 921px) { .gallery { position: sticky; top: calc(var(--hdr) + 20px); } }
+  .stage { position: relative; border-radius: var(--r); overflow: hidden; background: var(--line); box-shadow: var(--shadow); aspect-ratio: 4 / 5; touch-action: pan-y; }
+  .stage img { width: 100%; height: 100%; object-fit: cover; cursor: zoom-in; }
+  .nav-btn { position: absolute; top: 50%; transform: translateY(-50%); width: 42px; height: 42px; border-radius: 50%; border: 0; background: rgba(255,255,255,.92); box-shadow: 0 2px 10px rgba(0,0,0,.12); cursor: pointer; display: grid; place-items: center; color: var(--ink); }
+  .nav-btn:hover { background: #fff; }
+  .nav-btn.prev { left: 12px; } .nav-btn.next { right: 12px; }
+  .count { position: absolute; right: 12px; bottom: 12px; background: rgba(31,58,58,.72); color: #fff; font-size: 12px; font-weight: 500; padding: 4px 10px; border-radius: 999px; }
+  .zoom-hint { position: absolute; left: 12px; bottom: 12px; background: rgba(255,255,255,.92); color: var(--ink); font-size: 12px; font-weight: 500; padding: 4px 10px; border-radius: 999px; display: inline-flex; gap: 6px; align-items: center; pointer-events: none; }
+  .thumbs { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
+  .thumb { border: 2px solid transparent; padding: 0; border-radius: 10px; overflow: hidden; cursor: pointer; background: var(--line); opacity: .7; transition: opacity .2s ease, border-color .2s ease; }
+  .thumb img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; }
+  .thumb[aria-current="true"] { border-color: var(--teal); opacity: 1; }
+  .thumb:hover { opacity: 1; }
 
-  /* sessions */
-  .tiers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; align-items: stretch; }
-  .tier { position: relative; background: #fff; border: 1px solid var(--border); border-radius: 20px; padding: 26px 22px 22px; display: flex; flex-direction: column; box-shadow: 0 2px 14px rgba(47,79,79,.06); min-width: 0; }
-  .tier.pop { border: 2px solid var(--gold); box-shadow: 0 10px 34px rgba(215,144,104,.22); }
-  .ribbon { position: absolute; top: -12px; left: 22px; background: var(--gold); color: #fff; font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; font-weight: 700; padding: 5px 12px; border-radius: 999px; }
-  .tier .em { font-size: 28px; line-height: 1; }
-  .tier h3 { font-size: 22px; font-weight: 600; margin-top: 10px; }
-  .tier .sub { font-size: 13px; color: var(--muted); margin: 2px 0 14px; min-height: 40px; }
-  .price { font-size: 34px; font-weight: 700; color: var(--slate); line-height: 1; }
-  .price small { font-size: 12px; font-weight: 500; color: var(--muted); margin-left: 4px; }
-  .facts { display: flex; flex-wrap: wrap; gap: 6px; margin: 14px 0 4px; }
-  .fact { font-size: 11.5px; font-weight: 600; color: var(--teal-dk); background: rgba(81,137,125,.1); border-radius: 999px; padding: 4px 10px; }
-  .fact.gold { color: #8a4f2c; background: rgba(215,144,104,.16); }
-  .tier ul { list-style: none; margin: 14px 0 0; padding: 0; font-size: 13.5px; }
-  .tier li { padding: 5px 0 5px 22px; position: relative; line-height: 1.45; }
-  .tier li::before { content: '\2713'; position: absolute; left: 0; color: var(--teal); font-weight: 700; }
-  .tier details { margin-top: 6px; font-size: 13px; }
-  .tier summary { cursor: pointer; color: var(--teal-dk); font-weight: 600; padding: 6px 0; list-style: none; }
-  .tier summary::-webkit-details-marker { display: none; }
-  .tier summary::after { content: ' +'; }
-  .tier details[open] summary::after { content: ' \2212'; }
-  .tier .grp { font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; font-weight: 700; color: var(--gold-dk); margin: 12px 0 2px; }
-  .tier .go { margin-top: auto; padding-top: 20px; display: grid; gap: 8px; }
-  .tier .go .btn { width: 100%; }
-  .tier-note { font-size: 12px; color: var(--muted); text-align: center; }
-  .sheetnote { margin-top: 18px; font-size: 12.5px; color: var(--muted); }
+  .details { background: var(--card); border: 1px solid var(--line); border-radius: var(--r); padding: 28px 26px; box-shadow: var(--shadow); min-width: 0; }
+  .details h3 { font-size: 28px; font-weight: 600; }
+  .details .sub { color: var(--muted); font-size: 14.5px; margin-top: 2px; }
+  .d-price { display: flex; align-items: baseline; gap: 8px; margin: 18px 0 14px; }
+  .d-price b { font-size: 40px; line-height: 1; font-weight: 700; color: var(--ink); letter-spacing: -.02em; }
+  .d-price span { font-size: 13px; color: var(--muted); }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 500; padding: 6px 11px; border-radius: 999px; background: var(--teal-soft); color: var(--teal-dk); }
+  .chip.copper { background: var(--copper-soft); color: var(--copper-dk); }
+  .groups { margin-top: 20px; border-top: 1px solid var(--line); }
+  .group { padding: 14px 0 4px; }
+  .group h4 { margin: 0 0 6px; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--copper-dk); font-weight: 600; }
+  .group ul { list-style: none; margin: 0; padding: 0; font-size: 14px; }
+  .group li { display: flex; gap: 9px; padding: 4px 0; line-height: 1.45; }
+  .group li svg { flex: none; margin-top: 3px; color: var(--teal); }
+  .arrive { margin-top: 16px; background: var(--copper-soft); color: #7a4a2c; border-radius: 12px; padding: 12px 14px; font-size: 13.5px; line-height: 1.5; }
+  .arrive b { font-weight: 600; }
+  .d-cta { display: grid; gap: 10px; margin-top: 22px; }
+  .d-note { font-size: 12.5px; color: var(--muted); text-align: center; }
+  .d-note a { color: var(--teal-dk); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
 
-  /* looks */
-  .looks { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
-  .look { background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 20px 18px; min-width: 0; }
-  .look .em { font-size: 26px; }
-  .look h3 { font-size: 16.5px; font-weight: 600; margin: 8px 0 2px; }
-  .look .sub { font-size: 12px; color: var(--muted); margin-bottom: 10px; }
-  .look .add { display: inline-block; font-size: 12px; font-weight: 700; color: var(--gold-dk); margin-bottom: 10px; }
-  .look ul { list-style: none; padding: 0; margin: 0; font-size: 12.5px; color: var(--text); }
-  .look li { padding: 3px 0 3px 16px; position: relative; }
-  .look li::before { content: ''; position: absolute; left: 3px; top: 11px; width: 5px; height: 5px; border-radius: 50%; background: var(--gold); }
-  .keeps { margin-top: 18px; background: #fff; border: 1px dashed var(--teal-lt); border-radius: 16px; padding: 16px 18px; }
-  .keeps h3 { font-size: 14px; font-weight: 600; }
-  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
-  .chip { font-size: 12.5px; background: var(--light); border-radius: 999px; padding: 7px 14px; color: var(--text); }
-  .chip b { color: var(--gold-dk); font-weight: 700; margin-left: 4px; }
+  /* ── compare ── */
+  .tbl-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--r); background: var(--card); box-shadow: var(--shadow); -webkit-overflow-scrolling: touch; }
+  table.cmp { width: 100%; min-width: 600px; border-collapse: separate; border-spacing: 0; font-size: 14px; }
+  .cmp th, .cmp td { padding: 14px 16px; text-align: center; border-bottom: 1px solid var(--line); vertical-align: middle; }
+  .cmp tr:last-child td { border-bottom: 0; }
+  .cmp th:first-child, .cmp td:first-child { text-align: left; color: var(--muted); font-weight: 500; position: sticky; left: 0; background: var(--card); z-index: 1; min-width: 150px; }
+  .cmp thead th { padding-top: 20px; vertical-align: bottom; }
+  .cmp thead th b { display: block; font-size: 17px; color: var(--ink); font-weight: 600; }
+  .cmp thead th span.p { display: block; font-size: 22px; font-weight: 700; color: var(--ink); margin: 2px 0 10px; }
+  .cmp .hl { background: #fbf7f3; }
+  .cmp thead th.hl { border-top: 3px solid var(--copper); }
+  .cmp .yes { color: var(--teal); }
+  .cmp .no { color: #b8c2c0; }
+  .cmp td.val { color: var(--ink); font-weight: 500; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
-  /* proof */
+  /* ── looks ── */
+  .looks { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+  .look { background: var(--card); border: 1px solid var(--line); border-radius: var(--r); padding: 20px 18px; min-width: 0; }
+  .look .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--copper); margin-bottom: 12px; }
+  .look h3 { font-size: 17px; font-weight: 600; }
+  .look .sub { font-size: 12.5px; color: var(--muted); margin-top: 2px; }
+  .look .add { display: inline-block; margin-top: 10px; font-size: 13px; font-weight: 600; color: var(--copper-dk); }
+  .look p { margin: 8px 0 0; font-size: 13px; color: var(--text); line-height: 1.55; }
+  .keeps { margin-top: 16px; background: var(--card); border: 1px solid var(--line); border-radius: var(--r); padding: 18px 20px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 22px; font-size: 14px; }
+  .keeps b { color: var(--ink); font-weight: 600; margin-right: 6px; }
+  .keeps span em { font-style: normal; color: var(--copper-dk); font-weight: 600; margin-left: 4px; }
+
+  /* ── proof ── */
   .proof[hidden] { display: none; }
-  .rate { margin-top: 8px; font-size: 14px; color: var(--muted); }
-  .rate b { color: var(--slate); }
-  .quotes { display: flex; gap: 14px; overflow-x: auto; padding: 4px 2px 14px; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
-  .quote { flex: 0 0 min(320px, 82%); scroll-snap-align: start; background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 18px; }
-  .quote .st { color: var(--gold); letter-spacing: 2px; font-size: 14px; }
-  .quote p { margin: 8px 0 10px; font-size: 14px; }
-  .quote .by { font-size: 12px; color: var(--muted); font-weight: 600; }
+  .quotes { display: flex; gap: 16px; overflow-x: auto; padding: 4px 2px 16px; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
+  .quote { flex: 0 0 min(340px, 84%); scroll-snap-align: start; margin: 0; background: var(--card); border: 1px solid var(--line); border-radius: var(--r); padding: 22px; box-shadow: var(--shadow); }
+  .quote .st { color: var(--copper); letter-spacing: 2px; font-size: 15px; }
+  .quote p { margin: 10px 0 14px; font-size: 14.5px; color: var(--text); }
+  .quote .by { font-size: 13px; color: var(--muted); font-weight: 600; }
 
-  /* faq */
-  .faq details { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 0 18px; margin-bottom: 10px; }
-  .faq summary { cursor: pointer; font-weight: 600; font-size: 15px; padding: 16px 0; color: var(--slate); list-style: none; display: flex; justify-content: space-between; gap: 12px; }
+  /* ── steps + faq ── */
+  .steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+  .steps li { background: var(--card); border: 1px solid var(--line); border-radius: var(--r); padding: 20px; }
+  .steps .n { width: 30px; height: 30px; border-radius: 50%; background: var(--teal-soft); color: var(--teal-dk); font-weight: 700; font-size: 13px; display: grid; place-items: center; margin-bottom: 12px; }
+  .steps b { display: block; color: var(--ink); font-weight: 600; font-size: 15px; }
+  .steps span { font-size: 13.5px; color: var(--muted); }
+  .faq { max-width: 780px; margin: 0 auto; }
+  .faq details { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 0 20px; margin-bottom: 10px; }
+  .faq summary { cursor: pointer; font-weight: 600; font-size: 15.5px; padding: 18px 0; color: var(--ink); list-style: none; display: flex; justify-content: space-between; gap: 16px; align-items: center; }
   .faq summary::-webkit-details-marker { display: none; }
-  .faq summary::after { content: '+'; color: var(--teal); font-size: 20px; line-height: 1; }
-  .faq details[open] summary::after { content: '\2212'; }
-  .faq p { margin: 0 0 16px; font-size: 14px; color: var(--muted); max-width: 640px; }
+  .faq summary::after { content: ''; flex: none; width: 10px; height: 10px; border-right: 2px solid var(--teal); border-bottom: 2px solid var(--teal); transform: rotate(45deg) translateY(-3px); transition: transform .2s ease; }
+  .faq details[open] summary::after { transform: rotate(-135deg) translateY(-3px); }
+  .faq p { margin: 0 0 18px; font-size: 14.5px; color: var(--muted); }
 
-  /* closing */
-  .closing { margin-top: 64px; background: var(--slate); color: #fff; text-align: center; padding: 56px 0 60px; }
+  /* ── closing ── */
+  .closing { margin: 88px 0 0; }
+  .closing .box { background: var(--ink); color: #fff; border-radius: 24px; padding: 52px 28px; text-align: center; }
   .closing h2 { color: #fff; }
-  .closing p { color: rgba(255,255,255,.75); margin: 10px auto 26px; max-width: 460px; }
+  .closing p { color: rgba(255,255,255,.75); max-width: 460px; margin: 10px auto 26px; }
   .closing .cta-row { justify-content: center; }
-  .closing .msg { margin-top: 18px; font-size: 13px; color: rgba(255,255,255,.65); }
-  .closing .msg a { color: var(--gold-lt); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
-  footer { background: var(--slate-dk); color: rgba(255,255,255,.55); font-size: 12px; text-align: center; padding: 22px 20px 26px; line-height: 1.7; }
+  .closing .btn-ghost { background: transparent; color: #fff; border-color: rgba(255,255,255,.35); }
+  .closing .btn-ghost:hover { border-color: #fff; color: #fff; }
+  .closing .msg { margin-top: 20px; font-size: 13.5px; color: rgba(255,255,255,.65); }
+  .closing .msg a { color: #fff; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+  footer { text-align: center; font-size: 12.5px; color: var(--muted); padding: 32px 20px 40px; }
 
-  /* sticky mobile bar */
-  .sticky { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; background: rgba(255,255,255,.96); backdrop-filter: blur(8px); border-top: 1px solid var(--light2); padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px)); display: none; gap: 10px; transform: translateY(110%); transition: transform .25s ease; }
-  .sticky.show { transform: none; }
-  .sticky .btn { flex: 1; padding: 13px 14px; font-size: 14px; }
+  /* ── mobile book bar ── */
+  .bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 25; background: rgba(255,255,255,.97); backdrop-filter: blur(8px); border-top: 1px solid var(--line); padding: 10px max(16px, env(safe-area-inset-right, 0px)) calc(10px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); display: none; align-items: center; gap: 12px; transform: translateY(110%); transition: transform .25s ease; }
+  .bar.show { transform: none; }
+  .bar .info { flex: 1; min-width: 0; line-height: 1.25; }
+  .bar .info b { display: block; font-size: 15px; color: var(--ink); }
+  .bar .info span { font-size: 12.5px; color: var(--muted); }
 
-  @media (max-width: 880px) {
-    .hero-grid { grid-template-columns: minmax(0, 1fr); gap: 26px; padding-bottom: 40px; }
-    .tiers { grid-template-columns: minmax(0, 1fr); max-width: 520px; margin: 0 auto; }
+  /* ── lightbox ── */
+  .lb { position: fixed; inset: 0; z-index: 50; background: rgba(15,24,24,.94); display: flex; align-items: center; justify-content: center; padding: calc(56px + env(safe-area-inset-top, 0px)) 56px calc(56px + env(safe-area-inset-bottom, 0px)); touch-action: pan-y; }
+  .lb[hidden] { display: none; }
+  .lb img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; border-radius: 8px; }
+  .lb button { position: absolute; border: 0; background: rgba(255,255,255,.12); color: #fff; width: 46px; height: 46px; border-radius: 50%; cursor: pointer; display: grid; place-items: center; }
+  .lb button:hover { background: rgba(255,255,255,.22); }
+  .lb .x { top: calc(14px + env(safe-area-inset-top, 0px)); right: calc(14px + env(safe-area-inset-right, 0px)); }
+  .lb .lp { left: calc(10px + env(safe-area-inset-left, 0px)); top: 50%; transform: translateY(-50%); }
+  .lb .ln { right: calc(10px + env(safe-area-inset-right, 0px)); top: 50%; transform: translateY(-50%); }
+  .lb .lc { position: absolute; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); left: 0; right: 0; text-align: center; color: rgba(255,255,255,.8); font-size: 13px; }
+
+  @media (max-width: 920px) {
+    .hdr nav { display: none; }
+    .hero { padding-top: 32px; }
+    .hero-grid { grid-template-columns: minmax(0, 1fr); gap: 34px; }
+    .trio a:nth-child(1), .trio a:nth-child(3) { transform: none; }
+    .panel { grid-template-columns: minmax(0, 1fr); }
     .looks { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .steps ol { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .tier .sub { min-height: 0; }
-    .sticky { display: flex; }
-    body { padding-bottom: 72px; }
+    .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .sec { padding-top: 64px; }
+    .bar { display: flex; }
+    body { padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
+    .tabs { max-width: none; }
   }
   @media (max-width: 520px) {
-    .looks { grid-template-columns: minmax(0, 1fr); }
-    .btn { width: 100%; }
+    .hdr .btn { padding: 9px 14px; font-size: 13.5px; }
     .cta-row .btn { flex: 1 1 100%; }
+    .looks, .steps { grid-template-columns: minmax(0, 1fr); }
+    .details { padding: 22px 18px; }
+    .d-price b { font-size: 34px; }
+    .tab b { font-size: 14px; }
+    .tab small { font-size: 12px; }
+    .lb { padding: 64px 8px; }
+    .lb .lp, .lb .ln { top: auto; bottom: calc(10px + env(safe-area-inset-bottom, 0px)); transform: none; }
+    .lb .lp { left: 20px; } .lb .ln { right: 20px; }
   }
-  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .btn, .sticky { transition: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .btn, .bar, .trio img, .tab, .thumb, .faq summary::after { transition: none; }
+  }
 </style>
 </head>
 <body>
 
-<div class="hero" id="top">
-  <div class="wrap">
-    <div class="top">
-      <a href="https://hellotalentff-max.github.io/clicklounge_looklab/" aria-label="The Look Lab"><img src="https://hellotalentff-max.github.io/clicklounge/STUDIO_LOGO_GIF.gif" alt="ClickLounge Studio"></a>
-      <a class="small" href="#sessions">See sessions</a>
-    </div>
-    <div class="hero-grid">
-      <div>
-        <div class="eyebrow">The Look Lab · ClickLounge Studio</div>
-        <h1>Your portrait, <em>styled and directed.</em></h1>
-        <p>Pick a session, choose your look, and show up. We handle the lighting, the posing and the direction.</p>
-        <div class="cta-row">
-          <a class="btn btn-gold" id="cta-quiz" href="./">Find my look · 2 min</a>
-          <a class="btn btn-line" href="#sessions">Compare sessions</a>
-        </div>
-        <div class="hero-note">Reserve with a ₱300 deposit through GCash or BPI.</div>
-      </div>
-      <div class="hero-img">
-        <img src="https://hellotalentff-max.github.io/clicklounge/img_looklab.jpg" alt="A Look Lab portrait with printed keepsakes and gowns" width="800" height="500" fetchpriority="high">
-      </div>
-    </div>
+<header class="site">
+  <div class="wrap hdr">
+    <a href="https://hellotalentff-max.github.io/clicklounge_looklab/" aria-label="The Look Lab home"><img src="https://hellotalentff-max.github.io/clicklounge/STUDIO_LOGO_GIF.gif" alt="ClickLounge Studio" width="96" height="34"></a>
+    <nav aria-label="Page sections">
+      <a href="#sessions">Sessions</a>
+      <a href="#compare">Compare</a>
+      <a href="#looks">Looks</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <a class="btn btn-primary btn-sm" href="#sessions">Book a session</a>
   </div>
-</div>
-
-<div class="steps">
-  <div class="wrap">
-    <ol>
-      <li><span class="n">1</span><span><b>Pick a session</b>Standard, Signature or Prestige.</span></li>
-      <li><span class="n">2</span><span><b>Choose your look</b>Fashion, dreamy, or both.</span></li>
-      <li><span class="n">3</span><span><b>Reserve your slot</b>₱300 deposit, confirmed by the studio.</span></li>
-      <li><span class="n">4</span><span><b>Show up and shoot</b>We guide you through it.</span></li>
-    </ol>
-  </div>
-</div>
+</header>
 
 <main>
-  <section class="block" id="sessions">
-    <div class="wrap">
-      <header>
-        <div class="eyebrow">Step 1</div>
-        <h2>Choose your session</h2>
-        <p class="lead">Each session builds on the one before. Prices below are the live Look Lab prices and include the Styleshots look and digital copies.</p>
-      </header>
-      <div class="tiers" id="tiers" aria-live="polite"><div class="sheetnote">Loading sessions…</div></div>
-      <div class="sheetnote" id="tier-foot"></div>
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <div class="eyebrow">The Look Lab · ClickLounge Studio</div>
+        <h1>Portraits that are <span>styled and directed</span> for you</h1>
+        <p class="sub">Choose a session, see real photos from it, and book in a few taps. We handle the lighting, posing and direction.</p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="#sessions">See the sessions</a>
+          <a class="btn btn-ghost" href="./">Not sure? Take the 2-min quiz</a>
+        </div>
+        <div class="trust">
+          <span id="trust-rate" hidden><span class="stars" aria-hidden="true">★★★★★</span><b id="trust-rate-txt"></b></span>
+          <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>₱300 deposit to reserve</span>
+          <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>GCash or BPI</span>
+        </div>
+      </div>
+      <div class="trio" aria-label="One photo from each session">
+        <a href="#standard" data-pick="Standard"><img src="img/standard-1.jpg" alt="Standard session sample" width="1200" height="1500"><span class="cap">Standard</span></a>
+        <a href="#signature" data-pick="Signature"><img src="img/signature-2.jpg" alt="Signature session sample" width="1200" height="1500"><span class="cap">Signature</span></a>
+        <a href="#prestige" data-pick="Prestige"><img src="img/prestige-5.jpg" alt="Prestige session sample" width="1200" height="1500"><span class="cap">Prestige</span></a>
+      </div>
     </div>
   </section>
 
-  <section class="block" id="looks">
+  <section class="sec" id="sessions">
     <div class="wrap">
-      <header>
-        <div class="eyebrow">Step 2</div>
-        <h2>Choose your look</h2>
-        <p class="lead">Styleshots comes with every session. Add a signature look for the full editorial feel.</p>
-      </header>
+      <div class="sec-head">
+        <div class="eyebrow">Step 1</div>
+        <h2>Choose your session</h2>
+        <p class="lead">Tap a session to see real photos from it and everything that's included. Prices are the studio's live prices.</p>
+      </div>
+      <div class="tabs" role="tablist" aria-label="Sessions" id="tabs"></div>
+      <div class="panel" id="panel" role="tabpanel" aria-live="polite">
+        <div class="gallery">
+          <div class="stage" id="stage">
+            <img id="stage-img" src="img/prestige-1.jpg" alt="" width="1200" height="1500">
+            <button class="nav-btn prev" type="button" id="g-prev" aria-label="Previous photo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
+            <button class="nav-btn next" type="button" id="g-next" aria-label="Next photo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
+            <span class="zoom-hint"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3M11 8v6M8 11h6"/></svg>Tap to enlarge</span>
+            <span class="count" id="g-count"></span>
+          </div>
+          <div class="thumbs" id="thumbs"></div>
+        </div>
+        <div class="details" id="details"><div class="sub">Loading sessions…</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="compare">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow">Side by side</div>
+        <h2>Compare the sessions</h2>
+        <p class="lead">Every session includes the Styleshots look and your digital copies.</p>
+      </div>
+      <div class="tbl-wrap"><table class="cmp" id="cmp"></table></div>
+    </div>
+  </section>
+
+  <section class="sec" id="looks">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow">Step 2 · optional</div>
+        <h2>Add a signature look</h2>
+        <p class="lead">Styleshots is already included. Add a look for a bolder or dreamier set. You can choose it when you book or in the quiz.</p>
+      </div>
       <div class="looks" id="looksgrid"></div>
       <div class="keeps" id="keeps" hidden></div>
     </div>
   </section>
 
-  <section class="block proof" id="proof" hidden>
+  <section class="sec proof" id="proof" hidden>
     <div class="wrap">
-      <header>
+      <div class="sec-head">
         <div class="eyebrow">Kind words</div>
         <h2>What our clients say</h2>
-        <div class="rate" id="rate"></div>
-      </header>
+        <p class="lead" id="rate"></p>
+      </div>
       <div class="quotes" id="quotes" tabindex="0" aria-label="Client testimonials"></div>
     </div>
   </section>
 
-  <section class="block faq" id="faq">
+  <section class="sec" id="how">
     <div class="wrap">
-      <header>
+      <div class="sec-head">
+        <div class="eyebrow">How booking works</div>
+        <h2>From booking to your shoot</h2>
+      </div>
+      <ol class="steps">
+        <li><span class="n">1</span><b>Pick a session</b><span>Book it on this page, or let the quiz match you.</span></li>
+        <li><span class="n">2</span><b>Choose a date</b><span>See open slots and pick the time that suits you.</span></li>
+        <li><span class="n">3</span><b>Send the ₱300 deposit</b><span>Pay by GCash or BPI and enter your reference number.</span></li>
+        <li><span class="n">4</span><b>Arrive and shoot</b><span>We confirm by email. For Signature and Prestige, arrive 1.5 hours early for hair and makeup.</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="sec" id="faq">
+    <div class="wrap">
+      <div class="sec-head center">
         <div class="eyebrow">Before you book</div>
-        <h2>Good to know</h2>
-      </header>
-      <div id="faqlist">
-        <details><summary>How do I reserve my slot?</summary><p>Pick a date on the booking page, then send a ₱300 deposit through GCash or BPI and enter the reference number. The studio confirms your booking by email.</p></details>
-        <details><summary>What should I wear?</summary><p>Bring your own outfit, or rent a gown from our House of Roan collection. A gown is included with Prestige; for the other sessions it is an optional rental. The quiz shows gowns that fit your sizes.</p></details>
-        <details><summary>How long does the shoot take?</summary><p>Each session card shows the shoot time. Plan to arrive a little early, and allow extra time if you are changing outfits.</p></details>
-        <details><summary>What if I need to cancel or move my booking?</summary><p>Message us as early as you can. If you cancel or miss your session, your ₱300 deposit can still be used for another shoot booked within the same month as your original date.</p></details>
+        <h2>Questions, answered</h2>
+      </div>
+      <div class="faq">
+        <details><summary>What should I wear?</summary><p>Bring your own outfit, or rent a gown from our House of Roan and Serra collections. A gown is included with Prestige; for Standard and Signature it is an optional rental. The quiz shows gowns that fit your sizes.</p></details>
+        <details><summary>When should I arrive?</summary><p>For Signature and Prestige, please arrive 1.5 hours before your schedule for hair and makeup. Arriving later may shorten your actual shoot. For Standard, arrive a few minutes early.</p></details>
+        <details><summary>Can I reschedule?</summary><p>Yes. Rescheduling at least 5 days before your shoot is free. Rescheduling 4 days or less before your shoot, including on the day itself, has a ₱200 rescheduling fee. Your new date must be in the same month as your original booking for your deposit to stay valid.</p></details>
+        <details><summary>What if I cancel or miss my session?</summary><p>If you cancel at least 5 days before your shoot, your ₱300 deposit can be used for another package scheduled within the same month. Cancelling less than 5 days before your shoot forfeits the deposit. If you miss your session, your deposit can still be used for a shoot within the same month.</p></details>
         <details><summary>Can I get my photos faster?</summary><p id="rushans">Rush delivery is available as an add-on. Ask the studio when you book.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <section class="closing">
+    <div class="wrap">
+      <div class="box">
+        <h2>Ready for your portrait?</h2>
+        <p>Pick a session and a date. If you're not sure which session fits, the quiz will match you in two minutes.</p>
+        <div class="cta-row">
+          <a class="btn btn-copper" href="#sessions">Choose a session</a>
+          <a class="btn btn-ghost" href="./">Take the quiz</a>
+        </div>
+        <div class="msg">Questions? <a href="https://m.me/clicklounge.studio" target="_blank" rel="noopener">Message us on Messenger</a></div>
       </div>
     </div>
   </section>
 </main>
 
-<div class="closing" id="book">
-  <div class="wrap">
-    <h2>Ready when you are</h2>
-    <p>Not sure which session fits? Answer a few questions and we will match you with one.</p>
-    <div class="cta-row">
-      <a class="btn btn-gold" href="./">Find my look · 2 min</a>
-      <a class="btn btn-light" href="#sessions">Pick a session</a>
-    </div>
-    <div class="msg">Questions? <a href="https://m.me/clicklounge.studio" target="_blank" rel="noopener">Message us on Messenger</a></div>
-  </div>
-</div>
-<footer>ClickLounge Studio · The Look Lab<br>Prices and inclusions are read live from the studio, so they match what we quote you.</footer>
+<footer>ClickLounge Studio · The Look Lab<br>Prices and inclusions come straight from the studio, so they always match what we quote you.</footer>
 
-<div class="sticky" id="sticky">
-  <a class="btn btn-gold" href="./">Find my look</a>
-  <a class="btn btn-line" href="#sessions">See sessions</a>
+<div class="bar" id="bar">
+  <div class="info"><b id="bar-name">Prestige</b><span id="bar-price"></span></div>
+  <a class="btn btn-primary btn-sm" id="bar-book" href="#sessions">Book</a>
+</div>
+
+<div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="Photo viewer">
+  <img id="lb-img" alt="">
+  <button class="x" type="button" id="lb-x" aria-label="Close"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+  <button class="lp" type="button" id="lb-prev" aria-label="Previous photo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
+  <button class="ln" type="button" id="lb-next" aria-label="Next photo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
+  <div class="lc" id="lb-count"></div>
 </div>
 
 <!-- Prices and inclusions come from the live Look Lab, so there is one source of truth -->
@@ -276,85 +400,145 @@
   var STUDIO_API  = 'https://script.google.com/macros/s/AKfycbx_Y5nH34Rq16JJ2AxBDr30ttmDFuic61OqoC0u3Wq0zogHEhfoV6qE7uiNagI43flVgw/exec';
   // "Most booked": Prestige was 17 of the 28 Look Lab bookings recorded up to 2026-10-25. Update if that changes.
   var POPULAR = 'Prestige';
+  // Sample photos per session, in img/ (full 1200x1500) and img/thumb/. Add a file and raise the count to show more.
+  var PHOTOS = { Standard: 3, Signature: 4, Prestige: 5 };
+
+  var CHECK = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
+  var DASH  = '<span class="no" aria-label="Not included">—</span>';
+
+  var S = { tab: POPULAR, idx: 0 };
+  var touchX = null;
 
   function $(id) { return document.getElementById(id); }
   function h(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
   function peso(n) { return '₱' + Math.round(n).toLocaleString('en-PH'); }
   function ready() { return typeof SESSIONS !== 'undefined' && typeof MOODS !== 'undefined' && typeof buildInclusions === 'function'; }
+  function byKeep(id) { for (var i = 0; i < KEEPSAKES.length; i++) if (KEEPSAKES[i].id === id) return KEEPSAKES[i]; return null; }
+  function sess(id) { for (var i = 0; i < SESSIONS.length; i++) if (SESSIONS[i].id === id) return SESSIONS[i]; return SESSIONS[0]; }
+  function slug(id) { return String(id).toLowerCase(); }
+  function photos(id) {
+    var n = PHOTOS[id] || 0, out = [];
+    for (var i = 1; i <= n; i++) out.push({ full: 'img/' + slug(id) + '-' + i + '.jpg', thumb: 'img/thumb/' + slug(id) + '-' + i + '.jpg' });
+    return out;
+  }
 
   /* ── what a session includes, from the same rules the Look Lab uses ── */
-  function incFor(sess) {
-    var mid = 'styleshots';
-    return buildInclusions({ session: sess, mood: llMood(mid), keepsake: byKeep('digital'), extras: {}, extraDefs: EXTRAS,
-                             moodMinutes: moodMinutesOverride(sess.id, mid) });
+  function incFor(s) {
+    return buildInclusions({ session: s, mood: llMood('styleshots'), keepsake: byKeep('digital'), extras: {}, extraDefs: EXTRAS,
+                             moodMinutes: moodMinutesOverride(s.id, 'styleshots') });
   }
-  function byKeep(id) { for (var i = 0; i < KEEPSAKES.length; i++) if (KEEPSAKES[i].id === id) return KEEPSAKES[i]; return null; }
-
-  function bookingUrl(sess) {
-    var label = 'The Look Lab: ' + sess.name + ' + Styleshots + Digital';
-    return BOOKING_URL + '?pkg=' + encodeURIComponent(label) + '&price=' + encodeURIComponent(sess.price) +
-           '&dur=' + encodeURIComponent(slotMinutes(sess.id, 'styleshots', {})) +
+  function hmuOf(inc) {
+    for (var i = 0; i < inc.groups.length; i++) if (/hair/i.test(inc.groups[i].title)) return inc.groups[i].items[0];
+    return '';
+  }
+  function bookingUrl(s) {
+    return BOOKING_URL + '?pkg=' + encodeURIComponent('The Look Lab: ' + s.name + ' + Styleshots + Digital') +
+           '&price=' + encodeURIComponent(s.price) + '&dur=' + encodeURIComponent(slotMinutes(s.id, 'styleshots', {})) +
            '&desc=' + encodeURIComponent('Booked from the Look Lab page');
   }
 
-  function tierHtml(sess) {
-    var inc = incFor(sess), g = inc.groups || [];
-    var flat = [];
-    g.forEach(function (grp) { grp.items.forEach(function (it) { flat.push({ t: grp.title, i: it }); }); });
-    var head = flat.slice(0, 5), rest = flat.slice(5);
-    var rule = dressRule(sess.id, 'styleshots');
-    var facts = '';
-    if (inc.counts && inc.counts.mins) facts += '<span class="fact">' + inc.counts.mins + '-min shoot</span>';
-    if (rule === 'included') facts += '<span class="fact gold">Gown included</span>';
-    else if (rule === 'add-on') facts += '<span class="fact">Gown rental optional</span>';
-    var restHtml = '';
-    if (rest.length) {
-      var by = {}, order = [];
-      rest.forEach(function (x) { if (!by[x.t]) { by[x.t] = []; order.push(x.t); } by[x.t].push(x.i); });
-      restHtml = '<details><summary>Everything included</summary>' + order.map(function (t) {
-        return '<div class="grp">' + h(t) + '</div><ul>' + by[t].map(function (i) { return '<li>' + h(i) + '</li>'; }).join('') + '</ul>';
-      }).join('') + '</details>';
-    }
-    var pop = sess.id === POPULAR;
-    return '<article class="tier' + (pop ? ' pop' : '') + '">' +
-      (pop ? '<span class="ribbon">Most booked</span>' : '') +
-      '<div class="em" aria-hidden="true">' + h(sess.emoji || '') + '</div>' +
-      '<h3>' + h(sess.name) + '</h3>' +
-      '<div class="sub">' + h(sess.sub || '') + '</div>' +
-      '<div class="price">' + peso(sess.price) + '<small>per session</small></div>' +
-      '<div class="facts">' + facts + '</div>' +
-      '<ul>' + head.map(function (x) { return '<li>' + h(x.i) + '</li>'; }).join('') + '</ul>' + restHtml +
-      '<div class="go"><a class="btn ' + (pop ? 'btn-gold' : 'btn-teal') + '" href="' + h(bookingUrl(sess)) + '">Book ' + h(sess.name) + '</a>' +
-      '<div class="tier-note">₱300 deposit to reserve</div></div>' +
-    '</article>';
+  /* ── session tabs + panel ── */
+  function renderTabs() {
+    $('tabs').innerHTML = SESSIONS.map(function (s) {
+      var on = s.id === S.tab;
+      return '<button class="tab" role="tab" type="button" id="tab-' + slug(s.id) + '" aria-selected="' + on + '" tabindex="' + (on ? 0 : -1) + '" aria-controls="panel" data-id="' + h(s.id) + '">' +
+        (s.id === POPULAR ? '<span class="pop">Most booked</span>' : '') +
+        '<b>' + h(s.name) + '</b><small>' + peso(s.price) + '</small></button>';
+    }).join('');
+  }
+  function renderGallery() {
+    var list = photos(S.tab), s = sess(S.tab);
+    if (!list.length) return;
+    if (S.idx >= list.length) S.idx = 0;
+    var cur = list[S.idx];
+    var img = $('stage-img');
+    img.src = cur.full;
+    img.alt = s.name + ' session, sample photo ' + (S.idx + 1) + ' of ' + list.length;
+    $('g-count').textContent = (S.idx + 1) + ' / ' + list.length;
+    $('thumbs').style.gridTemplateColumns = 'repeat(' + Math.max(list.length, 4) + ', minmax(0, 1fr))';
+    $('thumbs').innerHTML = list.map(function (p, i) {
+      return '<button class="thumb" type="button" data-i="' + i + '" aria-label="Show photo ' + (i + 1) + '" aria-current="' + (i === S.idx) + '">' +
+        '<img src="' + h(p.thumb) + '" alt="" width="360" height="450" loading="lazy"></button>';
+    }).join('');
+    // warm the next photo so swiping feels instant
+    var nx = list[(S.idx + 1) % list.length]; if (nx) { var pre = new Image(); pre.src = nx.full; }
+  }
+  function renderDetails() {
+    var s = sess(S.tab), inc = incFor(s), rule = dressRule(s.id, 'styleshots');
+    var chips = '';
+    if (inc.counts.mins) chips += '<span class="chip">' + inc.counts.mins + '-minute shoot</span>';
+    if (rule === 'included') chips += '<span class="chip copper">Gown included</span>';
+    else if (rule === 'add-on') chips += '<span class="chip">Gown rental optional</span>';
+    var groups = inc.groups.map(function (g) {
+      return '<div class="group"><h4>' + h(g.title) + '</h4><ul>' + g.items.map(function (it) { return '<li>' + CHECK + '<span>' + h(it) + '</span></li>'; }).join('') + '</ul></div>';
+    }).join('');
+    $('details').innerHTML =
+      '<h3>' + h(s.name) + '</h3><div class="sub">' + h(s.sub || '') + '</div>' +
+      '<div class="d-price"><b>' + peso(s.price) + '</b><span>per session</span></div>' +
+      '<div class="chips">' + chips + '</div>' +
+      '<div class="groups">' + groups + '</div>' +
+      (hmuOf(inc) ? '<div class="arrive"><b>Arrive 1.5 hours early</b> for hair and makeup. Arriving later may shorten your shoot.</div>' : '') +
+      '<div class="d-cta"><a class="btn btn-primary btn-block" href="' + h(bookingUrl(s)) + '">Book ' + h(s.name) + ' · ' + peso(s.price) + '</a>' +
+      '<div class="d-note">₱300 deposit to reserve · <a href="./">Not sure? Take the quiz</a></div></div>';
+    $('bar-name').textContent = s.name;
+    $('bar-price').textContent = peso(s.price) + ' · ₱300 deposit to reserve';
+    $('bar-book').href = bookingUrl(s);
+    $('bar-book').textContent = 'Book ' + s.name;
+  }
+  function selectTab(id, focus) {
+    S.tab = id; S.idx = 0;
+    renderTabs(); renderGallery(); renderDetails();
+    if (focus) { var t = $('tab-' + slug(id)); if (t) t.focus(); }
+  }
+  function step(d) {
+    var n = photos(S.tab).length; if (!n) return;
+    S.idx = (S.idx + d + n) % n; renderGallery();
+    if (!$('lb').hidden) showLb();
   }
 
-  function lookHtml(m, isDouble) {
-    var add = m.price ? '+' + peso(m.price) : 'Included';
-    return '<div class="look"><div class="em" aria-hidden="true">' + h(m.emoji || '') + '</div>' +
-      '<h3>' + h(m.name) + '</h3><div class="sub">' + h(m.sub || '') + '</div>' +
-      '<span class="add">' + h(add) + '</span>' +
-      '<ul>' + (m.setDesign || []).map(function (d) { return '<li>' + h(d) + '</li>'; }).join('') + '</ul></div>';
+  /* ── compare table ── */
+  function renderCompare() {
+    var cols = SESSIONS.map(function (s) { return { s: s, inc: incFor(s), rule: dressRule(s.id, 'styleshots') }; });
+    function yes(b) { return b ? '<span class="yes" aria-label="Included">' + CHECK + '</span>' : DASH; }
+    function val(v) { return v ? '<span>' + h(v) + '</span>' : DASH; }
+    var rows = [
+      ['Shoot time',           function (c) { return val(c.inc.counts.mins ? c.inc.counts.mins + ' minutes' : ''); }],
+      ['Unlimited shots',      function (c) { return yes(c.inc.flags.unlimited); }],
+      ['Light styles',         function (c) { return val(c.inc.counts.styles || ''); }],
+      ['Outfit changes',       function (c) { return val(c.inc.counts.outfits || ''); }],
+      ['Hair & makeup',        function (c) { return val(hmuOf(c.inc)); }],
+      ['Edited photos',        function (c) { return val(c.inc.counts.edits || ''); }],
+      ['All digital copies',   function (c) { return yes(c.inc.flags.digital); }],
+      ['Gown',                 function (c) { return val(c.rule === 'included' ? 'Included' : c.rule === 'add-on' ? 'Optional rental' : ''); }],
+      ['8×24 printed portrait', function (c) { return yes(c.inc.flags.p8x24); }]
+    ];
+    var head = '<thead><tr><th scope="col"><span class="sr">Session</span></th>' + cols.map(function (c) {
+      var hl = c.s.id === POPULAR ? ' class="hl"' : '';
+      return '<th scope="col"' + hl + '><b>' + h(c.s.name) + '</b><span class="p">' + peso(c.s.price) + '</span>' +
+        '<a class="btn ' + (c.s.id === POPULAR ? 'btn-primary' : 'btn-ghost') + ' btn-sm" href="' + h(bookingUrl(c.s)) + '">Book</a></th>';
+    }).join('') + '</tr></thead>';
+    var body = '<tbody>' + rows.map(function (r) {
+      return '<tr><td>' + h(r[0]) + '</td>' + cols.map(function (c) {
+        return '<td class="val' + (c.s.id === POPULAR ? ' hl' : '') + '">' + r[1](c) + '</td>';
+      }).join('') + '</tr>';
+    }).join('') + '</tbody>';
+    $('cmp').innerHTML = head + body;
   }
 
-  function render() {
-    if (!ready()) {
-      $('tiers').innerHTML = '<div class="sheetnote">We could not load the sessions right now. <a class="btn btn-teal" href="https://m.me/clicklounge.studio" style="margin-top:10px;">Message us to book</a></div>';
-      return;
-    }
-    $('tiers').innerHTML = SESSIONS.map(tierHtml).join('');
-    $('tier-foot').textContent = 'Want a different look or a keepsake? Choose it in the next step, or let the quiz build it for you.';
+  /* ── looks + keepsakes ── */
+  function renderLooks() {
     var looks = MOODS.slice();
     if (typeof DOUBLE !== 'undefined' && DOUBLE) looks.push(DOUBLE);
-    $('looksgrid').innerHTML = looks.map(function (m) { return lookHtml(m); }).join('');
-    var keeps = KEEPSAKES;
-    if (keeps.length) {
-      var chips = keeps.map(function (k) {
-        var p = k.price ? '<b>+' + peso(k.price) + '</b>' : '<b>Included</b>';
-        return '<span class="chip">' + h(k.name) + p + '</span>';
-      }).join('');
+    $('looksgrid').innerHTML = looks.map(function (m) {
+      return '<div class="look"><div class="dot" aria-hidden="true"></div><h3>' + h(m.name) + '</h3><div class="sub">' + h(m.sub || '') + '</div>' +
+        '<span class="add">' + (m.price ? '+' + peso(m.price) : 'Included') + '</span>' +
+        '<p>' + (m.setDesign || []).map(h).join(' · ') + '</p></div>';
+    }).join('');
+    if (KEEPSAKES.length) {
       $('keeps').hidden = false;
-      $('keeps').innerHTML = '<h3>Make it a keepsake</h3><div class="chips">' + chips + '</div>';
+      $('keeps').innerHTML = '<b>Keepsakes</b>' + KEEPSAKES.map(function (k) {
+        return '<span>' + h(k.name) + '<em>' + (k.price ? '+' + peso(k.price) : 'Included') + '</em></span>';
+      }).join('');
     }
     if (typeof EXTRAS !== 'undefined') {
       for (var i = 0; i < EXTRAS.length; i++) if (EXTRAS[i].key === 'rush') {
@@ -363,7 +547,81 @@
     }
   }
 
-  /* ── real testimonials, first names only; the section stays hidden if they cannot load ── */
+  function renderAll() {
+    if (!ready()) {
+      $('details').innerHTML = '<div class="sub">We could not load the sessions right now.</div><div class="d-cta"><a class="btn btn-primary btn-block" href="https://m.me/clicklounge.studio">Message us to book</a></div>';
+      return;
+    }
+    renderTabs(); renderGallery(); renderDetails(); renderCompare(); renderLooks();
+  }
+
+  /* ── lightbox ── */
+  var lastFocus = null;
+  function showLb() {
+    var list = photos(S.tab), s = sess(S.tab), cur = list[S.idx];
+    $('lb-img').src = cur.full;
+    $('lb-img').alt = s.name + ' session, sample photo ' + (S.idx + 1) + ' of ' + list.length;
+    $('lb-count').textContent = s.name + ' · ' + (S.idx + 1) + ' / ' + list.length;
+  }
+  function openLb() { lastFocus = document.activeElement; showLb(); $('lb').hidden = false; document.body.style.overflow = 'hidden'; $('lb-x').focus(); }
+  function closeLb() { $('lb').hidden = true; document.body.style.overflow = ''; if (lastFocus) lastFocus.focus(); }
+
+  /* ── events ── */
+  $('tabs').addEventListener('click', function (e) { var b = e.target.closest('.tab'); if (b) selectTab(b.getAttribute('data-id')); });
+  $('tabs').addEventListener('keydown', function (e) {
+    var ids = SESSIONS.map(function (s) { return s.id; }), i = ids.indexOf(S.tab);
+    if (e.key === 'ArrowRight') { e.preventDefault(); selectTab(ids[(i + 1) % ids.length], true); }
+    if (e.key === 'ArrowLeft')  { e.preventDefault(); selectTab(ids[(i - 1 + ids.length) % ids.length], true); }
+  });
+  $('thumbs').addEventListener('click', function (e) { var b = e.target.closest('.thumb'); if (b) { S.idx = +b.getAttribute('data-i'); renderGallery(); } });
+  $('g-prev').addEventListener('click', function () { step(-1); });
+  $('g-next').addEventListener('click', function () { step(1); });
+  $('stage-img').addEventListener('click', openLb);
+  $('lb-x').addEventListener('click', closeLb);
+  $('lb-prev').addEventListener('click', function () { step(-1); });
+  $('lb-next').addEventListener('click', function () { step(1); });
+  $('lb').addEventListener('click', function (e) { if (e.target === $('lb')) closeLb(); });
+  document.addEventListener('keydown', function (e) {
+    if ($('lb').hidden) return;
+    if (e.key === 'Escape') closeLb();
+    if (e.key === 'ArrowRight') step(1);
+    if (e.key === 'ArrowLeft') step(-1);
+    if (e.key === 'Tab') { // keep focus inside the viewer
+      var f = [$('lb-x'), $('lb-prev'), $('lb-next')], i = f.indexOf(document.activeElement);
+      e.preventDefault(); f[(i + (e.shiftKey ? f.length - 1 : 1)) % f.length].focus();
+    }
+  });
+  function swipe(el) {
+    el.addEventListener('touchstart', function (e) { touchX = e.touches[0].clientX; }, { passive: true });
+    el.addEventListener('touchend', function (e) {
+      if (touchX === null) return;
+      var dx = e.changedTouches[0].clientX - touchX; touchX = null;
+      if (Math.abs(dx) > 40) step(dx < 0 ? 1 : -1);
+    });
+  }
+  swipe($('stage')); swipe($('lb'));
+
+  // Hero photos and #standard / #signature / #prestige links open that session
+  function fromHash() {
+    var m = /^#(standard|signature|prestige)$/i.exec(location.hash);
+    if (!m || !ready()) return false;
+    var id = m[1].charAt(0).toUpperCase() + m[1].slice(1).toLowerCase();
+    selectTab(id);
+    var sec = $('sessions'); if (sec) sec.scrollIntoView();
+    return true;
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('[data-pick]'), function (a) {
+    a.addEventListener('click', function (e) { e.preventDefault(); selectTab(a.getAttribute('data-pick')); $('sessions').scrollIntoView(); });
+  });
+  window.addEventListener('hashchange', fromHash);
+
+  /* ── mobile book bar: shows once the hero is out of view ── */
+  var hero = document.querySelector('.hero'), bar = $('bar');
+  if (hero && 'IntersectionObserver' in window) {
+    new IntersectionObserver(function (es) { bar.classList.toggle('show', !es[0].isIntersecting); }, { threshold: 0 }).observe(hero);
+  }
+
+  /* ── real testimonials, first names only; hidden if they cannot load ── */
   function loadProof(cb) {
     try { var c = JSON.parse(sessionStorage.getItem('sp_cache_v1') || 'null'); if (c && Date.now() - c.t < 300000) { cb(c.d); return; } } catch (e) {}
     var name = '_sp_' + Math.random().toString(36).slice(2), done = false, sc = document.createElement('script');
@@ -382,24 +640,24 @@
   function stars(n) { n = Math.max(0, Math.min(5, Math.round(n))); return '★★★★★'.slice(0, n) + '☆☆☆☆☆'.slice(0, 5 - n); }
   function showProof(d) {
     var list = (d.testimonials || []).filter(function (t) { return t && t.message; }).slice(0, 8);
+    var r = d.rating || {};
+    if (r.count >= 10 && r.avg) {
+      var txt = Number(r.avg).toFixed(1) + ' from ' + r.count + ' client reviews';
+      $('rate').textContent = txt;
+      $('trust-rate-txt').textContent = txt;
+      $('trust-rate').hidden = false;
+    }
     if (!list.length) return;
     $('quotes').innerHTML = list.map(function (t) {
-      return '<figure class="quote" style="margin:0;"><div class="st" aria-label="' + h(t.rating) + ' out of 5 stars">' + stars(t.rating) + '</div>' +
+      return '<figure class="quote"><div class="st" aria-label="' + h(t.rating) + ' out of 5 stars">' + stars(t.rating) + '</div>' +
         '<p>“' + h(t.message) + '”</p><div class="by">' + h(t.name) + ', ClickLounge client</div></figure>';
     }).join('');
-    var r = d.rating || {};
-    if (r.count >= 10 && r.avg) $('rate').innerHTML = '<b>' + h(Number(r.avg).toFixed(1)) + ' / 5</b> from ' + h(r.count) + ' client reviews';
     $('proof').hidden = false;
   }
 
-  /* ── sticky bar appears once the hero is out of view (phones only) ── */
-  var hero = document.querySelector('.hero'), bar = $('sticky');
-  if (hero && 'IntersectionObserver' in window) {
-    new IntersectionObserver(function (es) { bar.classList.toggle('show', !es[0].isIntersecting); }, { threshold: 0 }).observe(hero);
-  }
-
-  render();
-  if (typeof loadLookLab === 'function') loadLookLab(function () { render(); });
+  renderAll();
+  fromHash();
+  if (typeof loadLookLab === 'function') loadLookLab(function () { renderAll(); });
   loadProof(showProof);
 })();
 </script>
