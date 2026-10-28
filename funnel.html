@@ -87,14 +87,28 @@
   .gallery { min-width: 0; }
   @media (min-width: 921px) { .gallery { position: sticky; top: calc(var(--hdr) + 20px); } }
   .stage { position: relative; border-radius: var(--r); overflow: hidden; background: var(--line); box-shadow: var(--shadow); aspect-ratio: 4 / 5; touch-action: pan-y; }
-  .stage img { width: 100%; height: 100%; object-fit: cover; cursor: zoom-in; }
+  /* carousel: slides sit off to the right until shown; the one leaving slides out the other side */
+  .track { position: absolute; inset: 0; cursor: zoom-in; }
+  .slide { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform: translateX(100%); user-select: none; -webkit-user-drag: none; }
+  .slide.anim { transition: transform .7s cubic-bezier(.22, .61, .36, 1); }
+  .prog { position: absolute; top: 12px; left: 12px; right: 12px; display: flex; gap: 4px; pointer-events: none; }
+  .prog i { flex: 1; height: 3px; border-radius: 2px; background: rgba(255,255,255,.45); box-shadow: 0 0 3px rgba(0,0,0,.25); overflow: hidden; }
+  .prog i::after { content: ''; display: block; height: 100%; background: #fff; transform: scaleX(0); transform-origin: left; }
+  .prog i.done::after { transform: none; }
+  .prog i.run::after { animation: prog-fill 4.5s linear forwards; }
+  .stage.paused .prog i.run::after { animation-play-state: paused; }
+  @keyframes prog-fill { to { transform: none; } }
+  .pp { position: absolute; top: 24px; right: 12px; width: 34px; height: 34px; border-radius: 50%; border: 0; background: rgba(255,255,255,.92); box-shadow: 0 2px 10px rgba(0,0,0,.12); cursor: pointer; display: grid; place-items: center; color: var(--ink); }
+  .pp:hover { background: #fff; }
   .nav-btn { position: absolute; top: 50%; transform: translateY(-50%); width: 42px; height: 42px; border-radius: 50%; border: 0; background: rgba(255,255,255,.92); box-shadow: 0 2px 10px rgba(0,0,0,.12); cursor: pointer; display: grid; place-items: center; color: var(--ink); }
   .nav-btn:hover { background: #fff; }
   .nav-btn.prev { left: 12px; } .nav-btn.next { right: 12px; }
   .count { position: absolute; right: 12px; bottom: 12px; background: rgba(31,58,58,.72); color: #fff; font-size: 12px; font-weight: 500; padding: 4px 10px; border-radius: 999px; }
   .zoom-hint { position: absolute; left: 12px; bottom: 12px; background: rgba(255,255,255,.92); color: var(--ink); font-size: 12px; font-weight: 500; padding: 4px 10px; border-radius: 999px; display: inline-flex; gap: 6px; align-items: center; pointer-events: none; }
-  .thumbs { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
-  .thumb { border: 2px solid transparent; padding: 0; border-radius: 10px; overflow: hidden; cursor: pointer; background: var(--line); opacity: .7; transition: opacity .2s ease, border-color .2s ease; }
+  /* about five and a half thumbs show at once; the strip scrolls sideways when a session has more */
+  .thumbs { position: relative; display: flex; gap: 8px; margin-top: 10px; overflow-x: auto; scroll-snap-type: x proximity; scrollbar-width: none; }
+  .thumbs::-webkit-scrollbar { display: none; }
+  .thumb { flex: 0 0 calc((100% - 40px) / 5.4); scroll-snap-align: start; border: 2px solid transparent; padding: 0; border-radius: 10px; overflow: hidden; cursor: pointer; background: var(--line); opacity: .7; transition: opacity .2s ease, border-color .2s ease; }
   .thumb img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; }
   .thumb[aria-current="true"] { border-color: var(--teal); opacity: 1; }
   .thumb:hover { opacity: 1; }
@@ -246,7 +260,7 @@
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
     .pick.need .pick-grid { animation: none; }
-    .btn, .bar, .trio img, .tab, .thumb, .faq summary::after { transition: none; }
+    .btn, .bar, .trio img, .tab, .thumb, .faq summary::after, .slide.anim { transition: none; }
   }
 </style>
 </head>
@@ -301,7 +315,9 @@
       <div class="panel" id="panel" role="tabpanel" aria-live="polite">
         <div class="gallery">
           <div class="stage" id="stage">
-            <img id="stage-img" src="img/prestige-1.jpg" alt="" width="1200" height="1500">
+            <div class="track" id="track"><img class="slide" src="img/prestige-1.jpg" alt="" width="1200" height="1500" style="transform:none"></div>
+            <div class="prog" id="prog" aria-hidden="true"></div>
+            <button class="pp" type="button" id="g-pp" aria-label="Pause slideshow"></button>
             <button class="nav-btn prev" type="button" id="g-prev" aria-label="Previous photo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
             <button class="nav-btn next" type="button" id="g-next" aria-label="Next photo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
             <span class="zoom-hint"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3M11 8v6M8 11h6"/></svg>Tap to enlarge</span>
@@ -420,7 +436,7 @@
   // "Most booked": Prestige was 17 of the 28 Look Lab bookings recorded up to 2026-10-25. Update if that changes.
   var POPULAR = 'Prestige';
   // Sample photos per session, in img/ (full 1200x1500) and img/thumb/. Add a file and raise the count to show more.
-  var PHOTOS = { Standard: 3, Signature: 4, Prestige: 5 };
+  var PHOTOS = { Standard: 4, Signature: 5, Prestige: 10 };
 
   var CHECK = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
   var DASH  = '<span class="no" aria-label="Not included">—</span>';
@@ -487,22 +503,64 @@
         '<b>' + h(s.name) + '</b><small>' + peso(s.price) + '</small></button>';
     }).join('');
   }
-  function renderGallery() {
+  /* ── photo carousel: moves on by itself every 4.5s (the progress bar's animation sets the pace) ── */
+  var REDUCE = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  // Autoplay stops while the visitor hovers, tabs into the gallery, opens the viewer, or scrolls it out of sight.
+  // It starts off for people who ask their device for less motion; the play button turns it on.
+  var AUTO = { user: !REDUCE, hover: false, focus: false, seen: true };
+  var shown = { tab: null, idx: -1 };
+  var ICON_PAUSE = '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>';
+  var ICON_PLAY  = '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l11-6.5a1 1 0 0 0 0-1.72l-11-6.5A1 1 0 0 0 8 5.5z"/></svg>';
+  function autoOn() { return AUTO.user && !AUTO.hover && !AUTO.focus && AUTO.seen && $('lb').hidden && !document.hidden; }
+  function syncAuto() {
+    $('stage').classList.toggle('paused', !autoOn());
+    $('g-pp').innerHTML = AUTO.user ? ICON_PAUSE : ICON_PLAY;
+    $('g-pp').setAttribute('aria-label', AUTO.user ? 'Pause slideshow' : 'Play slideshow');
+  }
+  function loadSlide(el, p) { if (el && !el.getAttribute('src')) el.src = p.full; }
+  // dir: 1 = next (comes in from the right), -1 = previous, 0 = jump without sliding
+  function renderGallery(dir) {
     var list = photos(S.tab), s = sess(S.tab);
     if (!list.length) return;
     if (S.idx >= list.length) S.idx = 0;
-    var cur = list[S.idx];
-    var img = $('stage-img');
-    img.src = cur.full;
-    img.alt = s.name + ' session, sample photo ' + (S.idx + 1) + ' of ' + list.length;
+    var track = $('track'), tb = $('thumbs');
+    if (shown.tab !== S.tab) {
+      track.innerHTML = list.map(function (p, i) {
+        return '<img class="slide" alt="' + h(s.name + ' session, sample photo ' + (i + 1) + ' of ' + list.length) + '" width="1200" height="1500" draggable="false">';
+      }).join('');
+      $('prog').innerHTML = list.map(function () { return '<i></i>'; }).join('');
+      tb.innerHTML = list.map(function (p, i) {
+        return '<button class="thumb" type="button" data-i="' + i + '" aria-label="Show photo ' + (i + 1) + '">' +
+          '<img src="' + h(p.thumb) + '" alt="" width="360" height="450" loading="lazy"></button>';
+      }).join('');
+      shown = { tab: S.tab, idx: -1 };
+    }
+    var slides = track.children, inc = slides[S.idx], out = shown.idx >= 0 ? slides[shown.idx] : null;
+    loadSlide(inc, list[S.idx]);
+    if (out && out !== inc && dir && !REDUCE) {
+      inc.classList.remove('anim');
+      inc.style.transform = 'translateX(' + (dir * 100) + '%)';
+      void inc.offsetWidth; // park it on the entry side before it slides in
+      inc.classList.add('anim'); out.classList.add('anim');
+      inc.style.transform = 'none';
+      out.style.transform = 'translateX(' + (-dir * 100) + '%)';
+    } else {
+      for (var i = 0; i < slides.length; i++) { slides[i].classList.remove('anim'); slides[i].style.transform = i === S.idx ? 'none' : ''; }
+    }
+    shown.idx = S.idx;
+    // warm the next photo so it is ready when the carousel moves on
+    loadSlide(slides[(S.idx + 1) % list.length], list[(S.idx + 1) % list.length]);
+
+    Array.prototype.forEach.call($('prog').children, function (seg, i) {
+      seg.className = '';
+      if (i === S.idx) { void seg.offsetWidth; seg.className = 'run'; } // restart the fill
+      else if (i < S.idx) seg.className = 'done';
+    });
     $('g-count').textContent = (S.idx + 1) + ' / ' + list.length;
-    $('thumbs').style.gridTemplateColumns = 'repeat(' + Math.max(list.length, 4) + ', minmax(0, 1fr))';
-    $('thumbs').innerHTML = list.map(function (p, i) {
-      return '<button class="thumb" type="button" data-i="' + i + '" aria-label="Show photo ' + (i + 1) + '" aria-current="' + (i === S.idx) + '">' +
-        '<img src="' + h(p.thumb) + '" alt="" width="360" height="450" loading="lazy"></button>';
-    }).join('');
-    // warm the next photo so swiping feels instant
-    var nx = list[(S.idx + 1) % list.length]; if (nx) { var pre = new Image(); pre.src = nx.full; }
+    Array.prototype.forEach.call(tb.children, function (b, i) { b.setAttribute('aria-current', String(i === S.idx)); });
+    var t = tb.children[S.idx];
+    if (t) tb.scrollTo({ left: t.offsetLeft - (tb.clientWidth - t.offsetWidth) / 2, behavior: REDUCE ? 'auto' : 'smooth' });
+    syncAuto();
   }
   function pickerHtml(s) {
     return '<div class="pick" id="pick"><h4>Choose your look</h4><p class="hint">Pick one to book. Styleshots is included in the price.</p>' +
@@ -559,7 +617,7 @@
   }
   function step(d) {
     var n = photos(S.tab).length; if (!n) return;
-    S.idx = (S.idx + d + n) % n; renderGallery();
+    S.idx = (S.idx + d + n) % n; renderGallery(d);
     if (!$('lb').hidden) showLb();
   }
 
@@ -630,8 +688,8 @@
     $('lb-img').alt = s.name + ' session, sample photo ' + (S.idx + 1) + ' of ' + list.length;
     $('lb-count').textContent = s.name + ' · ' + (S.idx + 1) + ' / ' + list.length;
   }
-  function openLb() { lastFocus = document.activeElement; showLb(); $('lb').hidden = false; document.body.style.overflow = 'hidden'; $('lb-x').focus(); }
-  function closeLb() { $('lb').hidden = true; document.body.style.overflow = ''; if (lastFocus) lastFocus.focus(); }
+  function openLb() { lastFocus = document.activeElement; showLb(); $('lb').hidden = false; document.body.style.overflow = 'hidden'; $('lb-x').focus(); syncAuto(); }
+  function closeLb() { $('lb').hidden = true; document.body.style.overflow = ''; if (lastFocus) lastFocus.focus(); syncAuto(); }
 
   /* ── events ── */
   $('tabs').addEventListener('click', function (e) { var b = e.target.closest('.tab'); if (b) selectTab(b.getAttribute('data-id')); });
@@ -649,10 +707,26 @@
     if (t.hasAttribute('data-choose-session')) { selectTab(t.getAttribute('data-choose-session')); needLook(); return; }
     e.preventDefault(); needLook();
   });
-  $('thumbs').addEventListener('click', function (e) { var b = e.target.closest('.thumb'); if (b) { S.idx = +b.getAttribute('data-i'); renderGallery(); } });
+  $('thumbs').addEventListener('click', function (e) {
+    var b = e.target.closest('.thumb'); if (!b) return;
+    var to = +b.getAttribute('data-i'); if (to === S.idx) return;
+    var d = to > S.idx ? 1 : -1; S.idx = to; renderGallery(d);
+  });
   $('g-prev').addEventListener('click', function () { step(-1); });
   $('g-next').addEventListener('click', function () { step(1); });
-  $('stage-img').addEventListener('click', openLb);
+  $('track').addEventListener('click', openLb);
+  // the progress bar finishing its fill is what moves the carousel on
+  $('prog').addEventListener('animationend', function () { if (autoOn()) step(1); });
+  $('g-pp').addEventListener('click', function () { AUTO.user = !AUTO.user; syncAuto(); });
+  var gal = document.querySelector('.gallery');
+  gal.addEventListener('pointerenter', function (e) { if (e.pointerType === 'mouse') { AUTO.hover = true; syncAuto(); } });
+  gal.addEventListener('pointerleave', function () { AUTO.hover = false; syncAuto(); });
+  gal.addEventListener('focusin', function (e) { AUTO.focus = e.target.matches(':focus-visible'); syncAuto(); });
+  gal.addEventListener('focusout', function () { AUTO.focus = false; syncAuto(); });
+  document.addEventListener('visibilitychange', syncAuto);
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(function (es) { AUTO.seen = es[0].isIntersecting; syncAuto(); }, { threshold: 0.4 }).observe($('stage'));
+  }
   $('lb-x').addEventListener('click', closeLb);
   $('lb-prev').addEventListener('click', function () { step(-1); });
   $('lb-next').addEventListener('click', function () { step(1); });
