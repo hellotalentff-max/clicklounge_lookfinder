@@ -1,0 +1,496 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Prestige Twofold · ClickLounge Studio</title>
+<meta name="description" content="Rich girl or angel? Be both. The Coat Code and Angelic Muse looks in one guided Prestige session at ClickLounge Studio, Antipolo. Reserve with a ₱300 deposit.">
+<meta name="theme-color" content="#f7f5f1">
+<meta property="og:title" content="Prestige Twofold · ClickLounge Studio">
+<meta property="og:description" content="Two completely different looks in one guided session: fur coat and angel wings, glam makeup, 10 edited photos.">
+<meta property="og:image" content="https://looklab.clickloungestudio.com/img/twofold/twofold-1.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* Same system as the Look Lab page (funnel.html): warm ivory ground, white cards, studio teal for actions, copper for accents */
+  :root {
+    --bg:#f7f5f1; --card:#ffffff; --ink:#1f3a3a; --text:#2b3f3f; --muted:#6b7f7d;
+    --teal:#51897d; --teal-dk:#3d6b61; --teal-soft:#e7f0ee;
+    --copper:#d79068; --copper-dk:#a8653f; --copper-soft:#fbefe7;
+    --line:#e7e2da; --shadow:0 1px 2px rgba(31,58,58,.05), 0 8px 24px rgba(31,58,58,.06);
+    --r:16px; --hdr:60px;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: calc(var(--hdr) + 12px); }
+  body { margin: 0; font-family: 'Poppins', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; -webkit-font-smoothing: antialiased; padding-bottom: 84px; }
+  a { color: inherit; text-decoration: none; }
+  img, video { max-width: 100%; height: auto; display: block; }
+  button { font-family: inherit; color: inherit; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); }
+  h1, h2, h3 { color: var(--ink); margin: 0; text-wrap: balance; letter-spacing: -.015em; }
+  h2 { font-size: clamp(26px, 4vw, 36px); line-height: 1.15; font-weight: 600; }
+  .eyebrow { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; font-weight: 600; color: var(--copper-dk); }
+  .lead { color: var(--muted); font-size: 15.5px; max-width: 560px; margin: 10px 0 0; }
+  .sec { padding: 72px 0 0; }
+  .sec-head { margin-bottom: 26px; }
+  .sec-head.center { text-align: center; }
+  .sec-head.center .lead { margin-left: auto; margin-right: auto; }
+
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 1.5px solid transparent; border-radius: 12px; padding: 15px 24px; font-weight: 600; font-size: 15.5px; cursor: pointer; transition: background .2s ease, border-color .2s ease, transform .2s ease; white-space: nowrap; }
+  .btn:active { transform: translateY(1px); }
+  .btn:focus-visible, a:focus-visible, button:focus-visible, summary:focus-visible { outline: 3px solid rgba(215,144,104,.6); outline-offset: 2px; }
+  .btn-primary { background: var(--teal); color: #fff; }
+  .btn-primary:hover { background: var(--teal-dk); }
+  .btn-ghost { border-color: var(--line); background: var(--card); color: var(--ink); }
+  .btn-ghost:hover { border-color: var(--teal); }
+  .btn-block { width: 100%; }
+
+  /* header */
+  .hdr { position: sticky; top: 0; z-index: 20; height: var(--hdr); background: rgba(247,245,241,.92); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+  .hdr .wrap { height: 100%; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .brand { font-weight: 600; color: var(--ink); font-size: 15px; }
+  .brand span { color: var(--muted); font-weight: 500; }
+  .hdr .btn { padding: 9px 16px; font-size: 14px; }
+
+  /* hero */
+  .hero { padding: 28px 0 0; }
+  .hero-grid { display: grid; gap: 28px; align-items: center; }
+  @media (min-width: 860px) { .hero-grid { grid-template-columns: 1fr 1fr; gap: 48px; } .hero { padding-top: 48px; } }
+  .hero-media { position: relative; border-radius: 20px; overflow: hidden; box-shadow: var(--shadow); background: #2b1a14; aspect-ratio: 4 / 5; }
+  .hero-media video, .hero-media img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; }
+  /* phones: keep the headline, price and Book button on the first screen */
+  @media (max-width: 859px) { .hero { padding-top: 16px; } .hero-grid { gap: 18px; } .hero-media { aspect-ratio: auto; height: min(42vh, 360px); } }
+  .tag { position: absolute; left: 14px; top: 14px; background: rgba(255,255,255,.92); color: var(--ink); font-size: 12.5px; font-weight: 600; padding: 7px 12px; border-radius: 999px; box-shadow: 0 4px 14px rgba(0,0,0,.15); }
+  h1 { font-size: clamp(32px, 6.4vw, 54px); line-height: 1.04; font-weight: 700; margin-top: 8px; }
+  @media (max-width: 859px) { .hero .lead { font-size: 14.5px; } .price-row { margin-top: 14px; } .price-row b { font-size: 34px; } .hero-cta { margin-top: 14px; } }
+  h1 em { font-style: normal; color: var(--copper-dk); }
+  .price-row { display: flex; align-items: baseline; flex-wrap: wrap; gap: 10px 14px; margin: 20px 0 6px; }
+  .price-row b { font-size: 40px; line-height: 1; color: var(--ink); font-weight: 700; letter-spacing: -.02em; }
+  .price-row s { color: var(--muted); font-size: 17px; }
+  .save { background: var(--copper-soft); color: var(--copper-dk); font-weight: 600; font-size: 13px; padding: 5px 10px; border-radius: 999px; }
+  .hero-cta { display: grid; gap: 10px; margin-top: 20px; max-width: 420px; }
+  .fine { color: var(--muted); font-size: 13.5px; }
+  .trust { display: flex; flex-wrap: wrap; gap: 8px 16px; margin-top: 16px; font-size: 13.5px; color: var(--muted); }
+  .trust b { color: var(--copper-dk); }
+
+  /* two looks */
+  .looks { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .look { position: relative; border-radius: var(--r); overflow: hidden; background: var(--card); box-shadow: var(--shadow); }
+  .look img { width: 100%; aspect-ratio: 2 / 3; object-fit: cover; }
+  .look figcaption { padding: 12px 14px 14px; }
+  .look figcaption b { display: block; color: var(--ink); font-size: 15px; }
+  .look figcaption span { color: var(--muted); font-size: 13px; }
+  .look .num { position: absolute; left: 10px; top: 10px; background: var(--ink); color: #fff; font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 999px; }
+  .apart { text-align: center; margin: 14px 0 0; color: var(--muted); font-size: 14px; }
+
+  /* gallery */
+  .gal { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .gal button { padding: 0; border: 0; border-radius: 12px; overflow: hidden; cursor: zoom-in; background: var(--line); aspect-ratio: 4 / 5; }
+  .gal img { width: 100%; height: 100%; object-fit: cover; transition: transform .3s ease; }
+  .gal button:hover img { transform: scale(1.03); }
+  dialog.lb { border: 0; padding: 0; background: transparent; max-width: min(92vw, 720px); max-height: 92vh; }
+  dialog.lb::backdrop { background: rgba(20,24,24,.88); }
+  dialog.lb img { max-height: 84vh; width: auto; margin: 0 auto; border-radius: 12px; }
+  .lb-bar { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 10px; color: #fff; font-size: 14px; }
+  .lb-bar button { background: rgba(255,255,255,.14); border: 0; color: #fff; border-radius: 10px; padding: 10px 14px; cursor: pointer; font-weight: 600; }
+
+  /* inclusions */
+  .card { background: var(--card); border-radius: var(--r); box-shadow: var(--shadow); padding: 24px; }
+  .inc { display: grid; gap: 18px; }
+  @media (min-width: 760px) { .inc { grid-template-columns: 1fr 1fr; } }
+  .group h4 { margin: 0 0 8px; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--copper-dk); }
+  .group ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; }
+  .group li { display: flex; gap: 9px; align-items: flex-start; font-size: 14.5px; }
+  .group li svg { flex: none; margin-top: 4px; color: var(--teal); }
+  .inc-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--line); }
+  .inc-foot .p b { font-size: 26px; color: var(--ink); }
+  .inc-foot .p s { color: var(--muted); margin-left: 8px; }
+  .size-note { margin: 18px 0 0; padding: 14px 16px; border-radius: 12px; background: var(--copper-soft); color: var(--text); font-size: 14.5px; }
+  .size-note b { color: var(--copper-dk); }
+  .size-note a { color: var(--teal-dk); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+
+  /* reassurance */
+  .why { display: grid; gap: 12px; }
+  @media (min-width: 760px) { .why { grid-template-columns: repeat(3, 1fr); } }
+  .why .card { padding: 20px; }
+  .why h3 { font-size: 17px; margin-bottom: 6px; }
+  .why p { margin: 0; color: var(--muted); font-size: 14.5px; }
+  .ico { width: 40px; height: 40px; border-radius: 12px; background: var(--teal-soft); color: var(--teal-dk); display: grid; place-items: center; margin-bottom: 12px; font-size: 20px; }
+
+  /* reviews */
+  .quotes { display: grid; gap: 12px; }
+  @media (min-width: 760px) { .quotes { grid-template-columns: repeat(2, 1fr); } }
+  .quote { margin: 0; background: var(--card); border-radius: var(--r); box-shadow: var(--shadow); padding: 18px 20px; }
+  .quote .st { color: var(--copper); letter-spacing: 2px; }
+  .quote p { margin: 6px 0 8px; color: var(--text); }
+  .quote .by { color: var(--muted); font-size: 13px; }
+
+  /* steps */
+  .steps { display: grid; gap: 12px; counter-reset: s; }
+  @media (min-width: 760px) { .steps { grid-template-columns: repeat(3, 1fr); } }
+  .step { background: var(--card); border-radius: var(--r); box-shadow: var(--shadow); padding: 20px; }
+  .step b { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--teal); color: #fff; font-size: 14px; margin-bottom: 10px; }
+  .step h3 { font-size: 16px; margin-bottom: 4px; }
+  .step p { margin: 0; color: var(--muted); font-size: 14px; }
+
+  /* faq */
+  .faq { display: grid; gap: 10px; max-width: 760px; }
+  details { background: var(--card); border-radius: 14px; box-shadow: var(--shadow); padding: 4px 18px; }
+  summary { cursor: pointer; font-weight: 600; color: var(--ink); padding: 14px 0; list-style: none; display: flex; justify-content: space-between; gap: 12px; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: "+"; color: var(--teal); font-size: 20px; line-height: 1; }
+  details[open] summary::after { content: "–"; }
+  details p { margin: 0 0 14px; color: var(--muted); font-size: 14.5px; }
+
+  /* final */
+  .final { margin: 72px 0 0; background: var(--ink); color: #fff; border-radius: 22px; padding: 36px 24px; text-align: center; }
+  .final h2 { color: #fff; }
+  .final p { color: rgba(255,255,255,.75); margin: 10px auto 22px; max-width: 460px; }
+  .final .btn-primary { background: var(--copper); }
+  .final .btn-primary:hover { background: var(--copper-dk); }
+  .final .msg { display: inline-block; margin-top: 14px; color: rgba(255,255,255,.85); text-decoration: underline; text-underline-offset: 3px; font-size: 14px; }
+  footer { padding: 36px 0 24px; text-align: center; color: var(--muted); font-size: 13px; }
+
+  /* sticky booking bar (phones) */
+  .bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; background: rgba(255,255,255,.96); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-top: 1px solid var(--line); padding: 10px max(16px, env(safe-area-inset-left, 0px)) calc(10px + env(safe-area-inset-bottom, 0px)); transform: translateY(110%); transition: transform .25s ease; }
+  .bar.on { transform: none; }
+  .bar .in { max-width: 1080px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .bar .t { line-height: 1.25; }
+  .bar .t b { display: block; color: var(--ink); font-size: 15px; }
+  .bar .t span { color: var(--muted); font-size: 12.5px; }
+  .bar .btn { padding: 12px 20px; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .bar, .gal img { transition: none; } }
+</style>
+<script type="text/javascript">
+(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","z61z5j2iv1");
+</script>
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init','263971983385899');fbq('track','PageView');
+// Where the visitor came from (ad tag, fbclid or referring site). Saved for 30 days and shared by
+// every Click Lounge page on this domain, so the booking app can record it with the booking.
+(function(){try{
+  var p=new URLSearchParams(location.search),o={};
+  ['utm_source','utm_medium','utm_campaign','utm_content','fbclid','ref'].forEach(function(k){var v=p.get(k);if(v)o[k]=v.slice(0,60);});
+  var old=JSON.parse(localStorage.getItem('cl_src')||'null');
+  if(old&&Date.now()-old.t>30*864e5)old=null;
+  if(!Object.keys(o).length&&!old&&document.referrer&&!/hellotalentff-max\.github\.io|clickloungestudio\.com/.test(document.referrer))o.ref=new URL(document.referrer).hostname;
+  if(Object.keys(o).length){o.t=Date.now();localStorage.setItem('cl_src',JSON.stringify(o));}
+}catch(e){}})();
+window.clSource=function(){try{
+  var o=JSON.parse(localStorage.getItem('cl_src')||'{}'),s=o.utm_source||(o.fbclid?'facebook':'')||o.ref||'direct';
+  return s+(o.utm_campaign?' / '+o.utm_campaign:'');
+}catch(e){return 'direct';}};
+try{clarity('set','source',clSource());}catch(e){}
+// Messenger taps count as "Contact"
+document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a[href*="m.me/"],a[href*="messenger.com"]');if(a&&window.fbq)fbq('track','Contact');},true);
+</script>
+<script src="https://hellotalentff-max.github.io/clicklounge_looklab/looklab-data.js"></script>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="wrap">
+    <a class="brand" href="funnel.html">ClickLounge <span>· The Look Lab</span></a>
+    <a class="btn btn-primary js-book" href="https://book.clickloungestudio.com/">Book</a>
+  </div>
+</header>
+
+<main>
+  <!-- 1. The promise: both looks, one session, the price -->
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div class="hero-media">
+        <video id="hero-video" autoplay muted loop playsinline preload="metadata" poster="img/twofold/hero-poster.jpg"
+               aria-label="Behind the scenes: the same client in a fur coat, then 22 minutes later in angel wings">
+          <source src="img/twofold/hero.mp4" type="video/mp4">
+        </video>
+        <span class="tag">Same girl · 22 minutes apart</span>
+      </div>
+      <div>
+        <div class="eyebrow">Prestige Twofold · Antipolo</div>
+        <h1>Rich girl or angel? <em>Be both.</em></h1>
+        <p class="lead">The Coat Code and Angelic Muse looks in one guided Prestige session. We do your glam makeup, bring the fur coat and angel wings, and direct every pose.</p>
+        <div class="price-row">
+          <b class="js-total">₱6,800</b>
+          <s class="js-regular">₱10,000</s>
+          <span class="save js-save">Save ₱3,200</span>
+        </div>
+        <div class="fine">Two looks · 10 edited photos · 8×24 print + mini keepsakes</div>
+        <div class="hero-cta">
+          <a class="btn btn-primary btn-block js-book" href="https://book.clickloungestudio.com/">Pick my date</a>
+          <div class="fine">₱300 deposit holds your slot · GCash or BPI</div>
+        </div>
+        <div class="trust">
+          <span id="trust-rate" hidden><b>★</b> <span id="trust-rate-txt"></span></span>
+          <span>📍 San Roque, Antipolo</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. The proof of the promise: the same client in both looks -->
+  <section class="sec">
+    <div class="wrap">
+      <div class="sec-head center">
+        <div class="eyebrow">One session</div>
+        <h2>Same girl. Two completely different looks.</h2>
+      </div>
+      <div class="looks">
+        <figure class="look" style="margin:0">
+          <span class="num">Look 1</span>
+          <img src="img/twofold/thumb/twofold-7.jpg" alt="Client in the Coat Code look: brown fur coat on a red set, holding a black heel" loading="lazy" width="480" height="720">
+          <figcaption><b>The Coat Code</b><span>Luxe, bold, main-character energy</span></figcaption>
+        </figure>
+        <figure class="look" style="margin:0">
+          <span class="num">Look 2</span>
+          <img src="img/twofold/thumb/twofold-2.jpg" alt="The same client in the Angelic Muse look: white corset and large angel wings" loading="lazy" width="480" height="720">
+          <figcaption><b>Angelic Muse</b><span>Soft, dreamy, straight out of heaven</span></figcaption>
+        </figure>
+      </div>
+      <p class="apart">Photographed 22 minutes apart, in the same session.</p>
+    </div>
+  </section>
+
+  <!-- 3. More proof: the finished photos from that day -->
+  <section class="sec" id="photos">
+    <div class="wrap">
+      <div class="sec-head center">
+        <div class="eyebrow">Real photos</div>
+        <h2>Her actual photos from that day</h2>
+        <p class="lead">Edited by our team. Tap a photo to see it full size.</p>
+      </div>
+      <div class="gal" id="gal"></div>
+    </div>
+  </section>
+
+  <!-- 4. The offer, from the studio's live price list -->
+  <section class="sec" id="included">
+    <div class="wrap">
+      <div class="sec-head center">
+        <div class="eyebrow">Everything included</div>
+        <h2>What you get in your Twofold session</h2>
+      </div>
+      <div class="card">
+        <div class="inc" id="inc"></div>
+        <div class="inc-foot">
+          <div class="p"><b class="js-total">₱6,800</b><s class="js-regular">₱10,000</s></div>
+          <a class="btn btn-primary js-book" href="https://book.clickloungestudio.com/">Book Prestige Twofold</a>
+        </div>
+        <p class="size-note"><b>👗 Please send us your dress size</b> after you book, so we can check which outfits are available for you. <a href="https://m.me/clicklounge.studio">Message us on Messenger</a></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. The objection: "I don't know how to pose" -->
+  <section class="sec">
+    <div class="wrap">
+      <div class="sec-head center">
+        <div class="eyebrow">First time in front of a camera?</div>
+        <h2>You just show up. We do the rest.</h2>
+      </div>
+      <div class="why">
+        <div class="card"><div class="ico" aria-hidden="true">📸</div><h3>We guide every pose</h3><p>Your photographer directs each shot, from your angles to your hands, so you never have to guess.</p></div>
+        <div class="card"><div class="ico" aria-hidden="true">💄</div><h3>Glam makeup and hair</h3><p>Our artist does your glam look before the shoot. Please arrive 1.5 hours early for it.</p></div>
+        <div class="card"><div class="ico" aria-hidden="true">🪽</div><h3>Outfits are ready</h3><p>The fur coat and the angel wings are provided, styled and fitted for you on the day.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. Social proof, from the studio's own client reviews -->
+  <section class="sec" id="proof" hidden>
+    <div class="wrap">
+      <div class="sec-head center">
+        <div class="eyebrow">Kind words</div>
+        <h2>What our clients say</h2>
+        <p class="lead" id="rate"></p>
+      </div>
+      <div class="quotes" id="quotes"></div>
+    </div>
+  </section>
+
+  <!-- 7. How booking works -->
+  <section class="sec">
+    <div class="wrap">
+      <div class="sec-head center">
+        <div class="eyebrow">How booking works</div>
+        <h2>Three steps to your two looks</h2>
+      </div>
+      <div class="steps">
+        <div class="step"><b>1</b><h3>Pick your date</h3><p>Tap Book, choose an open slot and enter your details. Prestige Twofold is already selected for you.</p></div>
+        <div class="step"><b>2</b><h3>Send the ₱300 deposit</h3><p>Pay by GCash or BPI and enter your reference number. Your slot is held for 4 hours while you pay.</p></div>
+        <div class="step"><b>3</b><h3>Send your dress size</h3><p>After booking, message us your dress size so we can check which outfits are available for you. Then arrive 1.5 hours early for hair and makeup.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. Remaining doubts -->
+  <section class="sec">
+    <div class="wrap">
+      <div class="sec-head center">
+        <div class="eyebrow">Before you book</div>
+        <h2>Questions, answered</h2>
+      </div>
+      <div class="faq" style="margin:0 auto">
+        <details><summary>Do I need to bring outfits?</summary><p>No. The Twofold comes with its outfits: the fur coat for the Coat Code and the wings and white look for Angelic Muse. After booking, please send us your dress size so we can check which outfits are available for you. We have studio shoes in size 6 (beige) and sizes 7 and 9 (black), or you can bring your own.</p></details>
+        <details><summary>I've never had a photoshoot. Is that okay?</summary><p>Yes. Most of our clients are first-timers. Your photographer directs every pose and checks the shots with you as you go.</p></details>
+        <details><summary>When should I arrive?</summary><p>Please arrive 1.5 hours before your schedule for hair and makeup. Arriving later may shorten your actual shoot.</p></details>
+        <details><summary>Can I reschedule?</summary><p>Yes. Rescheduling at least 5 days before your shoot is free. Rescheduling 4 days or less before your shoot, including on the day itself, has a ₱200 rescheduling fee. Your new date must be in the same month as your original booking for your deposit to stay valid.</p></details>
+        <details><summary>What if I cancel or miss my session?</summary><p>If you cancel at least 5 days before your shoot, your ₱300 deposit can be used for another package scheduled within the same month. Cancelling less than 5 days before your shoot forfeits the deposit. If you miss your session, your deposit can still be used for a shoot within the same month.</p></details>
+        <details><summary>Can I get my photos faster?</summary><p>Rush delivery is available as an add-on. Ask the studio when you book.</p></details>
+      </div>
+
+      <!-- 9. The close -->
+      <div class="final">
+        <h2>Your two looks are waiting.</h2>
+        <p>Prestige Twofold · <span class="js-total">₱6,800</span>. Pick your date now and hold it with a ₱300 deposit.</p>
+        <a class="btn btn-primary js-book" href="https://book.clickloungestudio.com/">Book my Twofold session</a><br>
+        <a class="msg" href="https://m.me/clicklounge.studio">Questions? Message us on Messenger</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>ClickLounge Studio · U302 Decoro Bldg., Circumferential Rd., San Roque, Antipolo City<br>
+  <a href="funnel.html" style="text-decoration:underline">See all Look Lab sessions</a></footer>
+
+<div class="bar" id="bar" aria-hidden="true">
+  <div class="in">
+    <div class="t"><b>Prestige Twofold · <span class="js-total">₱6,800</span></b><span>₱300 deposit to reserve</span></div>
+    <a class="btn btn-primary js-book" href="https://book.clickloungestudio.com/" tabindex="-1">Book</a>
+  </div>
+</div>
+
+<dialog class="lb" id="lb" aria-label="Photo">
+  <img id="lb-img" alt="">
+  <div class="lb-bar"><button type="button" id="lb-prev">‹ Prev</button><span id="lb-count"></span><button type="button" id="lb-next">Next ›</button><button type="button" id="lb-close">Close</button></div>
+</dialog>
+
+<script>
+(function () {
+  "use strict";
+
+  var BOOKING_URL = 'https://book.clickloungestudio.com/';
+  var STUDIO_API  = 'https://script.google.com/macros/s/AKfycbx_Y5nH34Rq16JJ2AxBDr30ttmDFuic61OqoC0u3Wq0zogHEhfoV6qE7uiNagI43flVgw/exec';
+  // The regular price on the Prestige Twofold poster (clicklounge/pres_2fold.png). The live price list has no
+  // "regular" figure, so the strike-through hides itself if the live price ever reaches it.
+  var REGULAR = 10000;
+  // Andrea Marie's session, in the order the Twofold ad shows them (img/twofold, full size + thumb/).
+  var PHOTOS = 9;
+  var SESSION = 'Prestige', LOOK = 'double';
+  // Used only when the Look Lab script can't be reached at all.
+  var FALLBACK = { total: 6800, mins: 120, label: 'Prestige + Twofold + Prestige Wall', groups: [
+    { title: 'Your session', items: ['55-minute guided shoot', 'Unlimited shots', '2 light styles', 'Up to 2 outfit changes'] },
+    { title: 'Your look', items: ['Two completely different looks', 'Fur coat AND angel wings'] },
+    { title: 'Hair & makeup', items: ['Glam makeup look'] },
+    { title: 'What you take home', items: ['10 professionally edited photos', 'Mini Keepsake set', '8×24in printed portrait'] }] };
+
+  var CHECK = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
+  function $(id) { return document.getElementById(id); }
+  function h(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+  function peso(n) { return '₱' + Math.round(n).toLocaleString('en-PH'); }
+  function each(sel, fn) { Array.prototype.forEach.call(document.querySelectorAll(sel), fn); }
+
+  /* ── the offer: same rules as the Look Lab page, so price, minutes and inclusions always match ── */
+  function build() {
+    try {
+      var s = null, i;
+      for (i = 0; i < SESSIONS.length; i++) if (SESSIONS[i].id === SESSION) s = SESSIONS[i];
+      var m = llMood(LOOK), k = null;
+      var opts = keepsakeOptions(LOOK);
+      for (i = 0; i < opts.length; i++) if (opts[i].freeWith && llNames(opts[i].freeWith, LOOK)) k = opts[i];
+      if (!s || !m || !k) return FALLBACK;
+      var inc = buildInclusions({ session: s, mood: m, keepsake: k, extras: {}, extraDefs: EXTRAS, moodMinutes: moodMinutesOverride(s.id, LOOK) });
+      return { total: s.price + (m.price || 0) + keepsakePrice(s.id, k.id, LOOK), mins: slotMinutes(s.id, LOOK, {}),
+               label: s.name + ' + ' + m.name + ' + ' + k.name, groups: inc.groups };
+    } catch (e) { return FALLBACK; }
+  }
+  function bookingUrl(b) {
+    return BOOKING_URL + '?pkg=' + encodeURIComponent('The Look Lab: ' + b.label) +
+           '&price=' + encodeURIComponent(b.total) + '&dur=' + encodeURIComponent(b.mins) +
+           '&desc=' + encodeURIComponent('Booked from the Twofold page');
+  }
+  var viewed = false;
+  function render() {
+    var b = build();
+    each('.js-total', function (el) { el.textContent = peso(b.total); });
+    var save = REGULAR - b.total;
+    each('.js-regular', function (el) { el.textContent = peso(REGULAR); el.hidden = save <= 0; });
+    each('.js-save', function (el) { el.textContent = 'Save ' + peso(save); el.hidden = save <= 0; });
+    each('.js-book', function (el) { el.href = bookingUrl(b); });
+    $('inc').innerHTML = b.groups.map(function (g) {
+      return '<div class="group"><h4>' + h(g.title) + '</h4><ul>' + g.items.map(function (it) { return '<li>' + CHECK + '<span>' + h(it) + '</span></li>'; }).join('') + '</ul></div>';
+    }).join('');
+    if (!viewed && window.fbq) { viewed = true; fbq('track', 'ViewContent', { content_name: 'Prestige Twofold', value: b.total, currency: 'PHP' }); }
+  }
+
+  /* ── gallery + lightbox ── */
+  var cur = 0, lastFocus = null;
+  function full(i) { return 'img/twofold/twofold-' + (i + 1) + '.jpg'; }
+  function showLb() { $('lb-img').src = full(cur); $('lb-img').alt = 'Prestige Twofold, client photo ' + (cur + 1) + ' of ' + PHOTOS; $('lb-count').textContent = (cur + 1) + ' / ' + PHOTOS; }
+  function openLb(i) { cur = i; lastFocus = document.activeElement; showLb(); $('lb').showModal(); }
+  function step(d) { cur = (cur + d + PHOTOS) % PHOTOS; showLb(); }
+  var g = '';
+  for (var i = 0; i < PHOTOS; i++) g += '<button type="button" data-i="' + i + '" aria-label="Open photo ' + (i + 1) + '"><img src="img/twofold/thumb/twofold-' + (i + 1) + '.jpg" alt="" loading="lazy"></button>';
+  $('gal').innerHTML = g;
+  $('gal').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) openLb(+b.dataset.i); });
+  $('lb-prev').onclick = function () { step(-1); };
+  $('lb-next').onclick = function () { step(1); };
+  $('lb-close').onclick = function () { $('lb').close(); };
+  $('lb').addEventListener('close', function () { if (lastFocus) lastFocus.focus(); });
+  $('lb').addEventListener('click', function (e) { if (e.target === $('lb')) $('lb').close(); });
+  document.addEventListener('keydown', function (e) { if (!$('lb').open) return; if (e.key === 'ArrowRight') step(1); if (e.key === 'ArrowLeft') step(-1); });
+
+  /* ── sticky booking bar once the first Book button is out of view ── */
+  var heroBtn = document.querySelector('.hero .js-book');
+  if ('IntersectionObserver' in window && heroBtn) {
+    new IntersectionObserver(function (es) {
+      var on = !es[0].isIntersecting && es[0].boundingClientRect.top < 0;
+      $('bar').classList.toggle('on', on); $('bar').setAttribute('aria-hidden', String(!on));
+      $('bar').querySelector('a').tabIndex = on ? 0 : -1;
+    }).observe(heroBtn);
+  }
+
+  /* ── reduced motion: the hero stays on its poster ── */
+  if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) { var v = $('hero-video'); v.removeAttribute('autoplay'); v.pause(); }
+
+  /* ── client reviews, from the studio's own review sheet (same source as the Look Lab page) ── */
+  function loadProof(cb) {
+    try { var c = JSON.parse(sessionStorage.getItem('sp_cache_v1') || 'null'); if (c && Date.now() - c.t < 300000) { cb(c.d); return; } } catch (e) {}
+    var name = '_sp_' + Math.random().toString(36).slice(2), done = false, sc = document.createElement('script');
+    function finish(d) {
+      if (done) return; done = true;
+      try { delete window[name]; } catch (e) { window[name] = undefined; }
+      if (sc.parentNode) sc.parentNode.removeChild(sc);
+      if (d && d.ok) { try { sessionStorage.setItem('sp_cache_v1', JSON.stringify({ t: Date.now(), d: d })); } catch (e) {} cb(d); }
+    }
+    window[name] = finish;
+    setTimeout(function () { finish(null); }, 10000);
+    sc.onerror = function () { finish(null); };
+    sc.src = STUDIO_API + '?d=' + encodeURIComponent(btoa(JSON.stringify({ action: 'getPublicSocialProof', payload: {} }))) + '&callback=' + name;
+    document.head.appendChild(sc);
+  }
+  function stars(n) { n = Math.max(0, Math.min(5, Math.round(n))); return '★★★★★'.slice(0, n) + '☆☆☆☆☆'.slice(0, 5 - n); }
+  function showProof(d) {
+    var list = (d.testimonials || []).filter(function (t) { return t && t.message; }).slice(0, 6);
+    var r = d.rating || {};
+    if (r.count >= 10 && r.avg) {
+      var txt = Number(r.avg).toFixed(1) + ' from ' + r.count + ' client reviews';
+      $('rate').textContent = txt; $('trust-rate-txt').textContent = txt; $('trust-rate').hidden = false;
+    }
+    if (!list.length) return;
+    $('quotes').innerHTML = list.map(function (t) {
+      return '<figure class="quote"><div class="st" aria-label="' + h(t.rating) + ' out of 5 stars">' + stars(t.rating) + '</div>' +
+        '<p>“' + h(t.message) + '”</p><div class="by">' + h(t.name) + ', ClickLounge client</div></figure>';
+    }).join('');
+    $('proof').hidden = false;
+  }
+
+  render();
+  if (typeof loadLookLab === 'function') loadLookLab(function () { render(); });
+  loadProof(showProof);
+})();
+</script>
+</body>
+</html>
