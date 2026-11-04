@@ -160,6 +160,9 @@
   .bar .t b { display: block; color: var(--ink); font-size: 15px; }
   .bar .t span { color: var(--muted); font-size: 12.5px; }
   .bar .btn { padding: 12px 20px; }
+  .bar .acts { display: flex; gap: 8px; flex-shrink: 0; }
+  .bar .acts .btn-ghost { padding: 12px 14px; }
+  .hero-cta .msg-btn { margin-top: 10px; }
   @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .bar, .gal img { transition: none; } }
 </style>
 <script type="text/javascript">
@@ -185,6 +188,14 @@ window.clSource=function(){try{
 try{clarity('set','source',clSource());}catch(e){}
 // Messenger taps count as "Contact"
 document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a[href*="m.me/"],a[href*="messenger.com"]');if(a&&window.fbq)fbq('track','Contact');},true);
+// The other Click Lounge subdomains (book., looklab.) keep their own storage, so links to them carry the saved source along
+window.clCarry=function(url){try{
+  var u=new URL(url,location.href);if(u.hostname===location.hostname||!/(^|\.)clickloungestudio\.com$/.test(u.hostname))return url;
+  var o=JSON.parse(localStorage.getItem('cl_src')||'null');if(!o||Date.now()-o.t>30*864e5)return url;
+  ['utm_source','utm_medium','utm_campaign','utm_content','fbclid','ref'].forEach(function(k){if(o[k]&&!u.searchParams.has(k))u.searchParams.set(k,o[k]);});
+  return u.href;
+}catch(e){return url;}};
+document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a[href]');if(!a)return;var n=clCarry(a.href);if(n!==a.href)a.href=n;},true);
 </script>
 <script src="https://hellotalentff-max.github.io/clicklounge_looklab/looklab-data.js"></script>
 </head>
@@ -221,6 +232,7 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
         <div class="hero-cta">
           <a class="btn btn-primary btn-block js-book" href="https://book.clickloungestudio.com/">Pick my date</a>
           <div class="fine">₱300 deposit holds your slot · GCash or BPI</div>
+          <a class="btn btn-ghost btn-block msg-btn" href="https://m.me/clicklounge.studio?text=Hi!%20I%20saw%20the%20Prestige%20Twofold%20and%20I%20have%20a%20question%3A%20">💬 Not sure yet? Ask us on Messenger</a>
         </div>
         <div class="trust">
           <span id="trust-rate" hidden><b>★</b> <span id="trust-rate-txt"></span></span>
@@ -346,7 +358,7 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
         <h2>Your two looks are waiting.</h2>
         <p>Prestige Twofold · <span class="js-total">₱6,800</span>. Pick your date now and hold it with a ₱300 deposit.</p>
         <a class="btn btn-primary js-book" href="https://book.clickloungestudio.com/">Book my Twofold session</a><br>
-        <a class="msg" href="https://m.me/clicklounge.studio">Questions? Message us on Messenger</a>
+        <a class="msg" href="https://m.me/clicklounge.studio?text=Hi!%20I%20saw%20the%20Prestige%20Twofold%20and%20I%20have%20a%20question%3A%20">Questions? Message us on Messenger</a>
       </div>
     </div>
   </section>
@@ -358,7 +370,10 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
 <div class="bar" id="bar" aria-hidden="true">
   <div class="in">
     <div class="t"><b>Prestige Twofold · <span class="js-total">₱6,800</span></b><span>₱300 deposit to reserve</span></div>
-    <a class="btn btn-primary js-book" href="https://book.clickloungestudio.com/" tabindex="-1">Book</a>
+    <div class="acts">
+      <a class="btn btn-ghost" href="https://m.me/clicklounge.studio?text=Hi!%20I%20saw%20the%20Prestige%20Twofold%20and%20I%20have%20a%20question%3A%20" tabindex="-1" aria-label="Message us on Messenger">💬 Ask</a>
+      <a class="btn btn-primary js-book" href="https://book.clickloungestudio.com/" tabindex="-1">Book</a>
+    </div>
   </div>
 </div>
 
@@ -448,7 +463,7 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
     new IntersectionObserver(function (es) {
       var on = !es[0].isIntersecting && es[0].boundingClientRect.top < 0;
       $('bar').classList.toggle('on', on); $('bar').setAttribute('aria-hidden', String(!on));
-      $('bar').querySelector('a').tabIndex = on ? 0 : -1;
+      $('bar').querySelectorAll('a').forEach(function (a) { a.tabIndex = on ? 0 : -1; });
     }).observe(heroBtn);
   }
 
