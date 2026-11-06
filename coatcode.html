@@ -1,0 +1,562 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Prestige Coat Code · ClickLounge Studio</title>
+<meta name="description" content="Your fur coat moment is waiting. A guided Prestige shoot in Antipolo with the fur coat, your outfit and glam makeup all ready for you. Reserve with a ₱300 deposit.">
+<meta name="theme-color" content="#17100e">
+<meta property="og:title" content="Prestige Coat Code · ClickLounge Studio">
+<meta property="og:description" content="The fur coat, your outfit and glam makeup are all here. You just show up.">
+<meta property="og:image" content="https://looklab.clickloungestudio.com/img/coatcode/coatcode-6.jpg">
+<link rel="preload" as="image" href="img/coatcode/hero-poster.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
+<style>
+  /* Same system as the Twofold page (twofold.html), with a dark first screen for the Coat Code and one action colour */
+  :root {
+    --bg:#f7f5f1; --card:#ffffff; --ink:#1f3a3a; --text:#2b3f3f; --muted:#6b7f7d;
+    --teal:#51897d; --teal-dk:#3d6b61; --teal-soft:#e7f0ee;
+    --copper:#d79068; --copper-lt:#e6a985; --copper-dk:#a8653f; --copper-soft:#fbefe7;
+    --night:#17100e; --on-copper:#22140c;
+    --line:#e7e2da; --shadow:0 1px 2px rgba(31,58,58,.05), 0 8px 24px rgba(31,58,58,.06);
+    --r:16px;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; font-family: 'Poppins', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; -webkit-font-smoothing: antialiased; padding-bottom: 84px; }
+  a { color: inherit; text-decoration: none; }
+  img, video { max-width: 100%; height: auto; display: block; }
+  button { font-family: inherit; color: inherit; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); }
+  h1, h2, h3 { color: var(--ink); margin: 0; text-wrap: balance; letter-spacing: -.015em; }
+  h2 { font-size: clamp(26px, 4vw, 36px); line-height: 1.15; font-weight: 600; }
+  .eyebrow { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; font-weight: 600; color: var(--copper-dk); }
+  .lead { color: var(--muted); font-size: 15.5px; max-width: 560px; margin: 10px 0 0; }
+  .sec { padding: 56px 0 0; }
+  #compare { padding-top: 36px; }
+  .sec-head { margin-bottom: 22px; }
+  .sec-head.center { text-align: center; }
+  .sec-head.center .lead { margin-left: auto; margin-right: auto; }
+
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 1.5px solid transparent; border-radius: 12px; padding: 15px 24px; font-weight: 600; font-size: 15.5px; cursor: pointer; transition: background .2s ease, border-color .2s ease, transform .2s ease; white-space: nowrap; }
+  .btn:active { transform: translateY(1px); }
+  .btn:focus-visible, a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visible + .cmp-bar { outline: 3px solid rgba(215,144,104,.6); outline-offset: 2px; }
+  .btn-primary { background: var(--copper); color: var(--on-copper); }
+  .btn-primary:hover { background: var(--copper-lt); }
+  .btn-ghost { border-color: var(--line); background: var(--card); color: var(--ink); }
+  .btn-ghost:hover { border-color: var(--copper); }
+  .btn-block { width: 100%; }
+
+  /* hero: the ad's opening, then the offer. On phones the video fills the first screen behind the text */
+  .hero { position: relative; overflow: hidden; background: var(--night); color: #fff; }
+  .hero-media { position: absolute; left: 0; right: 0; top: 0; height: 64%; background: #2b1a14; }
+  .hero-media video { width: 100%; height: 100%; object-fit: cover; object-position: 50% 28%; }
+  .hero-media::after { content: ""; position: absolute; inset: 0 0 -2px; background: linear-gradient(180deg, rgba(23,16,14,.42) 0, rgba(23,16,14,0) 20%, rgba(23,16,14,0) 58%, var(--night) 97%); }
+  .logo { position: absolute; z-index: 2; left: max(16px, env(safe-area-inset-left, 0px)); top: calc(14px + env(safe-area-inset-top, 0px)); width: 104px; filter: drop-shadow(0 1px 4px rgba(0,0,0,.5)); }
+  .tag { position: absolute; z-index: 2; right: max(16px, env(safe-area-inset-right, 0px)); top: calc(18px + env(safe-area-inset-top, 0px)); background: rgba(23,16,14,.82); color: #f8e7d6; font-size: 12px; font-weight: 600; letter-spacing: .04em; padding: 7px 12px; border-radius: 999px; box-shadow: 0 4px 14px rgba(0,0,0,.25), inset 0 0 0 1px rgba(215,144,104,.7); }
+  .tag.cam { background: rgba(255,250,242,.95); color: #4b3423; box-shadow: 0 4px 14px rgba(0,0,0,.2); }
+  .hero-copy { position: relative; z-index: 1; min-height: 92vh; min-height: min(92svh, 780px); display: flex; flex-direction: column; justify-content: flex-end; padding: 190px 0 20px; text-shadow: 0 1px 14px rgba(0,0,0,.55); }
+  .hero-copy .btn { text-shadow: none; }
+  .hero h1 { color: #fff; font-size: clamp(30px, 8.4vw, 54px); line-height: 1.08; font-weight: 700; margin-top: 6px; }
+  .hero h1 em { font-style: normal; color: var(--copper-lt); }
+  .hero .eyebrow { color: var(--copper-lt); }
+  .hero .sub { margin: 8px 0 0; color: rgba(255,255,255,.86); font-size: 14.5px; line-height: 1.5; max-width: 460px; }
+  .price-row { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 10px; margin: 12px 0 0; }
+  .price-row b { font-size: 34px; line-height: 1.1; color: #fff; font-weight: 700; letter-spacing: -.02em; }
+  .price-row span { color: rgba(255,255,255,.8); font-size: 14px; font-weight: 500; }
+  .facts { margin: 2px 0 0; color: rgba(255,255,255,.72); font-size: 13px; line-height: 1.5; }
+  .hero-cta { display: grid; gap: 8px; margin-top: 12px; max-width: 420px; }
+  .hero .fine { color: rgba(255,255,255,.7); font-size: 12.5px; text-align: center; }
+  .hero .msg { color: #fff; font-size: 13.5px; text-align: center; text-decoration: underline; text-underline-offset: 3px; padding: 2px 0; }
+  .trust { display: flex; justify-content: center; gap: 2px 12px; margin-top: 8px; font-size: 12px; color: rgba(255,255,255,.72); max-width: 420px; white-space: nowrap; }
+  .trust b { color: var(--copper-lt); }
+  @media (max-width: 859px) and (max-height: 700px) { .facts { display: none; } }   /* short phone screens and in-app browsers: keep her face clear of the text */
+  @media (min-width: 860px) {
+    .hero { padding: 40px 0; }
+    .hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+    .hero-media { position: relative; height: auto; aspect-ratio: 4 / 5; border-radius: 20px; overflow: hidden; }
+    .hero-media::after { background: linear-gradient(180deg, rgba(23,16,14,.4) 0, rgba(23,16,14,0) 20%); }
+    .hero-copy { min-height: 0; padding: 0; }
+    .hero .sub { font-size: 16px; }
+    .price-row { margin-top: 18px; }
+    .price-row b { font-size: 40px; }
+    .hero-cta { margin-top: 18px; }
+    .trust { justify-content: flex-start; }
+  }
+
+  /* phone vs. camera: the two pictures are lined up on her eyes (handle kept low, off her face) */
+  .cmp { --p: 50%; position: relative; max-width: 460px; margin: 0 auto; border-radius: var(--r); overflow: hidden; box-shadow: var(--shadow); aspect-ratio: 4 / 5; background: var(--line); touch-action: pan-y; cursor: ew-resize; user-select: none; -webkit-user-select: none; }
+  .cmp img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+  .cmp .cmp-top { clip-path: inset(0 calc(100% - var(--p)) 0 0); }
+  .cmp-lb { position: absolute; bottom: 12px; font-size: 12px; font-weight: 600; padding: 6px 11px; border-radius: 999px; pointer-events: none; }
+  .cmp-lb.a { left: 12px; background: rgba(23,16,14,.8); color: #f8e7d6; }
+  .cmp-lb.b { right: 12px; background: rgba(255,250,242,.95); color: #4b3423; }
+  .cmp-bar { position: absolute; top: 0; bottom: 0; left: var(--p); width: 3px; margin-left: -1.5px; background: #fff; box-shadow: 0 0 10px rgba(0,0,0,.35); pointer-events: none; }
+  .cmp-bar i { position: absolute; top: 80%; left: 50%; width: 44px; height: 44px; margin: -22px 0 0 -22px; border-radius: 50%; background: #fff; color: var(--ink); font-style: normal; font-size: 15px; font-weight: 600; letter-spacing: 1px; display: grid; place-items: center; box-shadow: 0 4px 14px rgba(0,0,0,.3); }
+  .cmp-input { position: absolute; width: 1px; height: 1px; opacity: 0; margin: 0; }
+
+  /* gallery */
+  .gal { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .gal button { padding: 0; border: 0; border-radius: 10px; overflow: hidden; cursor: zoom-in; background: var(--line); aspect-ratio: 4 / 5; }
+  .gal img { width: 100%; height: 100%; object-fit: cover; transition: transform .3s ease; }
+  .gal button:hover img { transform: scale(1.03); }
+  dialog.lb { border: 0; padding: 0; background: transparent; max-width: min(92vw, 720px); max-height: 92vh; }
+  dialog.lb::backdrop { background: rgba(20,24,24,.88); }
+  dialog.lb img { max-height: 84vh; width: auto; margin: 0 auto; border-radius: 12px; }
+  .lb-bar { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 10px; color: #fff; font-size: 14px; }
+  .lb-bar button { background: rgba(255,255,255,.14); border: 0; color: #fff; border-radius: 10px; padding: 10px 14px; cursor: pointer; font-weight: 600; }
+
+  /* reviews */
+  .quotes { display: grid; gap: 10px; }
+  @media (min-width: 760px) { .quotes { grid-template-columns: repeat(3, 1fr); } }
+  .quote { margin: 0; background: var(--card); border-radius: var(--r); box-shadow: var(--shadow); padding: 16px 18px; }
+  .quote .st { color: var(--copper); letter-spacing: 2px; font-size: 14px; }
+  .quote p { margin: 4px 0 6px; color: var(--text); font-size: 14.5px; }
+  .quote .by { color: var(--muted); font-size: 12.5px; }
+
+  /* inclusions */
+  .card { background: var(--card); border-radius: var(--r); box-shadow: var(--shadow); padding: 22px; }
+  .inc { display: grid; gap: 16px; }
+  @media (min-width: 760px) { .inc { grid-template-columns: 1fr 1fr; } }
+  .group h4 { margin: 0 0 7px; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--copper-dk); }
+  .group ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+  .group li { display: flex; gap: 9px; align-items: flex-start; font-size: 14.5px; line-height: 1.45; }
+  .group li svg { flex: none; margin-top: 3px; color: var(--teal); }
+  .inc-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--line); }
+  .inc-foot .p b { display: block; font-size: 26px; line-height: 1.15; color: var(--ink); }
+  .inc-foot .p span { color: var(--muted); font-size: 13px; }
+  .inc-foot .btn { flex: 1 1 200px; }
+  .size-note { margin: 16px 0 0; padding: 13px 15px; border-radius: 12px; background: var(--copper-soft); color: var(--text); font-size: 14px; }
+  .size-note b { color: var(--copper-dk); }
+  .size-note a { color: var(--teal-dk); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+
+  /* reassurance */
+  .why { display: grid; gap: 10px; }
+  @media (min-width: 760px) { .why { grid-template-columns: repeat(3, 1fr); } }
+  .why .card { padding: 16px 18px; display: grid; grid-template-columns: 40px 1fr; gap: 2px 12px; }
+  .why h3 { font-size: 16px; align-self: end; }
+  .why p { grid-column: 2; margin: 0; color: var(--muted); font-size: 14px; line-height: 1.5; }
+  .ico { grid-row: span 2; width: 40px; height: 40px; border-radius: 12px; background: var(--copper-soft); display: grid; place-items: center; font-size: 19px; }
+
+  /* steps */
+  .steps { display: grid; gap: 10px; }
+  @media (min-width: 760px) { .steps { grid-template-columns: repeat(3, 1fr); } }
+  .step { background: var(--card); border-radius: var(--r); box-shadow: var(--shadow); padding: 16px 18px; display: grid; grid-template-columns: 30px 1fr; gap: 2px 12px; }
+  .step b { grid-row: span 2; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--ink); color: #fff; font-size: 14px; }
+  .step h3 { font-size: 15.5px; }
+  .step p { grid-column: 2; margin: 0; color: var(--muted); font-size: 14px; line-height: 1.5; }
+
+  /* faq */
+  .faq { display: grid; gap: 8px; max-width: 760px; margin: 0 auto; }
+  details { background: var(--card); border-radius: 14px; box-shadow: var(--shadow); padding: 2px 16px; }
+  summary { cursor: pointer; font-weight: 600; color: var(--ink); padding: 12px 0; list-style: none; display: flex; justify-content: space-between; gap: 12px; font-size: 14.5px; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: "+"; color: var(--copper-dk); font-size: 20px; line-height: 1; }
+  details[open] summary::after { content: "–"; }
+  details p { margin: 0 0 12px; color: var(--muted); font-size: 14px; }
+  details p a { color: var(--teal-dk); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+
+  /* final */
+  .final { margin: 56px 0 0; background: var(--night); color: #fff; border-radius: 22px; padding: 34px 22px; text-align: center; }
+  .final h2 { color: #fff; }
+  .final p { color: rgba(255,255,255,.75); margin: 10px auto 20px; max-width: 460px; font-size: 15px; }
+  .final .msg { display: inline-block; margin-top: 14px; color: rgba(255,255,255,.85); text-decoration: underline; text-underline-offset: 3px; font-size: 14px; }
+  footer { padding: 32px 0 24px; text-align: center; color: var(--muted); font-size: 13px; }
+
+  /* sticky booking bar */
+  .bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; background: rgba(255,255,255,.97); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-top: 1px solid var(--line); padding: 10px max(16px, env(safe-area-inset-left, 0px)) calc(10px + env(safe-area-inset-bottom, 0px)); transform: translateY(110%); transition: transform .25s ease; }
+  .bar.on { transform: none; }
+  .bar .in { max-width: 1080px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .bar .t { line-height: 1.25; min-width: 0; }
+  .bar .t b { display: block; color: var(--ink); font-size: 14.5px; }
+  .bar .t span { color: var(--muted); font-size: 12.5px; }
+  .bar .acts { display: flex; gap: 8px; flex-shrink: 0; }
+  .bar .btn { padding: 12px 18px; }
+  .bar .btn-ghost { padding: 12px 13px; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .bar, .gal img { transition: none; } }
+</style>
+<script type="text/javascript">
+(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","z61z5j2iv1");
+</script>
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init','263971983385899');fbq('track','PageView');
+// Where the visitor came from (ad tag, fbclid or referring site). Saved for 30 days and shared by
+// every Click Lounge page on this domain, so the booking app can record it with the booking.
+(function(){try{
+  var p=new URLSearchParams(location.search),o={};
+  ['utm_source','utm_medium','utm_campaign','utm_content','fbclid','ref'].forEach(function(k){var v=p.get(k);if(v)o[k]=v.slice(0,60);});
+  var old=JSON.parse(localStorage.getItem('cl_src')||'null');
+  if(old&&Date.now()-old.t>30*864e5)old=null;
+  if(!Object.keys(o).length&&!old&&document.referrer&&!/hellotalentff-max\.github\.io|clickloungestudio\.com/.test(document.referrer))o.ref=new URL(document.referrer).hostname;
+  if(Object.keys(o).length){o.t=Date.now();localStorage.setItem('cl_src',JSON.stringify(o));}
+}catch(e){}})();
+window.clSource=function(){try{
+  var o=JSON.parse(localStorage.getItem('cl_src')||'{}'),s=o.utm_source||(o.fbclid?'facebook':'')||o.ref||'direct';
+  return s+(o.utm_campaign?' / '+o.utm_campaign:'');
+}catch(e){return 'direct';}};
+try{clarity('set','source',clSource());clarity('set','page','coatcode');}catch(e){}
+// Messenger taps count as "Contact"
+document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a[href*="m.me/"],a[href*="messenger.com"]');if(a&&window.fbq)fbq('track','Contact');},true);
+// The other Click Lounge subdomains (book., looklab.) keep their own storage, so links to them carry the saved source along
+window.clCarry=function(url){try{
+  var u=new URL(url,location.href);if(u.hostname===location.hostname||!/(^|\.)clickloungestudio\.com$/.test(u.hostname))return url;
+  var o=JSON.parse(localStorage.getItem('cl_src')||'null');if(!o||Date.now()-o.t>30*864e5)return url;
+  ['utm_source','utm_medium','utm_campaign','utm_content','fbclid','ref'].forEach(function(k){if(o[k]&&!u.searchParams.has(k))u.searchParams.set(k,o[k]);});
+  return u.href;
+}catch(e){return url;}};
+document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a[href]');if(!a)return;var n=clCarry(a.href);if(n!==a.href)a.href=n;},true);
+// Clarity events, so a dashboard filter shows who tapped what on this page
+window.clEvent=function(n){try{clarity('event',n);}catch(e){}};
+document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a[href]');if(!a)return;
+  if(a.classList.contains('js-book'))clEvent('coatcode_book_'+(a.dataset.cta||'link'));else if(/m\.me\//.test(a.href))clEvent('coatcode_messenger');},true);
+</script>
+</head>
+<body>
+
+<main>
+  <!-- 1. The ad's opening, then the promise and the offer on the first phone screen -->
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div class="hero-media">
+        <video id="hero-video" autoplay muted loop playsinline preload="metadata" poster="img/coatcode/hero-poster.jpg"
+               aria-label="A client in a hooded fur coat on a phone, then the studio strobe fires and her finished photo appears">
+          <source src="img/coatcode/hero.mp4" type="video/mp4">
+        </video>
+        <img class="logo" src="img/coatcode/logo-white.png" alt="ClickLounge Studio" width="240" height="117">
+        <span class="tag" id="hero-tag">📱 On my phone</span>
+      </div>
+      <div class="hero-copy">
+        <div class="eyebrow">Prestige Coat Code · Antipolo</div>
+        <h1>Your fur coat moment <em>is waiting.</em></h1>
+        <p class="sub">The fur coat, your outfit and glam makeup are all here. You just show up.</p>
+        <div class="price-row"><b class="js-total">₱5,800</b><span>all-in · ₱300 holds your date</span></div>
+        <p class="facts"><span class="js-mins">55</span>-min guided shoot · Unlimited shots · <span class="js-edits">7</span> edited photos · 8×24 print</p>
+        <div class="hero-cta">
+          <a class="btn btn-primary btn-block js-book" data-cta="hero" href="https://book.clickloungestudio.com/">Pick my date</a>
+          <a class="msg" href="https://m.me/clicklounge.studio?text=Hi!%20I%20saw%20the%20Prestige%20Coat%20Code%20and%20I%20have%20a%20question%3A%20">Not sure yet? Ask us on Messenger</a>
+        </div>
+        <div class="trust">
+          <span id="trust-rate" hidden><b>★</b> <span id="trust-rate-txt"></span></span>
+          <span>📍 San Roque, Antipolo</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. The ad's claim, proved: drag between the phone picture and the finished photo -->
+  <section class="sec" id="compare">
+    <div class="wrap">
+      <div class="sec-head center">
+        <div class="eyebrow">Phone vs. our camera</div>
+        <h2>Same girl. Same pose.</h2>
+        <p class="lead">Drag the line to see what real studio lighting, a guided pose and our editing do.</p>
+      </div>
+      <div class="cmp" id="cmp">
+        <img src="img/coatcode/compare-camera.jpg" alt="Her finished studio photo: moody dark lighting, glowing skin and rich brown fur" width="800" height="1000" loading="lazy">
+        <img class="cmp-top" src="img/coatcode/compare-phone.jpg" alt="The same client in the same pose, filmed on a phone" width="800" height="1000" loading="lazy">
+        <span class="cmp-lb a">On my phone</span>
+        <span class="cmp-lb b">On our camera</span>
+        <input class="cmp-input" id="cmp-range" type="range" min="0" max="100" value="50" aria-label="Compare the phone picture with the finished studio photo">
+        <span class="cmp-bar"><i aria-hidden="true">‹›</i></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. More proof: real clients of different looks and sizes -->
+  <section class="sec" id="photos">
+    <div class="wrap">
+      <div class="sec-head center">
+        <div class="eyebrow">Real clients</div>
+        <h2>Real Coat Code photos</h2>
+        <p class="lead">Shot at our Antipolo studio and edited by our team. Tap a photo to see it full size.</p>
+      </div>
+      <div class="gal" id="gal"></div>
+    </div>
+  </section>
+
+  <!-- 4. Social proof while they're still reading, from the studio's own client reviews -->
+  <section class="sec" id="proof" hidden>
+    <div class="wrap">
+      <div class="sec-head center">
+        <div class="eyebrow">Kind words</div>
+        <h2>What our clients say</h2>
+        <p class="lead" id="rate"></p>
+      </div>
+      <div class="quotes" id="quotes"></div>
+    </div>
+  </section>
+
+  <!-- 5. The offer, from the studio's live price list -->
+  <section class="sec" id="included">
+    <div class="wrap">
+      <div class="sec-head center">
+        <div class="eyebrow">All-in</div>
+        <h2>Everything's already included</h2>
+        <p class="lead">The coat, your outfit and your glam makeup are all in the price.</p>
+      </div>
+      <div class="card">
+        <div class="inc" id="inc"></div>
+        <div class="inc-foot">
+          <div class="p"><b class="js-total">₱5,800</b><span>Only ₱300 today to hold your date</span></div>
+          <a class="btn btn-primary js-book" data-cta="included" href="https://book.clickloungestudio.com/">Pick my date</a>
+        </div>
+        <p class="size-note"><b>👗 Please send us your dress size</b> after you book, so we can check which outfits are available for you. <a href="https://m.me/clicklounge.studio">Message us on Messenger</a></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. The objections: "I don't know how to pose", "I have nothing to wear" -->
+  <section class="sec">
+    <div class="wrap">
+      <div class="sec-head center">
+        <div class="eyebrow">First shoot?</div>
+        <h2>You just show up. We do the rest.</h2>
+      </div>
+      <div class="why">
+        <div class="card"><div class="ico" aria-hidden="true">📸</div><h3>We guide every pose</h3><p>We'll tell you how to stand, where to look, even what to do with your hands.</p></div>
+        <div class="card"><div class="ico" aria-hidden="true">💄</div><h3>Glam hair and makeup</h3><p>Our artist does your look before the shoot. Please arrive 1.5 hours early for it.</p></div>
+        <div class="card"><div class="ico" aria-hidden="true">🖤</div><h3>Nothing to bring</h3><p>The fur coat and your outfit are already here, styled for you on the day.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. How booking works -->
+  <section class="sec">
+    <div class="wrap">
+      <div class="sec-head center">
+        <div class="eyebrow">How booking works</div>
+        <h2>Three steps to your shoot</h2>
+      </div>
+      <div class="steps">
+        <div class="step"><b>1</b><h3>Pick your date</h3><p>Tap Book, choose an open slot and enter your details. Prestige Coat Code is already selected for you.</p></div>
+        <div class="step"><b>2</b><h3>Send the ₱300 deposit</h3><p>Pay by GCash or BPI and enter your reference number. Your slot is held for 4 hours while you pay.</p></div>
+        <div class="step"><b>3</b><h3>Send your dress size</h3><p>Message us your dress size so we can check which outfits are available for you. Then arrive 1.5 hours early for hair and makeup.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. Remaining doubts -->
+  <section class="sec">
+    <div class="wrap">
+      <div class="sec-head center">
+        <div class="eyebrow">Before you book</div>
+        <h2>Questions, answered</h2>
+      </div>
+      <div class="faq">
+        <details><summary>I've never had a photoshoot. Is that okay?</summary><p>Yes. Most of our clients are first-timers. Your photographer directs every pose and checks the shots with you as you go.</p></details>
+        <details><summary>Do I need to bring an outfit?</summary><p>No. The Coat Code comes with its outfit, including the fur coat. After booking, please send us your dress size so we can check which outfits are available for you. We have studio shoes in size 6 (beige) and sizes 7 and 9 (black), or you can bring your own.</p></details>
+        <details><summary>Do I get to choose my photos?</summary><p>Yes. You choose the photos for editing, and you also get all your digital copies.</p></details>
+        <details><summary>Can I reschedule?</summary><p>Yes. Rescheduling at least 5 days before your shoot is free. Rescheduling 4 days or less before your shoot, including on the day itself, has a ₱200 rescheduling fee. Your new date must be in the same month as your original booking for your deposit to stay valid.</p></details>
+        <details><summary>What if I cancel or miss my session?</summary><p>If you cancel at least 5 days before your shoot, your ₱300 deposit can be used for another package scheduled within the same month. Cancelling less than 5 days before your shoot forfeits the deposit. If you miss your session, your deposit can still be used for a shoot within the same month.</p></details>
+        <details><summary>Is there a smaller Coat Code package?</summary><p>Yes. The Coat Code also comes with our Signature and Standard sessions, which are shorter and include less. <a href="funnel.html">See all Look Lab sessions</a></p></details>
+      </div>
+
+      <!-- 9. The close -->
+      <div class="final">
+        <h2>Your fur coat moment is waiting.</h2>
+        <p>Prestige Coat Code · <span class="js-total">₱5,800</span> all-in. Pick your date now and hold it with a ₱300 deposit.</p>
+        <a class="btn btn-primary js-book" data-cta="final" href="https://book.clickloungestudio.com/">Pick my date</a><br>
+        <a class="msg" href="https://m.me/clicklounge.studio?text=Hi!%20I%20saw%20the%20Prestige%20Coat%20Code%20and%20I%20have%20a%20question%3A%20">Questions? Message us on Messenger</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>ClickLounge Studio · U302 Decoro Bldg., Circumferential Rd., San Roque, Antipolo City<br>
+  <a href="funnel.html" style="text-decoration:underline">See all Look Lab sessions</a></footer>
+
+<div class="bar" id="bar" aria-hidden="true">
+  <div class="in">
+    <div class="t"><b>Prestige Coat Code</b><span><span class="js-total">₱5,800</span> all-in</span></div>
+    <div class="acts">
+      <a class="btn btn-ghost" href="https://m.me/clicklounge.studio?text=Hi!%20I%20saw%20the%20Prestige%20Coat%20Code%20and%20I%20have%20a%20question%3A%20" tabindex="-1" aria-label="Message us on Messenger">💬 Ask</a>
+      <a class="btn btn-primary js-book" data-cta="bar" href="https://book.clickloungestudio.com/" tabindex="-1">Book</a>
+    </div>
+  </div>
+</div>
+
+<dialog class="lb" id="lb" aria-label="Photo">
+  <img id="lb-img" alt="">
+  <div class="lb-bar"><button type="button" id="lb-prev">‹ Prev</button><span id="lb-count"></span><button type="button" id="lb-next">Next ›</button><button type="button" id="lb-close">Close</button></div>
+</dialog>
+
+<!-- Loaded down here so the first screen paints without waiting for it -->
+<script src="https://hellotalentff-max.github.io/clicklounge_looklab/looklab-data.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  var BOOKING_URL = 'https://book.clickloungestudio.com/';
+  var STUDIO_API  = 'https://script.google.com/macros/s/AKfycbx_Y5nH34Rq16JJ2AxBDr30ttmDFuic61OqoC0u3Wq0zogHEhfoV6qE7uiNagI43flVgw/exec';
+  var PHOTOS = 9;   // img/coatcode, full size + thumb/
+  var SESSION = 'Prestige', LOOK = 'coatcode';
+  // Used only when the Look Lab script can't be reached at all.
+  var FALLBACK = { total: 5800, mins: 100, label: 'Prestige + The Coat Code + Digital', groups: [
+    { title: 'Your look', items: ['Prestige fur coat', 'High-fashion posing', 'Editorial lighting'] },
+    { title: 'Hair & makeup', items: ['Glam makeup look'] },
+    { title: 'Your session', items: ['55-minute guided shoot', 'Unlimited shots', '2 light styles', 'Up to 2 outfit changes', 'FREE use of 1 Premium Dress'] },
+    { title: 'What you take home', items: ['7 professionally edited photos', 'All your digital copies', '8×24in printed portrait'] }] };
+
+  var CHECK = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
+  function $(id) { return document.getElementById(id); }
+  function h(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+  function peso(n) { return '₱' + Math.round(n).toLocaleString('en-PH'); }
+  function each(sel, fn) { Array.prototype.forEach.call(document.querySelectorAll(sel), fn); }
+
+  /* ── the offer: same rules as the Look Lab page, so price, minutes and inclusions always match ── */
+  function build() {
+    try {
+      var s = null, i;
+      for (i = 0; i < SESSIONS.length; i++) if (SESSIONS[i].id === SESSION) s = SESSIONS[i];
+      var m = llMood(LOOK), k = null, best = Infinity;
+      keepsakeOptions(LOOK).forEach(function (o) { var p = keepsakePrice(s.id, o.id, LOOK); if (p < best) { k = o; best = p; } });   // Digital, like the Look Lab page
+      if (!s || !m || !k) return FALLBACK;
+      var inc = buildInclusions({ session: s, mood: m, keepsake: k, extras: {}, extraDefs: EXTRAS, moodMinutes: moodMinutesOverride(s.id, LOOK) });
+      return { total: s.price + (m.price || 0) + best, mins: slotMinutes(s.id, LOOK, {}),
+               label: s.name + ' + ' + m.name + ' + ' + k.name, groups: inc.groups };
+    } catch (e) { return FALLBACK; }
+  }
+  function bookingUrl(b) {
+    return BOOKING_URL + '?pkg=' + encodeURIComponent('The Look Lab: ' + b.label) +
+           '&price=' + encodeURIComponent(b.total) + '&dur=' + encodeURIComponent(b.mins) +
+           '&desc=' + encodeURIComponent('Booked from the Coat Code page');
+  }
+  // What sells first: the look and what they take home, then the session details.
+  var ORDER = { 'Your look': 0, 'Hair & makeup': 1, 'What you take home': 2, 'Your session': 3 };
+  function sorted(groups) {
+    return groups.slice().sort(function (a, c) { return (ORDER[a.title] === undefined ? 9 : ORDER[a.title]) - (ORDER[c.title] === undefined ? 9 : ORDER[c.title]); });
+  }
+  // The sheet's wording, a little shorter for a phone: the set list loses its descriptions
+  function tidy(t) {
+    t = String(t).replace(/Make up/g, 'makeup');
+    var m = /^Choice of 1 set design\s*:\s*(.+)$/i.exec(t);
+    return m ? 'Set designs: ' + m[1].replace(/\s*\([^)]*\)/g, '') : t;
+  }
+  function find(groups, re) {
+    for (var i = 0; i < groups.length; i++) for (var j = 0; j < groups[i].items.length; j++) { var m = re.exec(groups[i].items[j]); if (m) return m[1]; }
+    return null;
+  }
+  var viewed = false;
+  function render() {
+    var b = build();
+    each('.js-total', function (el) { el.textContent = peso(b.total); });
+    each('.js-book', function (el) { el.href = bookingUrl(b); });
+    var mins = find(b.groups, /(\d+)-minute/), edits = find(b.groups, /(\d+) (?:professionally )?edited/i);
+    if (mins) each('.js-mins', function (el) { el.textContent = mins; });
+    if (edits) each('.js-edits', function (el) { el.textContent = edits; });
+    $('inc').innerHTML = sorted(b.groups).map(function (g) {
+      return '<div class="group"><h4>' + h(g.title) + '</h4><ul>' + g.items.map(function (it) { return '<li>' + CHECK + '<span>' + h(tidy(it)) + '</span></li>'; }).join('') + '</ul></div>';
+    }).join('');
+    if (!viewed && window.fbq) { viewed = true; fbq('track', 'ViewContent', { content_name: 'Prestige Coat Code', value: b.total, currency: 'PHP' }); }
+  }
+
+  /* ── phone vs. camera: drag anywhere on the picture; it sweeps once by itself to show it moves ── */
+  var cmp = $('cmp'), range = $('cmp-range'), touched = false, dragging = false;
+  var REDUCE = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  function setP(p) { p = Math.max(0, Math.min(100, p)); cmp.style.setProperty('--p', p + '%'); range.value = p; }
+  function fromEvent(e) { var r = cmp.getBoundingClientRect(); setP((e.clientX - r.left) / r.width * 100); }
+  function touch() { if (!touched) { touched = true; clEvent('coatcode_compare'); } }
+  cmp.addEventListener('pointerdown', function (e) { dragging = true; touch(); try { cmp.setPointerCapture(e.pointerId); } catch (x) {} fromEvent(e); });
+  cmp.addEventListener('pointermove', function (e) { if (dragging) fromEvent(e); });
+  ['pointerup', 'pointercancel'].forEach(function (n) { cmp.addEventListener(n, function () { dragging = false; }); });
+  range.addEventListener('input', function () { touch(); setP(+range.value); });
+  if (!REDUCE && 'IntersectionObserver' in window) {
+    var swept = false;
+    new IntersectionObserver(function (es, ob) {
+      if (swept || !es[0].isIntersecting) return;
+      swept = true; ob.disconnect();
+      var t0 = null, keys = [[0, 50], [.3, 22], [.7, 78], [1, 50]], D = 2600;
+      (function frame(t) {
+        if (touched) return;
+        if (t0 === null) t0 = t;
+        var u = Math.min(1, (t - t0) / D), i = 1;
+        while (keys[i][0] < u) i++;
+        var a = keys[i - 1], c = keys[i], f = (u - a[0]) / (c[0] - a[0]);
+        f = f * f * (3 - 2 * f);
+        setP(a[1] + (c[1] - a[1]) * f);
+        if (u < 1) requestAnimationFrame(frame);
+      })(performance.now());
+    }, { threshold: .6 }).observe(cmp);
+  }
+
+  /* ── gallery + lightbox ── */
+  var cur = 0, lastFocus = null;
+  function full(i) { return 'img/coatcode/coatcode-' + (i + 1) + '.jpg'; }
+  function showLb() { $('lb-img').src = full(cur); $('lb-img').alt = 'Coat Code, client photo ' + (cur + 1) + ' of ' + PHOTOS; $('lb-count').textContent = (cur + 1) + ' / ' + PHOTOS; }
+  function openLb(i) { cur = i; lastFocus = document.activeElement; showLb(); $('lb').showModal(); clEvent('coatcode_photo'); }
+  function step(d) { cur = (cur + d + PHOTOS) % PHOTOS; showLb(); }
+  var g = '';
+  for (var i = 0; i < PHOTOS; i++) g += '<button type="button" data-i="' + i + '" aria-label="Open photo ' + (i + 1) + '"><img src="img/coatcode/thumb/coatcode-' + (i + 1) + '.jpg" alt="" loading="lazy"></button>';
+  $('gal').innerHTML = g;
+  $('gal').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) openLb(+b.dataset.i); });
+  $('lb-prev').onclick = function () { step(-1); };
+  $('lb-next').onclick = function () { step(1); };
+  $('lb-close').onclick = function () { $('lb').close(); };
+  $('lb').addEventListener('close', function () { if (lastFocus) lastFocus.focus(); });
+  $('lb').addEventListener('click', function (e) { if (e.target === $('lb')) $('lb').close(); });
+  document.addEventListener('keydown', function (e) { if (!$('lb').open) return; if (e.key === 'ArrowRight') step(1); if (e.key === 'ArrowLeft') step(-1); });
+
+  /* ── sticky booking bar once the first Book button is out of view ── */
+  var heroBtn = document.querySelector('.hero .js-book');
+  if ('IntersectionObserver' in window && heroBtn) {
+    new IntersectionObserver(function (es) {
+      var on = !es[0].isIntersecting && es[0].boundingClientRect.top < 0;
+      $('bar').classList.toggle('on', on); $('bar').setAttribute('aria-hidden', String(!on));
+      $('bar').querySelectorAll('a').forEach(function (a) { a.tabIndex = on ? 0 : -1; });
+    }).observe(heroBtn);
+  }
+
+  /* ── hero: the tag follows the video, as in the ad. Reduced motion stays on the poster ── */
+  var v = $('hero-video'), tag = $('hero-tag'), CAM_AT = 2.47;
+  if (REDUCE) { v.removeAttribute('autoplay'); v.pause(); }
+  v.addEventListener('timeupdate', function () {
+    var cam = v.currentTime >= CAM_AT;
+    if (cam !== tag.classList.contains('cam')) { tag.classList.toggle('cam', cam); tag.textContent = cam ? '📸 On our camera' : '📱 On my phone'; }
+  });
+
+  /* ── client reviews, from the studio's own review sheet (same source as the Look Lab page) ── */
+  function loadProof(cb) {
+    try { var c = JSON.parse(sessionStorage.getItem('sp_cache_v1') || 'null'); if (c && Date.now() - c.t < 300000) { cb(c.d); return; } } catch (e) {}
+    var name = '_sp_' + Math.random().toString(36).slice(2), done = false, sc = document.createElement('script');
+    function finish(d) {
+      if (done) return; done = true;
+      try { delete window[name]; } catch (e) { window[name] = undefined; }
+      if (sc.parentNode) sc.parentNode.removeChild(sc);
+      if (d && d.ok) { try { sessionStorage.setItem('sp_cache_v1', JSON.stringify({ t: Date.now(), d: d })); } catch (e) {} cb(d); }
+    }
+    window[name] = finish;
+    setTimeout(function () { finish(null); }, 10000);
+    sc.onerror = function () { finish(null); };
+    sc.src = STUDIO_API + '?d=' + encodeURIComponent(btoa(JSON.stringify({ action: 'getPublicSocialProof', payload: {} }))) + '&callback=' + name;
+    document.head.appendChild(sc);
+  }
+  function stars(n) { n = Math.max(0, Math.min(5, Math.round(n))); return '★★★★★'.slice(0, n) + '☆☆☆☆☆'.slice(0, 5 - n); }
+  function showProof(d) {
+    var all = (d.testimonials || []).filter(function (t) { return t && t.message; });
+    // Reviews that talk about the coat or the guiding come first, three is enough here
+    function score(t) { return /(fur|coat|pose|posing|guide|direct)/i.test(t.message) ? 0 : 1; }
+    var list = all.map(function (t, i) { return [score(t), i, t]; }).sort(function (a, c) { return a[0] - c[0] || a[1] - c[1]; }).slice(0, 3).map(function (x) { return x[2]; });
+    var r = d.rating || {};
+    if (r.count >= 10 && r.avg) {
+      var txt = Number(r.avg).toFixed(1) + ' from ' + r.count + ' client reviews';
+      $('rate').textContent = txt; $('trust-rate-txt').textContent = Number(r.avg).toFixed(1) + ' from ' + r.count + ' reviews'; $('trust-rate').hidden = false;
+    }
+    if (!list.length) return;
+    $('quotes').innerHTML = list.map(function (t) {
+      return '<figure class="quote"><div class="st" aria-label="' + h(t.rating) + ' out of 5 stars">' + stars(t.rating) + '</div>' +
+        '<p>“' + h(t.message) + '”</p><div class="by">' + h(t.name) + ', ClickLounge client</div></figure>';
+    }).join('');
+    $('proof').hidden = false;
+  }
+
+  render();
+  if (typeof loadLookLab === 'function') loadLookLab(function () { render(); });
+  loadProof(showProof);
+})();
+</script>
+</body>
+</html>
