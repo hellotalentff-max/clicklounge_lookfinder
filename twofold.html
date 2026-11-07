@@ -81,6 +81,9 @@
   .look figcaption { padding: 12px 14px 14px; }
   .look figcaption b { display: block; color: var(--ink); font-size: 15px; }
   .look figcaption span { color: var(--muted); font-size: 13px; }
+  .look a { display: block; color: inherit; }
+  .look a:hover img { opacity: .94; }
+  .look .go { display: block; margin-top: 4px; color: var(--teal-dk); font-size: 13px; font-weight: 600; }
   .look .num { position: absolute; left: 10px; top: 10px; background: var(--ink); color: #fff; font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 999px; }
   .apart { text-align: center; margin: 14px 0 0; color: var(--muted); font-size: 14px; }
 
@@ -251,14 +254,18 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
       </div>
       <div class="looks">
         <figure class="look" style="margin:0">
-          <span class="num">Look 1</span>
-          <img src="img/twofold/thumb/twofold-7.jpg" alt="Client in the Coat Code look: brown fur coat on a red set, holding a black heel" loading="lazy" width="480" height="720">
-          <figcaption><b>The Coat Code</b><span>Luxe, bold, main-character energy</span></figcaption>
+          <a href="coatcode.html">
+            <span class="num">Look 1</span>
+            <img src="img/twofold/thumb/twofold-7.jpg" alt="Client in the Coat Code look: brown fur coat on a red set, holding a black heel" loading="lazy" width="480" height="720">
+            <figcaption><b>The Coat Code</b><span>Luxe, bold, main-character energy</span><span class="go">See this look ›</span></figcaption>
+          </a>
         </figure>
         <figure class="look" style="margin:0">
-          <span class="num">Look 2</span>
-          <img src="img/twofold/thumb/twofold-2.jpg" alt="The same client in the Angelic Muse look: white corset and large angel wings" loading="lazy" width="480" height="720">
-          <figcaption><b>Angelic Muse</b><span>Soft, dreamy, straight out of heaven</span></figcaption>
+          <a href="funnel.html">
+            <span class="num">Look 2</span>
+            <img src="img/twofold/thumb/twofold-2.jpg" alt="The same client in the Angelic Muse look: white corset and large angel wings" loading="lazy" width="480" height="720">
+            <figcaption><b>Angelic Muse</b><span>Soft, dreamy, straight out of heaven</span><span class="go">See this look ›</span></figcaption>
+          </a>
         </figure>
       </div>
       <p class="apart">Photographed 22 minutes apart, in the same session.</p>
