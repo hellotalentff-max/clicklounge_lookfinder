@@ -307,7 +307,10 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
       <a href="#looks">Looks</a>
       <a href="#faq">FAQ</a>
     </nav>
-    <a class="btn btn-primary btn-sm" href="#sessions">Book a session</a>
+    <div class="hdr-ctas">
+      <button type="button" class="btn btn-copper btn-sm lkb-trigger"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2 4h7a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H2z"/><path d="M22 4h-7a3 3 0 0 0-3 3v13a2 2 0 0 1 2-2h8z"/></svg>Lookbook</button>
+      <a class="btn btn-primary btn-sm hdr-book" href="#sessions"><span class="long">Book a session</span><span class="short">Book</span></a>
+    </div>
   </div>
 </header>
 
@@ -320,6 +323,7 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
         <p class="sub">Choose a session, see real photos from it, and book in a few taps. We handle the lighting, posing and direction.</p>
         <div class="cta-row">
           <a class="btn btn-primary" href="#sessions">See the sessions</a>
+          <button type="button" class="btn btn-copper lkb-trigger"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2 4h7a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H2z"/><path d="M22 4h-7a3 3 0 0 0-3 3v13a2 2 0 0 1 2-2h8z"/></svg>Browse the lookbook</button>
           <a class="btn btn-ghost" href="./">Not sure? Take the 2-min quiz</a>
         </div>
         <div class="trust">
@@ -379,11 +383,20 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
         <div class="eyebrow">Step 2</div>
         <h2>Choose your look</h2>
         <p class="lead">Every session needs one look before you book. Styleshots is included in the session price; the other looks are add-ons.</p>
-        <button type="button" class="btn btn-ghost btn-sm" id="lb-open" style="margin-top:14px;">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2 4h7a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H2z"/><path d="M22 4h-7a3 3 0 0 0-3 3v13a2 2 0 0 1 2-2h8z"/></svg>
-          Browse the lookbook
-        </button>
       </div>
+      <button type="button" class="lkb-banner lkb-trigger" aria-label="Browse the lookbook">
+        <span class="lkb-pics" aria-hidden="true">
+          <img src="img/thumb/prestige-5.jpg" alt="" width="240" height="300" loading="lazy">
+          <img src="img/coatcode/coatcode-2.jpg" alt="" width="240" height="300" loading="lazy">
+          <img src="img/thumb/prestige-1.jpg" alt="" width="240" height="300" loading="lazy">
+        </span>
+        <span class="lkb-text">
+          <span class="eyebrow">Not sure which look?</span>
+          <strong>See every look before you choose</strong>
+          <span class="lkb-desc">Flip through our lookbook of Angelic Muse, The Coat Code and Styleshots (for her and for him). It opens right here, so you won't lose your place.</span>
+          <span class="btn btn-copper"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2 4h7a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H2z"/><path d="M22 4h-7a3 3 0 0 0-3 3v13a2 2 0 0 1 2-2h8z"/></svg>Browse the lookbook</span>
+        </span>
+      </button>
       <div class="looks" id="looksgrid"></div>
       <div class="keeps" id="keeps" hidden></div>
     </div>
@@ -446,39 +459,53 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
   </section>
 </main>
 
-<dialog id="lb" aria-label="The Look Lab lookbook">
-  <div class="lb-bar">
+<dialog id="lkb" aria-label="The Look Lab lookbook">
+  <div class="lkb-bar">
     <strong>The Look Lab lookbook</strong>
-    <button type="button" class="btn btn-primary btn-sm" id="lb-close">Back to the sessions</button>
+    <button type="button" class="btn btn-primary btn-sm" id="lkb-close">Back to the sessions</button>
   </div>
-  <iframe id="lb-frame" title="The Look Lab lookbook" loading="lazy" allow="fullscreen" allowfullscreen></iframe>
+  <iframe id="lkb-frame" title="The Look Lab lookbook" loading="lazy" allow="fullscreen" allowfullscreen></iframe>
 </dialog>
 <style>
-  #lb { width: min(960px, 100vw); height: min(92vh, 100dvh); max-width: 100vw; max-height: 100dvh; padding: 0; border: 0; border-radius: 16px; overflow: hidden; background: #111; }
-  #lb[open] { display: flex; flex-direction: column; }
-  #lb::backdrop { background: rgba(20,30,30,.72); }
-  .lb-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 12px 10px 18px; background: #fff; color: var(--ink); font-size: 15px; }
-  #lb-frame { flex: 1; width: 100%; border: 0; background: #111; }
-  @media (max-width: 640px) { #lb { width: 100vw; height: 100dvh; border-radius: 0; } .lb-bar { padding-top: max(10px, env(safe-area-inset-top)); } }
+  .hdr-ctas { display: flex; gap: 8px; align-items: center; }
+  @media (max-width: 420px) { .hdr-ctas { gap: 6px; } .hdr .hdr-ctas .btn { padding: 9px 11px; font-size: 13px; } .hdr-ctas .lkb-trigger svg { display: none; } .hdr-book .long { display: none; } }
+  @media (min-width: 421px) { .hdr-book .short { display: none; } }
+  .lkb-banner { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: 22px; align-items: center; width: 100%; margin: 4px 0 28px; padding: 18px; text-align: left; font: inherit; color: inherit; cursor: pointer;
+    background: var(--copper-soft); border: 2px solid var(--copper); border-radius: 18px; transition: transform .2s ease, box-shadow .2s ease; }
+  .lkb-banner:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(168,101,63,.18); }
+  .lkb-pics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .lkb-pics img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 10px; display: block; }
+  .lkb-text { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+  .lkb-text strong { font-size: clamp(20px, 2.6vw, 26px); line-height: 1.2; color: var(--ink); }
+  .lkb-desc { color: var(--muted); font-size: 15px; }
+  .lkb-text .btn { margin-top: 6px; }
+  @media (max-width: 640px) { .lkb-banner { grid-template-columns: 1fr; gap: 14px; padding: 14px; } .lkb-text .btn { width: 100%; } }
+  #lkb { width: min(960px, 100vw); height: min(92vh, 100dvh); max-width: 100vw; max-height: 100dvh; padding: 0; border: 0; border-radius: 16px; overflow: hidden; background: #111; }
+  #lkb[open] { display: flex; flex-direction: column; }
+  #lkb::backdrop { background: rgba(20,30,30,.72); }
+  .lkb-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 12px 10px 18px; background: #fff; color: var(--ink); font-size: 15px; }
+  #lkb-frame { flex: 1; width: 100%; border: 0; background: #111; }
+  @media (max-width: 640px) { #lkb { width: 100vw; height: 100dvh; border-radius: 0; } .lkb-bar { padding-top: max(10px, env(safe-area-inset-top)); } }
 </style>
 <script>
 (function(){
   // The lookbook lives in Canva. It opens on top of this page, so closing it lands the
   // client back on the sessions exactly where they were.
   var URL = 'https://www.canva.com/design/DAGo67gpOdU/Y4EawCg8BLnBP5tf5F-c6A/view?embed';
-  var dlg = document.getElementById('lb'), frame = document.getElementById('lb-frame');
-  var openBtn = document.getElementById('lb-open');
-  if(!dlg || !openBtn || typeof dlg.showModal !== 'function') return;
-  openBtn.addEventListener('click', function(){
+  var dlg = document.getElementById('lkb'), frame = document.getElementById('lkb-frame');
+  var triggers = document.querySelectorAll('.lkb-trigger'), opener = null;
+  if(!dlg || !triggers.length || typeof dlg.showModal !== 'function') return;
+  triggers.forEach(function(btn){ btn.addEventListener('click', function(){
+    opener = btn;
     if(!frame.src) frame.src = URL;
     dlg.showModal();
     document.body.style.overflow = 'hidden';
     try{ clarity('event','lookbook_open'); }catch(e){}
-  });
+  }); });
   function shut(){ dlg.close(); }
-  document.getElementById('lb-close').addEventListener('click', shut);
+  document.getElementById('lkb-close').addEventListener('click', shut);
   dlg.addEventListener('click', function(e){ if(e.target === dlg) shut(); });   // tap outside
-  dlg.addEventListener('close', function(){ document.body.style.overflow = ''; openBtn.focus(); });
+  dlg.addEventListener('close', function(){ document.body.style.overflow = ''; if(opener) opener.focus({ preventScroll: true }); });
 })();
 </script>
 
