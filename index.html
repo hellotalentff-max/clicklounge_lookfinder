@@ -338,9 +338,15 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
     return r.counts.mins || 0;
   }
   function buildFor(sess, mid, kid) {
-    var m = llMood(mid), kp = keepsakePrice(sess.id, kid, mid);
-    var inc = sess.outfits != null ? +sess.outfits : (sess.id === 'Prestige' ? 2 : 1);
     var extras = {};
+    // Standard doesn't come with the Digital keepsake: someone who wants their digital copies
+    // gets the "Get All Digital Copies" add-on instead, at its own price.
+    if (kid && typeof keepsakeOffered === 'function' && !keepsakeOffered(kid, sess.id, mid)) {
+      if (kid === 'digital') EXTRAS.forEach(function (x) { if (/digital/i.test(x.key + ' ' + x.name)) extras[x.key] = true; });
+      kid = null;
+    }
+    var m = llMood(mid), kp = kid ? keepsakePrice(sess.id, kid, mid) : 0;
+    var inc = sess.outfits != null ? +sess.outfits : (sess.id === 'Prestige' ? 2 : 1);
     if (S.outfits > inc) extras.outfit = true;
     var offered = gownOffered(sess.id, mid), incl = gownIncluded(sess.id, mid);
     var wants = S.gown === 'gown' && offered;
@@ -351,9 +357,10 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
     }
     var lines = [{ l: sess.name + ' session', p: sess.price }];
     if (m && m.price) lines.push({ l: m.name, p: m.price }); else if (m) lines.push({ l: m.name, p: 0, free: true });
-    var kobj = byId(KEEPSAKES, kid);
-    lines.push({ l: kobj ? kobj.name : 'Keepsake', p: kp, free: kp === 0 });
+    var kobj = kid ? byId(KEEPSAKES, kid) : null;
+    if (kobj) lines.push({ l: kobj.name, p: kp, free: kp === 0 });
     if (extras.outfit) lines.push({ l: 'Additional Outfit Change', p: extraPrice('outfit') });
+    EXTRAS.forEach(function (x) { if (x.key !== 'outfit' && extras[x.key]) lines.push({ l: x.name, p: x.price || 0 }); });
     if (wants) lines.push({ l: 'Gown' + (gown ? ': ' + gown.name + (gown.brand ? ' (' + gown.brand + ')' : '') : ''), p: gownRate, free: incl, from: gownNote === 'from' });
     var total = lines.reduce(function (a, x) { return a + (x.p || 0); }, 0);
     return { sess: sess, mood: m, mid: mid, kid: kid, kobj: kobj, extras: extras, wantsGown: wants, gownIncl: incl, gownOffered: offered,
@@ -516,7 +523,7 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
       '</div>' +
       '<div class="hint" style="text-align:center;margin-top:12px;">Not ready to book? Send us your quote on Messenger and ask anything.</div>';
   }
-  function sessionTitle(b) { return b.sess.name + ' + ' + (b.mood ? b.mood.name : '') + ' + ' + (b.kobj ? b.kobj.name : ''); }
+  function sessionTitle(b) { return [b.sess.name, b.mood ? b.mood.name : '', b.kobj ? b.kobj.name : ''].filter(Boolean).join(' + '); }
   function altHtml(label, b, base) {
     var diff = b.total - base.total;
     var d = label === 'Save more' ? b.sess.name + ' session — ' + Math.round(b.shoot) + '-min shoot, ' + peso(-diff) + ' less.' : b.sess.name + ' session — ' + Math.round(b.shoot) + '-min shoot, ' + peso(diff) + ' more' + (b.gownIncl && S.gown === 'gown' ? ' (gown included)' : '') + '.';
@@ -536,7 +543,7 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
   function chosenBuild() { return (S.rec || recommend()).primary; }
   function descText(b, withId) {
     var bits = [];
-    if (b.extras && b.extras.outfit) bits.push('+Additional Outfit Change');
+    if (b.extras) EXTRAS.forEach(function (x) { if (b.extras[x.key]) bits.push('+' + x.name); });
     if (b.wantsGown) bits.push('Gown: ' + (b.gown ? b.gown.name + (b.gown.brand ? ' [' + b.gown.brand + ']' : '') + (b.gownIncl ? ' (included)' : b.gownRate ? ' (+' + peso(b.gownRate) + ')' : '') : 'to be chosen'));
     if (S.top) bits.push('Sizes: top ' + S.top + ', bottom ' + S.bottom + ', shoe ' + (S.shoe === 'Not sure' ? 'not sure' : 'EU ' + S.shoe));
     if (S.photos.length || S.links) bits.push('Inspo: ' + (S.photos.length ? S.photos.length + ' photo(s)' : '') + (S.photos.length && S.links ? ' + ' : '') + (S.links ? 'links' : ''));

@@ -134,6 +134,19 @@
   .pick-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
   .pick-opt { text-align: left; border: 1.5px solid var(--line); background: #fff; border-radius: 12px; padding: 11px 12px; cursor: pointer; min-width: 0; transition: border-color .15s ease, background .15s ease; }
   .pick-opt:hover { border-color: var(--teal); }
+  .opts { margin-top: 20px; border-top: 1px solid var(--line); padding-top: 18px; }
+  .opts h4 { margin: 0 0 4px; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--copper-dk); font-weight: 600; }
+  .opts .hint { margin: 0 0 10px; font-size: 13px; color: var(--muted); }
+  .opt-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1.5px solid var(--line); border-radius: 12px; margin-bottom: 8px; cursor: pointer; background: #fff; }
+  .opt-row:hover { border-color: var(--teal); }
+  .opt-row input { width: 18px; height: 18px; accent-color: var(--teal); flex-shrink: 0; margin: 0; }
+  .opt-row span { flex: 1; font-size: 14px; color: var(--ink); }
+  .opt-row em { font-style: normal; font-weight: 600; font-size: 14px; color: var(--copper-dk); white-space: nowrap; }
+  .opt-row.on { border-color: var(--teal); background: var(--teal-soft); }
+  .gown-box { border: 1.5px solid var(--line); border-radius: 12px; padding: 12px; background: #fff; margin-top: 4px; }
+  .gown-box label { display: block; font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 2px; }
+  .gown-box p { margin: 0 0 8px; font-size: 12.5px; color: var(--muted); }
+  .gown-box select { width: 100%; font: inherit; font-size: 14px; padding: 11px 10px; border: 1.5px solid var(--line); border-radius: 10px; background: #fff; color: var(--ink); }
   .pick-opt b { display: block; font-size: 14px; font-weight: 600; color: var(--ink); }
   .pick-opt span { display: block; font-size: 11.5px; color: var(--muted); line-height: 1.4; }
   .pick-opt em { display: block; margin-top: 4px; font-style: normal; font-size: 12.5px; font-weight: 600; color: var(--copper-dk); }
@@ -371,7 +384,7 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
       <div class="sec-head">
         <div class="eyebrow">Side by side</div>
         <h2>Compare the sessions</h2>
-        <p class="lead">Every session includes the Styleshots look and your digital copies.</p>
+        <p class="lead">Every session includes the Styleshots look. Add-ons and gown rentals are on each session above.</p>
       </div>
       <div class="tbl-wrap"><table class="cmp" id="cmp"></table></div>
     </div>
@@ -541,7 +554,7 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
   var DASH  = '<span class="no" aria-label="Not included">—</span>';
 
   // mood stays empty until the client picks a look: booking needs one
-  var S = { tab: POPULAR, idx: 0, mood: '' };
+  var S = { tab: POPULAR, idx: 0, mood: '', extras: {}, gown: '' };
   var touchX = null;
 
   function $(id) { return document.getElementById(id); }
@@ -558,10 +571,69 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
   }
 
   /* ── what a session includes, from the same rules the Look Lab uses ── */
-  function incFor(s, mid) {
+  // withPicks: include the add-ons and gown the client ticked (the compare table leaves them out)
+  function incFor(s, mid, withPicks) {
     mid = mid || 'styleshots';
-    return buildInclusions({ session: s, mood: llMood(mid), keepsake: keepFor(s, mid), extras: {}, extraDefs: EXTRAS,
+    var g = withPicks ? gownObj() : null;
+    return buildInclusions({ session: s, mood: llMood(mid), keepsake: keepFor(s, mid), extras: withPicks ? pickedExtras(s, mid) : {}, extraDefs: EXTRAS,
+                             gown: g ? g.name : '', gownFree: gownIncluded(s.id, mid), gownBrand: g ? g.brand || '' : '',
                              moodMinutes: moodMinutesOverride(s.id, mid) });
+  }
+  /* ── add-ons and gown rental ── */
+  var DRESS_API = 'https://script.google.com/macros/s/AKfycbzxb4jzWZ8IWijNr-q63t-n4pZUu7QOlsPDFCHHk_CXjIjD8EIu2eGWfoGPQIo4z6eT/exec';
+  var GOWNS = null;
+  function loadGowns() {
+    fetch(DRESS_API + '?action=dresses').then(function (r) { return r.text(); }).then(function (t) {
+      var j = JSON.parse(t);
+      if (j && j.ok && j.data) { GOWNS = j.data.filter(function (d) { return d && d.name; }); renderDetails(); }
+    }).catch(function () {});
+  }
+  function gownObj() {
+    if (!S.gown || !GOWNS) return null;
+    for (var i = 0; i < GOWNS.length; i++) if (GOWNS[i].name === S.gown) return GOWNS[i];
+    return null;
+  }
+  function gownRate(s, mid) {
+    var g = gownObj();
+    if (!g || gownIncluded(s.id, mid) || !gownOffered(s.id, mid)) return 0;
+    return g.photographerRate != null ? +g.photographerRate : 0;
+  }
+  // "Get All Digital Copies" only makes sense when the session doesn't already come with them
+  function digitalIncluded(s, mid) { var k = keepFor(s, mid); return !!(k && k.digital); }
+  function extraOffered(x, s, mid) { return !(/digital/i.test(x.key + ' ' + x.name) && digitalIncluded(s, mid)); }
+  function pickedExtras(s, mid) {
+    var out = {};
+    EXTRAS.forEach(function (x) { if (S.extras[x.key] && extraOffered(x, s, mid)) out[x.key] = true; });
+    return out;
+  }
+  function optionsHtml(s, mid) {
+    var rows = EXTRAS.filter(function (x) { return extraOffered(x, s, mid); }).map(function (x) {
+      var on = !!S.extras[x.key];
+      return '<label class="opt-row' + (on ? ' on' : '') + '"><input type="checkbox" data-extra="' + h(x.key) + '"' + (on ? ' checked' : '') + '>' +
+        '<span>' + h(x.name) + '</span><em>+' + peso(x.price || 0) + '</em></label>';
+    }).join('');
+    var rule = dressRule(s.id, mid || 'styleshots'), gown = '';
+    if (rule !== 'no') {
+      var incl = rule === 'included';
+      var list = (GOWNS || []).slice().sort(function (a, b) {
+        return String(a.brand).localeCompare(String(b.brand)) || (a.photographerRate || 0) - (b.photographerRate || 0) || String(a.name).localeCompare(String(b.name));
+      });
+      var rates = list.map(function (d) { return +d.photographerRate; }).filter(function (v) { return v > 0; });
+      var range = rates.length ? peso(Math.min.apply(null, rates)) + (Math.max.apply(null, rates) > Math.min.apply(null, rates) ? '–' + peso(Math.max.apply(null, rates)) : '') : '';
+      var brands = [];
+      list.forEach(function (d) { if (brands.indexOf(d.brand || 'Gowns') === -1) brands.push(d.brand || 'Gowns'); });
+      var opts = '<option value="">' + (incl ? 'No gown, I\'ll bring my own outfit' : 'No gown rental') + '</option>' +
+        brands.map(function (b) {
+          return '<optgroup label="' + h(b) + '">' + list.filter(function (d) { return (d.brand || 'Gowns') === b; }).map(function (d) {
+            return '<option value="' + h(d.name) + '"' + (S.gown === d.name ? ' selected' : '') + '>' + h(d.name) + ' · ' + (incl ? 'Included' : peso(d.photographerRate || 0)) + '</option>';
+          }).join('') + '</optgroup>';
+        }).join('');
+      gown = '<div class="gown-box"><label for="gown-pick">' + (incl ? 'Premium Dress · included with ' + h(s.name) : 'Premium Dress rental') + '</label>' +
+        '<p>' + (incl ? 'Pick any House of Roan or Serra gown at no extra cost.' : 'House of Roan and Serra gowns' + (range ? ', ' + range + ' depending on the gown' : '') + '.') +
+        ' We confirm the gown is free on your date when we confirm your booking.</p>' +
+        (GOWNS ? '<select id="gown-pick" data-gown>' + opts + '</select>' : '<p>Loading the gowns…</p>') + '</div>';
+    }
+    return '<div class="opts"><h4>Add-ons</h4><p class="hint">Optional. Tick what you\'d like and it\'s added to your total.</p>' + rows + gown + '</div>';
   }
   function allLooks() {
     var looks = MOODS.slice();
@@ -570,17 +642,24 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
   }
   // The keepsake that comes with a look at no extra cost: the one the look includes (Twofold → Prestige Wall),
   // otherwise the cheapest on offer (Digital).
+  // Only a keepsake that costs nothing comes with the session here (Digital, or the one a look includes).
+  // Standard has none: its 10 best shots are in the session, and all digital copies are an add-on.
   function keepFor(s, mid) {
-    var opts = keepsakeOptions(mid), best = null, bestP = Infinity;
+    var opts = keepsakeOptions(mid, s.id), best = null;
     for (var i = 0; i < opts.length; i++) if (opts[i].freeWith && llNames(opts[i].freeWith, mid)) return opts[i];
-    opts.forEach(function (k) { var p = keepsakePrice(s.id, k.id, mid); if (p < bestP) { best = k; bestP = p; } });
-    return best || byKeep('digital');
+    opts.forEach(function (k) { if (!best && keepsakePrice(s.id, k.id, mid) === 0) best = k; });
+    return best;
   }
   function buildOf(s, mid) {
     var m = llMood(mid), k = keepFor(s, mid);
-    var kp = k ? keepsakePrice(s.id, k.id, mid) : 0;
-    return { label: s.name + ' + ' + m.name + ' + ' + (k ? k.name : 'Digital'), total: s.price + (m.price || 0) + kp,
-             mins: slotMinutes(s.id, mid, {}) };
+    var kp = k ? keepsakePrice(s.id, k.id, mid) : 0, ex = pickedExtras(s, mid), g = gownObj();
+    var exNames = EXTRAS.filter(function (x) { return ex[x.key]; });
+    var extraTotal = exNames.reduce(function (t, x) { return t + (x.price || 0); }, 0);
+    var gr = gownRate(s, mid);
+    var addOns = exNames.map(function (x) { return x.name + ' (' + peso(x.price || 0) + ')'; });
+    if (g && gownOffered(s.id, mid)) addOns.push('Premium Dress: ' + g.name + (g.brand ? ' (' + g.brand + ')' : '') + ' ' + (gownIncluded(s.id, mid) ? '(included)' : '(' + peso(gr) + ')'));
+    return { label: s.name + ' + ' + m.name + (k ? ' + ' + k.name : ''), total: s.price + (m.price || 0) + kp + extraTotal + gr,
+             mins: slotMinutes(s.id, mid, ex), addOns: addOns };
   }
   function hmuOf(inc) {
     for (var i = 0; i < inc.groups.length; i++) if (/hair/i.test(inc.groups[i].title)) return inc.groups[i].items[0];
@@ -590,7 +669,7 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
     var b = buildOf(s, mid);
     return BOOKING_URL + '?pkg=' + encodeURIComponent('The Look Lab: ' + b.label) +
            '&price=' + encodeURIComponent(b.total) + '&dur=' + encodeURIComponent(b.mins) +
-           '&desc=' + encodeURIComponent('Booked from the Look Lab page');
+           '&desc=' + encodeURIComponent(['Booked from the Look Lab page'].concat(b.addOns.length ? ['Add-ons: ' + b.addOns.join(', ')] : []).join(' | '));
   }
 
   /* ── session tabs + panel ── */
@@ -669,7 +748,7 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
       }).join('') + '</div><div class="pick-need" id="pick-need" hidden>Choose a look first, then you can book.</div></div>';
   }
   function renderDetails() {
-    var s = sess(S.tab), inc = incFor(s, S.mood), rule = dressRule(s.id, S.mood || 'styleshots');
+    var s = sess(S.tab), inc = incFor(s, S.mood, true), rule = dressRule(s.id, S.mood || 'styleshots');
     if (window.fbq && renderDetails._seen !== s.name) { renderDetails._seen = s.name; fbq('track', 'ViewContent', { content_name: 'Look Lab ' + s.name }); }
     var chips = '';
     if (inc.counts.mins) chips += '<span class="chip">' + inc.counts.mins + '-minute shoot</span>';
@@ -688,7 +767,8 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
       '<div class="d-price"><b>' + peso(s.price) + '</b><span>session price</span></div>' +
       '<div class="chips">' + chips + '</div>' +
       pickerHtml(s) +
-      (b ? '<div class="total"><span>' + h(b.label) + '</span><b>' + peso(b.total) + '</b></div>' : '') +
+      optionsHtml(s, S.mood) +
+      (b ? '<div class="total"><span>' + h(b.label) + (b.addOns.length ? ' + ' + b.addOns.length + ' add-on' + (b.addOns.length !== 1 ? 's' : '') : '') + '</span><b>' + peso(b.total) + '</b></div>' : '') +
       '<div class="groups">' + groups + '</div>' +
       (hmuOf(inc) ? '<div class="arrive"><b>Arrive 1.5 hours early</b> for hair and makeup. Arriving later may shorten your shoot.</div>' : '') +
       '<div class="d-cta">' + cta +
@@ -793,6 +873,16 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
 
   /* ── events ── */
   $('tabs').addEventListener('click', function (e) { var b = e.target.closest('.tab'); if (b) selectTab(b.getAttribute('data-id')); });
+  $('details').addEventListener('change', function (e) {
+    var t = e.target;
+    if (t.hasAttribute('data-extra')) S.extras[t.getAttribute('data-extra')] = t.checked;
+    else if (t.hasAttribute('data-gown')) S.gown = t.value;
+    else return;
+    var y = window.scrollY; renderDetails(); window.scrollTo(0, y);
+    var back = t.hasAttribute('data-gown') ? $('gown-pick') : $('details').querySelector('[data-extra="' + t.getAttribute('data-extra') + '"]');
+    if (back) back.focus({ preventScroll: true });
+  });
+  loadGowns();
   $('tabs').addEventListener('keydown', function (e) {
     var ids = SESSIONS.map(function (s) { return s.id; }), i = ids.indexOf(S.tab);
     if (e.key === 'ArrowRight') { e.preventDefault(); selectTab(ids[(i + 1) % ids.length], true); }
