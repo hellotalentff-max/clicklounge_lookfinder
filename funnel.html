@@ -164,6 +164,11 @@
   .pick-opt b { display: block; font-size: 14px; font-weight: 600; color: var(--ink); }
   .pick-opt span { display: block; font-size: 11.5px; color: var(--muted); line-height: 1.4; }
   .pick-opt em { display: block; margin-top: 4px; font-style: normal; font-size: 12.5px; font-weight: 600; color: var(--copper-dk); }
+  .sale-box { margin-top: 14px; border: 1.5px solid #e7c9c9; background: #fdf4f2; border-radius: 14px; padding: 12px; }
+  .sale-box h4 { margin: 0 0 2px; font-size: 14px; color: #8e1f33; }
+  .sale-box .hint { margin: 0 0 8px; font-size: 12px; }
+  .sale-bar { background: #8e1f33; color: #fff; text-align: center; font-size: 13.5px; padding: 9px 14px; line-height: 1.45; }
+  .sale-bar b { color: #f4d58d; }
   .pick-opt[aria-pressed="true"] { border-color: var(--teal); background: var(--teal-soft); box-shadow: inset 0 0 0 1px var(--teal); }
   .pick.need .pick-grid { animation: nudge .5s ease; }
   .pick-need { font-size: 13px; font-weight: 500; color: var(--copper-dk); margin-top: 8px; }
@@ -342,6 +347,7 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
 </header>
 
 <main>
+  <div class="sale-bar" id="sale-bar" hidden>🎄 <b>Glow-Up Sale</b> · book Nov 27–29 for sessions Dec 1 – Jan 31 · pick your free upgrade on any session</div>
   <section class="hero">
     <div class="wrap hero-grid">
       <div>
@@ -584,6 +590,30 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
 
   // mood stays empty until the client picks a look: booking needs one
   var S = { tab: POPULAR, idx: 0, mood: '', extras: {}, gown: '', gdate: '' };
+  /* ── 3-Day Christmas Sale (Glow-Up Sale): links from clickloungestudio.com/sale carry ?sale=nov27.
+        Book Nov 27-29, 2026 only; sessions Dec 1, 2026 - Jan 31, 2027; two free perks per session. ── */
+  var GLOW = { key: 'nov27', open: '2026-11-27', close: '2026-11-29', from: '2026-12-01', to: '2027-01-31',
+    pick: 2,
+    perks: { Standard:  [{ t: '+2 edited photos' }, { t: '4 mini prints' }, { t: 'FREE 5R Frame (5x7)' }],
+             Signature: [{ t: '+3 edited photos + 4 mini prints' }, { t: '+10 mins shoot time', mins: 10 }, { t: 'FREE 5R Frame (5x7)' }],
+             Prestige:  [{ t: '+5 edited photos' }, { t: '+15 mins shoot time', mins: 15 }, { t: 'FREE 5R Frame (5x7)' }, { t: 'FREE 8R Frame (8x10)' }] } };
+  var SALE_ON = (function () {
+    var d = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Manila' }));
+    var today = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    var asked = new URLSearchParams(location.search).get('sale') === GLOW.key;
+    try { if (asked) sessionStorage.setItem('ll_sale', GLOW.key); asked = asked || sessionStorage.getItem('ll_sale') === GLOW.key; } catch (e) {}
+    return asked && today >= GLOW.open && today <= GLOW.close;
+  })();
+  S.perk = {};
+  // Chosen perk indexes for a session (default: the first two); clicking a third swaps out the oldest pick
+  function perkIdx(id) { var a = S.perk[id], n = (GLOW.perks[id] || []).length; a = Array.isArray(a) ? a.filter(function (i) { return i >= 0 && i < n; }) : []; return a.length ? a.slice(0, GLOW.pick) : [0, 1].slice(0, Math.min(GLOW.pick, n)); }
+  function perkOf(s) { var list = SALE_ON && GLOW.perks[s.id]; return list ? perkIdx(s.id).slice().sort().map(function (i) { return list[i]; }) : null; }
+  function perkHtml(s) {
+    var list = SALE_ON && GLOW.perks[s.id]; if (!list) return '';
+    var cur = perkIdx(s.id);
+    return '<div class="sale-box"><h4>🎄 Glow-Up Sale · choose ' + GLOW.pick + ' free upgrades</h4><p class="hint">For ' + h(s.name) + ' sessions booked Nov 27–29.</p><div class="pick-grid">' +
+      list.map(function (pk, i) { return '<button type="button" class="pick-opt" data-perk="' + i + '" aria-pressed="' + (cur.indexOf(i) > -1) + '"><b>' + h(pk.t) + '</b><em>Free</em></button>'; }).join('') + '</div></div>';
+  }
   var BACK_FROM_WARDROBE = false;
   var touchX = null;
 
@@ -680,14 +710,17 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
       : '<div class="t">Choose a session and a look first<b>' + peso(s.price) + '</b></div><a class="btn btn-primary" href="#looks">Choose your look</a>';
   }
   // Keep the client's choices when they pop over to the Wardrobe site and back
-  function saveState() { try { sessionStorage.setItem('ll_funnel', JSON.stringify({ tab: S.tab, mood: S.mood, extras: S.extras, gown: S.gown })); } catch (e) {} }
+  function saveState() { try { sessionStorage.setItem('ll_funnel', JSON.stringify({ tab: S.tab, mood: S.mood, extras: S.extras, gown: S.gown, perk: S.perk })); } catch (e) {} }
   function restoreState() {
     try {
       var o = JSON.parse(sessionStorage.getItem('ll_funnel') || 'null');
-      if (o) { if (o.tab) S.tab = o.tab; if (o.mood) S.mood = o.mood; S.extras = o.extras || {}; S.gown = o.gown || ''; }
+      if (o) { if (o.tab) S.tab = o.tab; if (o.mood) S.mood = o.mood; S.extras = o.extras || {}; S.gown = o.gown || ''; S.perk = o.perk || {}; }
     } catch (e) {}
     var q = new URLSearchParams(location.search), gown = q.get('gown');
     if (gown) { S.gown = gown; S.gdate = q.get('gdate') || ''; }
+    // Upgrades already chosen on clickloungestudio.com/sale: ?perk=N,M#tier
+    var pk = q.get('perk'), tm = /^#(standard|signature|prestige)$/i.exec(location.hash);
+    if (pk && tm) { var tid = tm[1].charAt(0).toUpperCase() + tm[1].slice(1).toLowerCase(); if (GLOW.perks[tid]) S.perk[tid] = pk.split(',').map(Number).filter(function (i) { return GLOW.perks[tid][i]; }); }
     if (gown || q.get('gdate')) { q.delete('gown'); q.delete('gdate'); history.replaceState(null, '', location.pathname + (q.toString() ? '?' + q : '') + location.hash); }
     return !!gown;
   }
@@ -723,9 +756,11 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
   }
   function bookingUrl(s, mid) {
     var b = buildOf(s, mid);
+    var pk = perkOf(s), pkMins = (pk || []).reduce(function (m, p) { return m + (p.mins || 0); }, 0);
     return BOOKING_URL + '?pkg=' + encodeURIComponent('The Look Lab: ' + b.label) +
-           '&price=' + encodeURIComponent(b.total) + '&dur=' + encodeURIComponent(b.mins) +
-           '&desc=' + encodeURIComponent(['Booked from the Look Lab page'].concat(b.addOns.length ? ['Add-ons: ' + b.addOns.join(', ')] : []).join(' | '));
+           '&price=' + encodeURIComponent(b.total) + '&dur=' + encodeURIComponent(b.mins + pkMins) +
+           '&desc=' + encodeURIComponent(['Booked from the Look Lab page'].concat(pk ? ['Glow-Up Sale perks: ' + pk.map(function (p) { return p.t; }).join(' + ')] : [], b.addOns.length ? ['Add-ons: ' + b.addOns.join(', ')] : []).join(' | ')) +
+           (pk ? '&sale=' + GLOW.key : '');
   }
 
   /* ── session tabs + panel ── */
@@ -822,7 +857,7 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
       '<h3>' + h(s.name) + '</h3><div class="sub">' + h(s.sub || '') + '</div>' +
       '<div class="d-price"><b>' + peso(s.price) + '</b><span>session price</span></div>' +
       '<div class="chips">' + chips + '</div>' +
-      pickerHtml(s) +
+      pickerHtml(s) + perkHtml(s) +
       '<p class="hint" style="margin:12px 0 0;font-size:13px;">Want extras or a gown? <a href="#addons">See Step 3: Add-ons</a> (optional).</p>' +
       (b ? '<div class="total"><span>' + h(b.label) + (b.addOns.length ? ' + ' + b.addOns.length + ' add-on' + (b.addOns.length !== 1 ? 's' : '') : '') + '</span><b>' + peso(b.total) + '</b></div>' : '') +
       '<div class="groups">' + groups + '</div>' +
@@ -954,6 +989,10 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
   });
   // Look choice, from the session panel or the looks section; "Choose" in the table opens that session's picker
   document.addEventListener('click', function (e) {
+    var pp = e.target.closest('[data-perk]');
+    if (pp) { var pi = +pp.getAttribute('data-perk'), cur = perkIdx(S.tab).slice(), at = cur.indexOf(pi);
+      if (at > -1) { if (cur.length > 1) cur.splice(at, 1); } else { cur.push(pi); if (cur.length > GLOW.pick) cur.shift(); }
+      S.perk[S.tab] = cur; saveState(); renderDetails(); var q = document.querySelector('.pick-opt[data-perk="' + pp.getAttribute('data-perk') + '"]'); if (q) q.focus({ preventScroll: true }); return; }
     var t = e.target.closest('[data-mood],[data-look-card],[data-need-look],[data-choose-session]');
     if (!t) return;
     if (t.hasAttribute('data-mood')) { chooseLook(t.getAttribute('data-mood')); var o = document.querySelector('.pick-opt[data-mood="' + t.getAttribute('data-mood') + '"]'); if (o) o.focus({ preventScroll: true }); return; }
@@ -1060,6 +1099,7 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
   }
 
   BACK_FROM_WARDROBE = restoreState();
+  if (SALE_ON) $('sale-bar').hidden = false;
   renderAll();
   fromHash();
   function toAddons() { if (BACK_FROM_WARDROBE || location.hash === '#addons') { var a = $('addons'); if (a) a.scrollIntoView(); } }
